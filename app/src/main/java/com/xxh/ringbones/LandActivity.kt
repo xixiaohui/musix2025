@@ -58,11 +58,10 @@ class LandActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Musix2025Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting2(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Scaffold(
+                    bottomBar = { SootheBottomNavigation() }
+                ) { padding ->
+                    HomeScreen(Modifier.padding(padding))
                 }
             }
         }
