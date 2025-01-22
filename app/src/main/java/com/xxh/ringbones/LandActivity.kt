@@ -57,6 +57,9 @@ import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+
+
 
 
 class LandActivity : ComponentActivity() {
@@ -65,7 +68,9 @@ class LandActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-            
+            val size = currentWindowAdaptiveInfo().windowSizeClass
+
+            Musix2025App(size)
         }
     }
 }
