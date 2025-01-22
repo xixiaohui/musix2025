@@ -67,9 +67,7 @@ class LandActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
             val size = currentWindowAdaptiveInfo().windowSizeClass
-
             Musix2025App(size)
         }
     }

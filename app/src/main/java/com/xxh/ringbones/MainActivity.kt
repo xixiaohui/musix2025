@@ -61,7 +61,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavigateButton(activity: MainActivity){
-
     Column (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
