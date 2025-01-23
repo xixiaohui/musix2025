@@ -1,5 +1,6 @@
 package com.xxh.ringbones.state
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 
@@ -15,7 +16,7 @@ class WellnessViewModel : ViewModel() {
 
     private fun getWellnessTasks() = List(30) { i -> WellnessTask(i, "Task # $i") }
 
-    fun changeTaskChecked(item: WellnessTask, checked: Boolean){
+    fun changeTaskChecked(item: WellnessTask, checked: MutableState<Boolean>){
 
         _tasks.find { it.id == item.id }?.let { task ->
             task.checked = checked
