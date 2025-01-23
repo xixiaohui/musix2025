@@ -1,5 +1,6 @@
 package com.xxh.ringbones
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -55,11 +57,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.xxh.ringbones.ui.theme.Musix2025Theme
-
+import com.xxh.ringbones.ui.theme.AppTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-
-
 
 
 class LandActivity : ComponentActivity() {
@@ -84,7 +83,7 @@ fun Greeting2(name: String, modifier: Modifier = Modifier) {
 //@Preview(showBackground = true)
 @Composable
 fun GreetingPreview2() {
-    Musix2025Theme {
+    AppTheme {
         Greeting2("Android")
     }
 }
@@ -122,7 +121,9 @@ fun SearchBar(
         onValueChange = {},
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.dp)
+            .background(MaterialTheme.colorScheme.background),
+
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -168,7 +169,7 @@ fun AlignYourBodyElement(
 //@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun AlignYourBodyElementPreview() {
-    Musix2025Theme {
+    AppTheme {
         AlignYourBodyElement(
             text = R.string.ab1_inversions,
             drawable = R.drawable.ab1_inversions,
@@ -212,7 +213,7 @@ fun FavoriteCollectionCard(
 //@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun FavoriteCollectionCardPreview() {
-    Musix2025Theme {
+    AppTheme {
         FavoriteCollectionCard(
             text = R.string.fc2_nature_meditations,
             drawable = R.drawable.fc2_nature_meditations,
@@ -264,7 +265,7 @@ fun HomeSection(
     Column(modifier) {
         Text(
             text = stringResource(title),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .paddingFromBaseline(top = 40.dp, bottom = 16.dp)
                 .padding(horizontal = 16.dp)
@@ -331,7 +332,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
 //@Preview(showBackground = true)
 @Composable
 fun MySootheAppPortrait() {
-    Musix2025Theme {
+    AppTheme {
         Scaffold(
             bottomBar = { SootheBottomNavigation() }
         ) { padding ->
@@ -383,11 +384,21 @@ private fun SootheNavigationRail(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
 @Composable
 fun MySootheAppLandscape() {
-    Musix2025Theme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+    AppTheme {
+        Surface(
+            color = MaterialTheme.colorScheme.background,
+            tonalElevation = 5.dp
+        ) {
             Row {
                 SootheNavigationRail()
                 HomeScreen()
