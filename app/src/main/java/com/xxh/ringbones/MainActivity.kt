@@ -151,7 +151,7 @@ private fun ShowRingtoneCard() {
     val ringtone = Ringtone(
         title = "New Ringtone Mp3 2020",
         des = "2020 ringtone",
-        url = "https://goodmorninghimalaya.com/ringtoneresource/2020/new-ringtone-mp3-2020.mp3"
+        url = "https://2020/new-ringtone-mp3-2020.mp3"
     )
 
     RingtoneCard(ringtone = ringtone)

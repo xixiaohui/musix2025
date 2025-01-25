@@ -34,6 +34,18 @@ class MusixRingtonesList {
 
     private val ringtoneURL = "https://www.compocore.com/ringtones/rings/2020.json"
 
+    private val ringtoneUrlList = listOf(
+        "https://www.compocore.com/ringtones/rings/2020.json",
+        "https://www.compocore.com/ringtones/rings/Airtel.json",
+        "https://www.compocore.com/ringtones/rings/Alarm.json",
+        "https://www.compocore.com/ringtones/rings/Animal.json",
+        "https://www.compocore.com/ringtones/rings/Arabic.json",
+        "https://www.compocore.com/ringtones/rings/Attitude.json",
+        "https://www.compocore.com/ringtones/rings/Bengali.json"
+    )
+
+    private val ringtoneFile ="https://www.compocore.com/ringtones/test.mp3"
+
     private var client: OkHttpClient = OkHttpClient()
 
     @Throws(IOException::class)
