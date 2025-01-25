@@ -31,20 +31,24 @@ import kotlin.coroutines.EmptyCoroutineContext
 class MusixRingtonesList {
 
 
+    companion object{
+        const val ringtoneURL = "https://www.compocore.com/ringtones/rings/2020.json"
 
-    private val ringtoneURL = "https://www.compocore.com/ringtones/rings/2020.json"
+        const val URL = "https://www.compocore.com/ringtones/rings/"
 
-    private val ringtoneUrlList = listOf(
-        "https://www.compocore.com/ringtones/rings/2020.json",
-        "https://www.compocore.com/ringtones/rings/Airtel.json",
-        "https://www.compocore.com/ringtones/rings/Alarm.json",
-        "https://www.compocore.com/ringtones/rings/Animal.json",
-        "https://www.compocore.com/ringtones/rings/Arabic.json",
-        "https://www.compocore.com/ringtones/rings/Attitude.json",
-        "https://www.compocore.com/ringtones/rings/Bengali.json"
-    )
+        val ringtoneUrlList = listOf(
+            "2020.json",
+            "Airtel.json",
+            "Alarm.json",
+            "Animal.json",
+            "Arabic.json",
+            "Attitude.json",
+            "Bengali.json"
+        )
 
-    private val ringtoneFile ="https://www.compocore.com/ringtones/test.mp3"
+        const val ringtoneFile = "https://www.compocore.com/ringtones/test.mp3"
+    }
+
 
     private var client: OkHttpClient = OkHttpClient()
 
@@ -63,9 +67,6 @@ class MusixRingtonesList {
     fun sendRequestWithOkHttp(): String {
         return read(ringtoneURL)
     }
-
-
-
 
 
 }
