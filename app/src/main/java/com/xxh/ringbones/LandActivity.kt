@@ -238,7 +238,7 @@ fun AlignYourBodyRow(
     }
 }
 
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
+@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun FavoriteCollectionsGrid(
     modifier: Modifier = Modifier
