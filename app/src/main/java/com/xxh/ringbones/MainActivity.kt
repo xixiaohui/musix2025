@@ -1,22 +1,15 @@
 package com.xxh.ringbones
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings.NameValueTable
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,66 +21,46 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.xxh.ringbones.gson.MusixRingtonesList
 import com.xxh.ringbones.gson.Ringtone
-import com.xxh.ringbones.state.WellnessTaskItem
-import com.xxh.ringbones.ui.theme.AppTheme
-
+import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.log
 
 
 class MainActivity : ComponentActivity() {
 
-    val TAG = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AppTheme {
+            Musix2025Theme {
                 MainScreen()
             }
 
@@ -158,7 +131,7 @@ fun RingtonesList() {
         loading = false
     }
 
-    AppTheme {
+    Musix2025Theme {
         LazyRow(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -167,13 +140,11 @@ fun RingtonesList() {
                     modifier = Modifier.padding(horizontal = 4.dp),
                     onClick = {
 
-
                         val ringtonesUrl = StringBuilder()
                             .append(MusixRingtonesList.URL)
                             .append(MusixRingtonesList.ringtoneUrlList[index])
 
                         ringtoneUrl = ringtonesUrl.toString()
-
                         loading = true
 //                            Log.v("MainActivity", ringtoneUrl)
 
@@ -278,7 +249,7 @@ private fun TopMenu() {
 
     val itemList = MusixRingtonesList.ringtoneUrlList
 
-    AppTheme {
+    Musix2025Theme {
         LazyRow(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -309,7 +280,9 @@ private fun TopMenu() {
 @Composable
 fun IndeterminateCircularIndicator() {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(50.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

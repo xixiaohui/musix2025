@@ -57,8 +57,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.xxh.ringbones.ui.theme.AppTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import com.xxh.ringbones.ui.theme.Musix2025Theme
 
 
 class LandActivity : ComponentActivity() {
@@ -72,21 +72,6 @@ class LandActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting2(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-//@Preview(showBackground = true)
-@Composable
-fun GreetingPreview2() {
-    AppTheme {
-        Greeting2("Android")
-    }
-}
 
 private val alignYourBodyData = listOf(
     R.drawable.ab1_inversions to R.string.ab1_inversions,
@@ -169,7 +154,7 @@ fun AlignYourBodyElement(
 //@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun AlignYourBodyElementPreview() {
-    AppTheme {
+    Musix2025Theme {
         AlignYourBodyElement(
             text = R.string.ab1_inversions,
             drawable = R.drawable.ab1_inversions,
@@ -213,7 +198,7 @@ fun FavoriteCollectionCard(
 //@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun FavoriteCollectionCardPreview() {
-    AppTheme {
+    Musix2025Theme {
         FavoriteCollectionCard(
             text = R.string.fc2_nature_meditations,
             drawable = R.drawable.fc2_nature_meditations,
@@ -332,7 +317,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
 //@Preview(showBackground = true)
 @Composable
 fun MySootheAppPortrait() {
-    AppTheme {
+    Musix2025Theme {
         Scaffold(
             bottomBar = { SootheBottomNavigation() }
         ) { padding ->
@@ -394,7 +379,7 @@ private fun SootheNavigationRail(modifier: Modifier = Modifier) {
 )
 @Composable
 fun MySootheAppLandscape() {
-    AppTheme {
+    Musix2025Theme {
         Surface(
             color = MaterialTheme.colorScheme.background,
             tonalElevation = 5.dp
