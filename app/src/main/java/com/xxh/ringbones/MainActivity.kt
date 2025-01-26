@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -77,6 +78,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.log
 
+
 class MainActivity : ComponentActivity() {
 
     val TAG = "MainActivity"
@@ -115,21 +117,20 @@ class MainActivity : ComponentActivity() {
                     })
             },
         ) { innerPadding ->
-            NavigateScreen(innerPadding)
+            MainScreen(innerPadding)
         }
     }
 
 
     @Composable
-    fun NavigateScreen(innerPadding: PaddingValues) {
+    fun MainScreen(innerPadding: PaddingValues) {
 
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-
-            Spacer(modifier = Modifier.size(8.dp))
-            TopMenu()
-            Spacer(modifier = Modifier.size(8.dp))
+//            Spacer(modifier = Modifier.size(8.dp))
+//            TopMenu()
+//            Spacer(modifier = Modifier.size(8.dp))
 
             RingtonesList()
         }
@@ -142,17 +143,56 @@ fun RingtonesList() {
 
     var ringtoneList by remember { mutableStateOf(listOf<Ringtone>()) }
 
-    LaunchedEffect(Unit) {
+    var loading by remember { mutableStateOf(true) }
+
+    var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.ringtoneURL) }
+
+    val itemList = MusixRingtonesList.ringtoneUrlList
+
+    LaunchedEffect(ringtoneUrl) {
         val result = withContext(Dispatchers.IO) {
-            mySuspendFunction()
+            mySuspendFunction(ringtoneUrl)
         }
         val gson = Gson()
         ringtoneList = gson.fromJson(result, Array<Ringtone>::class.java).toList()
+        loading = false
+    }
+
+    AppTheme {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            itemsIndexed(itemList) { index, it ->
+                Button(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    onClick = {
+
+
+                        val ringtonesUrl = StringBuilder()
+                            .append(MusixRingtonesList.URL)
+                            .append(MusixRingtonesList.ringtoneUrlList[index])
+
+                        ringtoneUrl = ringtonesUrl.toString()
+
+                        loading = true
+//                            Log.v("MainActivity", ringtoneUrl)
+
+                    }
+                ) {
+                    Text(text = it.dropLast(5))
+                }
+            }
+        }
+    }
+
+    if (loading) {
+        IndeterminateCircularIndicator()
+        return
     }
 
     Column(
         modifier = Modifier.fillMaxSize(),
-//        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally,
 //        verticalArrangement = Arrangement.Center
     ) {
 
@@ -220,11 +260,11 @@ fun RingtoneCard(ringtone: Ringtone) {
     }
 }
 
-suspend fun mySuspendFunction(): String {
+suspend fun mySuspendFunction(url: String): String {
     delay(1000)
 
     val musixRingtonesList = MusixRingtonesList()
-    val result = musixRingtonesList.sendRequestWithOkHttp()
+    val result = musixRingtonesList.sendRequestWithOkHttp(url)
 
     return result
 }
@@ -252,7 +292,10 @@ private fun TopMenu() {
                             .append(MusixRingtonesList.URL)
                             .append(MusixRingtonesList.ringtoneUrlList[index])
 
-//                        Log.v("MainActivity","$ringtonesUrl")
+//                        currentRingtoneUrl = ringtonesUrl.toString()
+//                        Log.v("MainActivity", currentRingtoneUrl)
+
+
                     }
                 ) {
                     Text(text = it.dropLast(5))
@@ -260,6 +303,23 @@ private fun TopMenu() {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun IndeterminateCircularIndicator() {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(50.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.width(64.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
+    }
+
 }
 
 
