@@ -51,7 +51,7 @@ class MusixRingtonesList {
             "Bengali.json"
         )
 
-        const val ringtoneFile = "https://www.compocore.com/ringtones/test.mp3"
+        const val audioURL = "https://www.compocore.com/ringtones/test.mp3"
     }
 
 

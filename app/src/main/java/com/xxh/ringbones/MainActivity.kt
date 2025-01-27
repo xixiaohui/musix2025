@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.xxh.ringbones.gson.MusixRingtonesList
 import com.xxh.ringbones.gson.Ringtone
+import com.xxh.ringbones.helper.SongHelper
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -197,12 +198,10 @@ class MainActivity : ComponentActivity() {
 
     fun navigateToPlayActivity(ringtone: Ringtone) {
         //跳转到下一个activity
-        val bundle = Bundle()
-        bundle.putSerializable("ringtone", ringtone)
-
         val currentActivity = findActivity()
         val intent = Intent(currentActivity, PlayActivity::class.java).apply {
-            putExtra("ringtone", bundle)
+//                    putExtra("EXTRA_INFO", ringtone as Serializable)
+            putExtra("EXTRA_INFO", ringtone as Parcelable)
         }
         currentActivity.startActivity(intent)
     }
@@ -214,16 +213,9 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier.fillMaxWidth(),
             onClick = {
 
-//                navigateToPlay(ringtone)
-//                val bundle = Bundle()
-//                bundle.putParcelable("ringtone", ringtone)
+                navigateToPlay(ringtone)
 
-                val currentActivity = findActivity()
-                val intent = Intent(currentActivity, PlayActivity::class.java).apply {
-//                    putExtra("EXTRA_INFO", ringtone as Serializable)
-                    putExtra("EXTRA_INFO", ringtone as Parcelable)
-                }
-                currentActivity.startActivity(intent)
+                SongHelper.stopStream()
             }
         ) {
             Row(
