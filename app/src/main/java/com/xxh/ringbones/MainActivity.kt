@@ -1,7 +1,13 @@
 package com.xxh.ringbones
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -41,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,6 +58,7 @@ import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.Serializable
 
 
 class MainActivity : ComponentActivity() {
@@ -74,20 +82,15 @@ class MainActivity : ComponentActivity() {
 
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text("Musix Ringtone") },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
+                TopAppBar(title = { Text("Musix Ringtone") }, navigationIcon = {
+                    IconButton(onClick = {
 
-                            }
-                        ) {
-                            Icon(
-                                Icons.Filled.Menu,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    })
+                    }) {
+                        Icon(
+                            Icons.Filled.Menu, contentDescription = "Localized description"
+                        )
+                    }
+                })
             },
         ) { innerPadding ->
             MainScreen(innerPadding)
@@ -108,191 +111,218 @@ class MainActivity : ComponentActivity() {
             RingtonesList()
         }
     }
-}
 
-
-@Composable
-fun RingtonesList() {
-
-    var ringtoneList by remember { mutableStateOf(listOf<Ringtone>()) }
-
-    var loading by remember { mutableStateOf(true) }
-
-    var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.ringtoneURL) }
-
-    val itemList = MusixRingtonesList.ringtoneUrlList
-
-    LaunchedEffect(ringtoneUrl) {
-        val result = withContext(Dispatchers.IO) {
-            mySuspendFunction(ringtoneUrl)
+    private fun Context.findActivity(): Activity {
+        var context = this
+        while (context is ContextWrapper) {
+            if (context is Activity) return context
+            context = context.baseContext
         }
-        val gson = Gson()
-        ringtoneList = gson.fromJson(result, Array<Ringtone>::class.java).toList()
-        loading = false
+        throw IllegalStateException("Permissions should be called in the context of an Activity")
     }
 
-    Musix2025Theme {
-        LazyRow(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            itemsIndexed(itemList) { index, it ->
-                Button(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    onClick = {
 
-                        val ringtonesUrl = StringBuilder()
-                            .append(MusixRingtonesList.URL)
+    @Composable
+    fun RingtonesList() {
+
+        var ringtoneList by remember { mutableStateOf(listOf<Ringtone>()) }
+
+        var loading by remember { mutableStateOf(true) }
+
+        var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.ringtoneURL) }
+
+        val itemList = MusixRingtonesList.ringtoneUrlList
+
+        LaunchedEffect(ringtoneUrl) {
+            val result = withContext(Dispatchers.IO) {
+                mySuspendFunction(ringtoneUrl)
+            }
+            val gson = Gson()
+            ringtoneList = gson.fromJson(result, Array<Ringtone>::class.java).toList()
+            loading = false
+        }
+
+        Musix2025Theme {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                itemsIndexed(itemList) { index, it ->
+                    Button(modifier = Modifier.padding(horizontal = 4.dp), onClick = {
+
+                        val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
                             .append(MusixRingtonesList.ringtoneUrlList[index])
 
                         ringtoneUrl = ringtonesUrl.toString()
                         loading = true
 //                            Log.v("MainActivity", ringtoneUrl)
 
+                    }) {
+                        Text(text = it.dropLast(5))
                     }
-                ) {
-                    Text(text = it.dropLast(5))
+                }
+            }
+        }
+
+        if (loading) {
+            IndeterminateCircularIndicator()
+            return
+        }
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center
+        ) {
+
+            LazyColumn {
+                items(ringtoneList) { ringtone ->
+                    RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
                 }
             }
         }
     }
 
-    if (loading) {
-        IndeterminateCircularIndicator()
-        return
+    @Preview
+    @Composable
+    private fun ShowRingtoneCard() {
+
+        val ringtone = Ringtone(
+            title = "New Ringtone Mp3 2020",
+            des = "2020 ringtone",
+            url = "https://2020/new-ringtone-mp3-2020.mp3"
+        )
+
+        RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
-    ) {
+    fun navigateToPlayActivity(ringtone: Ringtone) {
+        //跳转到下一个activity
+        val bundle = Bundle()
+        bundle.putSerializable("ringtone", ringtone)
 
-        LazyColumn {
-            items(ringtoneList) { ringtone ->
-                RingtoneCard(ringtone = ringtone)
+        val currentActivity = findActivity()
+        val intent = Intent(currentActivity, PlayActivity::class.java).apply {
+            putExtra("ringtone", bundle)
+        }
+        currentActivity.startActivity(intent)
+    }
+
+    @Composable
+    fun RingtoneCard(ringtone: Ringtone, navigateToPlay: (Ringtone) -> Unit) {
+
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+
+//                navigateToPlay(ringtone)
+//                val bundle = Bundle()
+//                bundle.putParcelable("ringtone", ringtone)
+
+                val currentActivity = findActivity()
+                val intent = Intent(currentActivity, PlayActivity::class.java).apply {
+//                    putExtra("EXTRA_INFO", ringtone as Serializable)
+                    putExtra("EXTRA_INFO", ringtone as Parcelable)
+                }
+                currentActivity.startActivity(intent)
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun ShowRingtoneCard() {
-
-    val ringtone = Ringtone(
-        title = "New Ringtone Mp3 2020",
-        des = "2020 ringtone",
-        url = "https://2020/new-ringtone-mp3-2020.mp3"
-    )
-
-    RingtoneCard(ringtone = ringtone)
-}
-
-@Composable
-fun RingtoneCard(ringtone: Ringtone) {
-
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {
-
-        }
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(R.drawable.ab1_inversions),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(140.dp)
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = ringtone.title,
-                    style = MaterialTheme.typography.titleMedium,
+                Image(
+                    painter = painterResource(R.drawable.ab1_inversions),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(140.dp)
                 )
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    text = ringtone.des,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Icon(
-                    modifier = Modifier.padding(start = 200.dp, top = 20.dp),
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = "play"
-                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 5.dp)
+                ) {
+                    Text(
+                        text = ringtone.title,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = ringtone.des,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Icon(
+                        modifier = Modifier.padding(start = 200.dp, top = 20.dp),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "play"
+                    )
+                }
             }
         }
     }
-}
 
-suspend fun mySuspendFunction(url: String): String {
-    delay(1000)
+    suspend fun mySuspendFunction(url: String): String {
+        delay(1000)
 
-    val musixRingtonesList = MusixRingtonesList()
-    val result = musixRingtonesList.sendRequestWithOkHttp(url)
+        val musixRingtonesList = MusixRingtonesList()
+        val result = musixRingtonesList.sendRequestWithOkHttp(url)
 
-    return result
-}
+        return result
+    }
 
-/**
- * 横向的导航菜单列表
- */
+    /**
+     * 横向的导航菜单列表
+     */
 //@Preview
-@Composable
-private fun TopMenu() {
+    @Composable
+    private fun TopMenu() {
 
-    val itemList = MusixRingtonesList.ringtoneUrlList
+        val itemList = MusixRingtonesList.ringtoneUrlList
 
-    Musix2025Theme {
-        LazyRow(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            itemsIndexed(itemList) { index, it ->
-                Button(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    onClick = {
+        Musix2025Theme {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                itemsIndexed(itemList) { index, it ->
+                    Button(modifier = Modifier.padding(horizontal = 4.dp), onClick = {
 
 
-                        val ringtonesUrl = StringBuilder()
-                            .append(MusixRingtonesList.URL)
+                        val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
                             .append(MusixRingtonesList.ringtoneUrlList[index])
 
 //                        currentRingtoneUrl = ringtonesUrl.toString()
 //                        Log.v("MainActivity", currentRingtoneUrl)
 
 
+                    }) {
+                        Text(text = it.dropLast(5))
                     }
-                ) {
-                    Text(text = it.dropLast(5))
                 }
             }
         }
     }
-}
 
-@Preview
-@Composable
-fun IndeterminateCircularIndicator() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(50.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.width(64.dp),
-            color = MaterialTheme.colorScheme.secondary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
+    @Preview
+    @Composable
+    fun IndeterminateCircularIndicator() {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(50.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp),
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
+        }
+
     }
 
 }
+
+
+
 
 
