@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -35,13 +37,18 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,17 +58,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.xxh.ringbones.gson.MusixRingtonesList
 
 import com.xxh.ringbones.gson.Ringtone
 import com.xxh.ringbones.helper.SongHelper
+import com.xxh.ringbones.media3.Media3PlayerView
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayActivity : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,15 +92,35 @@ class PlayActivity : ComponentActivity() {
         }
 
         setContent {
-            Musix2025Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MediaPlayerScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        ringtone = ringtone!!
-                    )
-                }
-            }
+            ExoPlayerView()
         }
+    }
+}
+
+@Composable
+private fun MyMediaPlayerView(ringtone: Ringtone?) {
+    Musix2025Theme {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            MediaPlayerScreen(
+                modifier = Modifier.padding(innerPadding),
+                ringtone = ringtone!!
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ExoPlayerView() {
+    Musix2025Theme {
+
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Media3PlayerView(
+                modifier = Modifier.padding(innerPadding),
+                videoUrl = MusixRingtonesList.audioURL
+            )
+        }
+
     }
 }
 
@@ -106,6 +139,8 @@ private fun ShowMediaPlayerScreen(
         }
     }
 }
+
+
 
 //@Preview
 @Composable
@@ -135,7 +170,6 @@ fun PlayingScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
 //                    }
 //                    loading = false
 //                }
-
 
             },
             modifier = Modifier.size(150.dp),
@@ -212,7 +246,6 @@ fun PlayingScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
                 Text("Set")
             }
         }
-
     }
 }
 
@@ -224,15 +257,18 @@ suspend fun loadProgress(updateProgress: (Float) -> Unit) {
     }
 }
 
+
 @Composable
 fun MediaPlayerScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
     var ringtoneState by remember { mutableStateOf(false) }
+
 
     if (ringtoneState) {
         val audioTestUrl = MusixRingtonesList.audioURL
 
 //        SongHelper.playStream(ringtone.url)
         SongHelper.playStream(audioTestUrl)
+
     } else {
         SongHelper.pauseStream()
     }
@@ -242,6 +278,9 @@ fun MediaPlayerScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
+        Spacer(Modifier.size(24.dp))
+
         Text(text = ringtone.title)
 
         Spacer(Modifier.size(24.dp))
@@ -257,9 +296,9 @@ fun MediaPlayerScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Blue)
 
         ) {
-            Column (
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 Icon(
                     imageVector = if (ringtoneState) {
                         Icons.Filled.Pause
@@ -285,8 +324,17 @@ fun MediaPlayerScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
         }
 
 //        Spacer(Modifier.size(240.dp))
+        LinearProgressIndicator(
+            progress = {
+                1.0f
+            },
+            trackColor = Color.Red,
+            modifier = Modifier.padding(16.dp, 72.dp),
+            color = Color.Blue,
 
-        Row (modifier = Modifier.padding(top = 240.dp)){
+            )
+
+        Row(modifier = Modifier.padding(top = 10.dp)) {
             Button(
                 onClick = {
 
@@ -341,7 +389,6 @@ fun MediaPlayerScreen(modifier: Modifier = Modifier, ringtone: Ringtone) {
             SongHelper.releasePlayer()
         }
     }
-
 
 
 }
