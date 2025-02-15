@@ -74,8 +74,13 @@ fun Media3PlayerView(
     Column(
         modifier = modifier
     ) {
-        Media3AndroidView(player)
+//        Media3AndroidView(player)
 //        PlayerControls(player)
+
+        if (player != null) {
+            XMLLayoutWithPlayerView(player)
+        }
+
     }
 }
 
@@ -87,7 +92,7 @@ fun Media3AndroidView(player: ExoPlayer?) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-    ){
+    ) {
         AndroidView(
             factory = { context ->
                 val playView = PlayerView(context).apply {
@@ -259,4 +264,33 @@ fun XMLLayoutWithPlayerView() {
             exoPlayer.release()
         }
     }
+}
+
+@Composable
+fun XMLLayoutWithPlayerView(exoPlayer: ExoPlayer?) {
+    val context = LocalContext.current
+
+
+    // 使用 LayoutInflater 加载 XML 布局
+    val layoutInflater = LayoutInflater.from(context)
+    val viewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
+
+    // 获取 XML 布局中的 PlayerView
+    val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view)
+    playerView.player = exoPlayer  // 设置 ExoPlayer
+
+
+    // 使用 AndroidView 来显示加载的 XML 布局
+    AndroidView(
+        factory = { viewGroup },
+        modifier = Modifier.fillMaxSize(),
+        update = { viewGroup ->
+            val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view) as PlayerView
+            playerView.player = exoPlayer
+
+
+        }
+    )
+
+
 }
