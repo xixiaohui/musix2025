@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <!-- ExoPlayer 的 PlayerView -->
@@ -13,19 +13,13 @@
         android:layout_height="200dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/ab1_inversions"
-        app:use_controller="true"
-        app:surface_type="none"
+        android:theme="@style/Theme.Musix2025"
         app:default_artwork="@drawable/ab1_inversions"
+        app:surface_type="none"
         app:use_artwork="true"
-        
-        android:theme="@style/Theme.Musix2025"/>
 
-    <!-- 示例的 TextView -->
-    <TextView
-        android:id="@+id/text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        app:use_controller="true" />
+
 
 
 </LinearLayout>

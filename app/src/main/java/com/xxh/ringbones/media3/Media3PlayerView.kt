@@ -285,7 +285,7 @@ fun XMLLayoutWithPlayerView(exoPlayer: ExoPlayer?) {
         factory = { viewGroup },
         modifier = Modifier.fillMaxSize(),
         update = { viewGroup ->
-            val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view) as PlayerView
+            val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view)
             playerView.player = exoPlayer
 
 
