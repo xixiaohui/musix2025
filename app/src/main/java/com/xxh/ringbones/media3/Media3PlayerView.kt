@@ -1,15 +1,22 @@
 package com.xxh.ringbones.media3
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +60,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
+import com.google.android.material.snackbar.Snackbar
+import com.xxh.ringbones.PlayActivity
 import kotlinx.coroutines.delay
 
 
@@ -81,34 +90,115 @@ fun Media3PlayerView(
         modifier = modifier.fillMaxWidth()
     ) {
         Media3AndroidView(player)
-
 //        player?.let { XMLLayoutWithPlayerView(context, it) }
-        IconButton(onClick = { /* 执行点击事件 */ }) {
-            Icon(
-                modifier = Modifier.size(48.dp),
-                imageVector = Icons.Default.Download,
-                contentDescription = "下载铃声",
-                tint = androidx.compose.ui.graphics.Color.Red
-            )
-        }
-        IconButton(onClick = { /* 执行点击事件 */ }) {
-            Icon(
-                modifier = Modifier.size(48.dp),
-                imageVector = Icons.Default.FavoriteBorder,
-                contentDescription = "添加喜欢",
-                tint = androidx.compose.ui.graphics.Color.Red
-            )
-        }
-        IconButton(onClick = { /* 执行点击事件 */ }) {
-            Icon(
-                modifier = Modifier.size(48.dp),
-                imageVector = Icons.Default.MusicNote,
-                contentDescription = "设置铃音",
-                tint = androidx.compose.ui.graphics.Color.Red
-            )
-        }
-
     }
+}
+
+@Composable
+fun getCurrentActivity(): PlayActivity? {
+    // 获取当前上下文
+    val context = LocalContext.current
+
+    // 转换为 Activity 类型
+    return context as? PlayActivity
+}
+
+
+fun addDownloadButton(context: Context,player: ExoPlayer?):ImageButton {
+    // 创建 ImageButton
+    val downloadButton = ImageButton(context).apply {
+        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
+            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
+            setMargins(0, 0, 80, 10) // 距离底部100dp
+        }
+        setImageResource(com.xxh.ringbones.R.drawable.download_24px)
+        setBackgroundColor(Color.TRANSPARENT)
+        setColorFilter(ContextCompat.getColor(context, com.xxh.ringbones.R.color.white), PorterDuff.Mode.SRC_IN)
+    }
+
+    downloadButton.setOnClickListener{
+        AlertDialog.Builder(context)
+            .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
+            .setMessage(context.getString(com.xxh.ringbones.R.string.downloadTips))
+            .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
+
+
+
+                //download
+                // 获取当前播放的 URL（MediaItem URI）
+                val currentMediaItem = player?.currentMediaItem
+                val audioUrl = currentMediaItem?.localConfiguration?.uri.toString()
+
+                val activity = context as PlayActivity
+
+                activity.let {
+                    Log.v("musixRingtone+", it.localClassName)
+                }
+
+                PlayActivity.Utility.downloadMusic(activity ,audioUrl)
+
+                Snackbar.make(downloadButton, context.getString(com.xxh.ringbones.R.string.downloadTips2), Snackbar.LENGTH_SHORT).show()
+//                Snackbar.make(downloadButton, "当前播放的音频链接 $audioUrl",Snackbar.LENGTH_SHORT).show()
+
+            }
+            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
+            .show()
+    }
+    return downloadButton
+}
+
+fun addFavoriteButton(context: Context):ImageButton {
+    // 创建 ImageButton
+    val favoriteButton = ImageButton(context).apply {
+        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
+            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
+            setMargins(0, 0, 160, 10) // 距离底部100dp
+        }
+        setImageResource(com.xxh.ringbones.R.drawable.favorite_24px)
+        setBackgroundColor(Color.TRANSPARENT)
+        setColorFilter(ContextCompat.getColor(context, com.xxh.ringbones.R.color.white), PorterDuff.Mode.SRC_IN)
+    }
+
+    favoriteButton.setOnClickListener{
+        AlertDialog.Builder(context)
+            .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
+            .setMessage(context.getString(com.xxh.ringbones.R.string.add_to_fav_list))
+            .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
+                Snackbar.make(favoriteButton, context.getString(com.xxh.ringbones.R.string.add_to_fav_list2), Snackbar.LENGTH_SHORT).show()
+
+            }
+            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
+            .show()
+    }
+
+    return favoriteButton
+}
+
+fun addSetRingtoneButton(context: Context):ImageButton {
+    // 创建 ImageButton
+    val setRingtoneButton = ImageButton(context).apply {
+        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
+            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
+            setMargins(0, 0, 250, 10) // 距离底部100dp
+        }
+        setImageResource(com.xxh.ringbones.R.drawable.notification_add_24px)
+        setBackgroundColor(Color.TRANSPARENT)
+        setColorFilter(ContextCompat.getColor(context, com.xxh.ringbones.R.color.white), PorterDuff.Mode.SRC_IN)
+    }
+
+    setRingtoneButton.setOnClickListener{
+        AlertDialog.Builder(context)
+            .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
+            .setMessage(context.getString(com.xxh.ringbones.R.string.set_ringtone))
+            .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
+                Snackbar.make(setRingtoneButton, context.getString(com.xxh.ringbones.R.string.set_ringtone2), Snackbar.LENGTH_SHORT).show()
+
+            }
+            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
+            .show()
+    }
+
+    return setRingtoneButton
 }
 
 
@@ -156,6 +246,10 @@ fun Media3AndroidView(player: ExoPlayer?) {
             factory = { context ->
 
 
+
+                // 将按钮添加到 PlayerView
+
+
                 playView
             },
             update = { playerView ->
@@ -163,6 +257,10 @@ fun Media3AndroidView(player: ExoPlayer?) {
                 playerView.showController()
                 playerView.controllerShowTimeoutMs = 0
                 playerView.controllerHideOnTouch = false
+
+                (playView as ViewGroup).addView(addDownloadButton(context,player))
+                (playView as ViewGroup).addView(addFavoriteButton(context))
+                (playView as ViewGroup).addView(addSetRingtoneButton(context))
 
             },
             modifier = Modifier.fillMaxWidth()
@@ -172,6 +270,17 @@ fun Media3AndroidView(player: ExoPlayer?) {
     }
 
 }
+
+
+
+
+
+//fun main() {
+//
+//    val ringtone_url = "https://www.compocore.com/ringtones/test.mp3"
+//    val fileName = ringtone_url.split("/").last()
+//    println(fileName)
+//}
 
 @Composable
 fun rememberExoPlayer(audioUri: Uri): ExoPlayer {

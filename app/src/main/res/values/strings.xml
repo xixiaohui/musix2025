@@ -22,4 +22,19 @@
     <string name="title_activity_play">PlayActivity</string>
     <string name="play">play</string>
     <string name="pause">pause</string>
+
+    <string name="tips">Tips</string>
+    <string name="downloadTips">Download this ringtone?</string>
+    <string name="downloadTips2">Download this ringtone.</string>
+
+    <string name="add_to_fav_list">Add to favorites list?</string>
+    <string name="add_to_fav_list2">Add to favorites list</string>
+
+    <string name="set_ringtone">Set this ringtone as your phone ringtone?</string>
+    <string name="set_ringtone2">As your phone ringtone</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+
+
 </resources>

@@ -52,6 +52,7 @@ class MusixRingtonesList {
         )
 
         const val audioURL = "https://www.compocore.com/ringtones/test.mp3"
+        const val local_audio_url = "/storage/emulated/0/Android/data/com.xxh.ringbones/files/Ringtones/test.mp3"
     }
 
 

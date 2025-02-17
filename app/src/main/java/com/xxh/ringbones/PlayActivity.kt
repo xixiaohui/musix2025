@@ -1,20 +1,18 @@
 package com.xxh.ringbones
 
-import android.annotation.SuppressLint
+
+import android.app.Activity
 import android.content.Context
-import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
-import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,14 +20,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Pause
@@ -37,18 +31,13 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,28 +47,48 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.xxh.ringbones.gson.MusixRingtonesList
-
 import com.xxh.ringbones.gson.Ringtone
 import com.xxh.ringbones.helper.SongHelper
 import com.xxh.ringbones.media3.Media3PlayerView
+import com.xxh.ringbones.media3.getCurrentActivity
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.File
+import java.io.IOException
+
 
 class PlayActivity : ComponentActivity() {
+
+
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // 请求存储权限
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 100)
+        }
+
+        // 请求读取权限
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 100)
+        }
 
         //获取ringtone
         val bundle: Bundle? = intent.extras
@@ -94,6 +103,80 @@ class PlayActivity : ComponentActivity() {
         setContent {
             ExoPlayerView()
         }
+
+//        val url = MusixRingtonesList.audioURL
+//        downloadMusic(url)
+    }
+
+
+
+    object Utility{
+        private val client = OkHttpClient()
+
+        fun isFileExists(filePath: String): Boolean {
+            val file = File(filePath)
+            return file.exists()
+        }
+
+        fun downloadMusic(activity: Activity, url: String) {
+
+            val fileName = url.split("/").last()
+
+            val file = File(activity.getExternalFilesDir(Environment.DIRECTORY_RINGTONES), fileName)
+            // 检查文件是否已经存在
+            if (file.exists()) {
+                Log.e("musixDownload","文件已经存在：${file.absolutePath}")
+                return // 文件已存在，跳过下载
+            }
+
+
+            val request = Request.Builder()
+                .url(url) // 音乐文件的 URL
+                .build()
+
+            // 异步请求
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    // 请求失败
+                    Log.e("musixDownload", "Download failed: ${e.message}")
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        // 获取响应的 body 内容
+                        val inputStream = response.body?.byteStream()
+
+                        // 将文件保存到本地存储
+                        val file = File(activity.getExternalFilesDir(Environment.DIRECTORY_RINGTONES), fileName)
+                        val outputStream = file.outputStream()
+
+                        try {
+                            inputStream?.copyTo(outputStream)
+                            activity.runOnUiThread {
+                                Log.d("musixDownload", "Music downloaded successfully: ${file.absolutePath}")
+                            }
+                        } catch (e: IOException) {
+                            activity.runOnUiThread {
+                                Log.e("musixDownload", "Error saving music: ${e.message}")
+                            }
+                        } finally {
+                            outputStream.close()
+                            inputStream?.close()
+                        }
+                    } else {
+                        activity.runOnUiThread {
+                            Log.e("musixDownload", "Download failed with status code: ${response.code}")
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+
     }
 }
 
@@ -112,12 +195,23 @@ private fun MyMediaPlayerView(ringtone: Ringtone?) {
 @Preview
 @Composable
 private fun ExoPlayerView() {
+    var videoUrl = MusixRingtonesList.audioURL
+    val fileName = videoUrl.split("/").last()
+    val file = File(LocalActivity.current?.getExternalFilesDir(Environment.DIRECTORY_RINGTONES), fileName)
+    if(file.exists()){
+        videoUrl = file.absolutePath
+
+        Log.e("musixDownload","播放本地存在的文件：${file.absolutePath}")
+    }else{
+        Log.e("musixDownload","播放网络文件：$videoUrl")
+    }
+
     Musix2025Theme {
 
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Media3PlayerView(
                 modifier = Modifier.padding(innerPadding),
-                videoUrl = MusixRingtonesList.audioURL
+                videoUrl = videoUrl
             )
         }
 
