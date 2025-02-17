@@ -1,14 +1,16 @@
 package com.xxh.ringbones.media3
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.Drawable
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.annotation.OptIn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +18,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -33,20 +40,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
+
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
-import com.xxh.ringbones.R
 import kotlinx.coroutines.delay
 
 
@@ -72,42 +78,97 @@ fun Media3PlayerView(
     }
 
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
-//        Media3AndroidView(player)
-//        PlayerControls(player)
+        Media3AndroidView(player)
 
-        if (player != null) {
-            XMLLayoutWithPlayerView(player)
+//        player?.let { XMLLayoutWithPlayerView(context, it) }
+        IconButton(onClick = { /* 执行点击事件 */ }) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                imageVector = Icons.Default.Download,
+                contentDescription = "下载铃声",
+                tint = androidx.compose.ui.graphics.Color.Red
+            )
+        }
+        IconButton(onClick = { /* 执行点击事件 */ }) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = "添加喜欢",
+                tint = androidx.compose.ui.graphics.Color.Red
+            )
+        }
+        IconButton(onClick = { /* 执行点击事件 */ }) {
+            Icon(
+                modifier = Modifier.size(48.dp),
+                imageVector = Icons.Default.MusicNote,
+                contentDescription = "设置铃音",
+                tint = androidx.compose.ui.graphics.Color.Red
+            )
         }
 
     }
 }
 
 
+@SuppressLint("ResourceAsColor")
 @OptIn(UnstableApi::class)
 @Composable
 fun Media3AndroidView(player: ExoPlayer?) {
 
+    val context = LocalContext.current
+
+    val playView = remember {
+        PlayerView(context).apply {
+            this.player = player
+            this.showController()
+            this.controllerShowTimeoutMs = 0
+            this.controllerHideOnTouch = false
+
+            this.artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FILL
+            this.defaultArtwork =
+                ContextCompat.getDrawable(context, com.xxh.ringbones.R.drawable.ab1_inversions)
+
+            val defaultTimeBar =
+                this.findViewById<DefaultTimeBar>(androidx.media3.ui.R.id.exo_progress).apply {
+                    setPlayedColor(Color.parseColor("#FF6200EE"))
+                    setBufferedColor(Color.parseColor("#FFFF4081"))
+                }
+            val frameLayout =
+                this.findViewById<FrameLayout>(androidx.media3.ui.R.id.exo_bottom_bar).apply {
+                    setBackgroundColor(Color.TRANSPARENT)
+                }
+
+            // 获取屏幕宽度
+            val displayMetrics = resources.displayMetrics
+            val screenWidth = displayMetrics.widthPixels
+            this.layoutParams = ViewGroup.LayoutParams(screenWidth, screenWidth)
+
+
+        }
+    }
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
     ) {
         AndroidView(
             factory = { context ->
-                val playView = PlayerView(context).apply {
-                    this.player = player
-                    setBackgroundColor(Color.GREEN)
-                    useController = false
 
-                }
+
                 playView
             },
             update = { playerView ->
                 playerView.player = player
+                playerView.showController()
+                playerView.controllerShowTimeoutMs = 0
+                playerView.controllerHideOnTouch = false
+
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth()
         )
+
+
     }
 
 }
@@ -192,105 +253,116 @@ fun VolumeControl(exoPlayer: ExoPlayer) {
     }
 }
 
-@Composable
-fun MusicPlayerScreen() {
-    val audioUri = Uri.parse("https://www.example.com/audio.mp3")
-    val exoPlayer = rememberExoPlayer(audioUri)
 
-    // 确保播放器在退出时释放
+@OptIn(UnstableApi::class)
+@Composable
+fun XMLLayoutWithPlayerView(context: Context, exoPlayer: ExoPlayer) {
+
+    // 使用 LayoutInflater 加载 XML 布局
+    val layoutInflater = LayoutInflater.from(context)
+    val viewGroup = layoutInflater.inflate(com.xxh.ringbones.R.layout.activity_main, null)
+
+    val isPlaying = remember { mutableStateOf(exoPlayer.isPlaying) }
+
+    // 监听播放器状态变化（这里只简单监听 isPlaying 状态）
     DisposableEffect(exoPlayer) {
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(isPlayingNow: Boolean) {
+                isPlaying.value = isPlayingNow
+            }
+        }
+        exoPlayer.addListener(listener)
         onDispose {
-            exoPlayer.release()
+            exoPlayer.removeListener(listener)
         }
     }
 
+
+    // 使用 AndroidView 来显示加载的 XML 布局
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 音频播放器控件
-        CustomAudioPlayer(audioUri = audioUri)
+        AndroidView(
+            factory = {
+                val playerView =
+                    viewGroup.findViewById<PlayerView>(com.xxh.ringbones.R.id.player_view).apply {
+                        this.player = exoPlayer
+                        this.showController()
+                        this.controllerShowTimeoutMs = 0
+                        this.controllerHideOnTouch = false
 
-        // 音量控制
-        VolumeControl(exoPlayer = exoPlayer)
+                        this.artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FILL
+                        this.defaultArtwork =
+                            ContextCompat.getDrawable(
+                                context,
+                                com.xxh.ringbones.R.drawable.ab1_inversions
+                            )
+
+                        val defaultTimeBar =
+                            this.findViewById<DefaultTimeBar>(androidx.media3.ui.R.id.exo_progress)
+                                .apply {
+                                    setPlayedColor(Color.parseColor("#FF6200EE"))
+                                    setBufferedColor(Color.parseColor("#FFFF4081"))
+                                }
+                        val frameLayout =
+                            this.findViewById<FrameLayout>(androidx.media3.ui.R.id.exo_bottom_bar)
+                                .apply {
+                                    setBackgroundColor(Color.TRANSPARENT)
+                                }
+                    }
+
+                viewGroup
+            },
+            modifier = Modifier.fillMaxSize(),
+            update = { viewGroup ->
+                val playerView =
+                    viewGroup.findViewById<PlayerView>(com.xxh.ringbones.R.id.player_view).apply {
+                        this.player = exoPlayer
+
+                        this.showController()
+                        this.controllerShowTimeoutMs = 0
+                        this.controllerHideOnTouch = false
+                    }
+            }
+        )
+
     }
+
 }
 
-@Composable
-fun XMLLayoutInCompose() {
-    val context = LocalContext.current
+fun printAllChildViews(view: View, depth: Int = 0) {
+    val indent = " ".repeat(depth * 2) // 控制缩进，方便查看层级关系
+    Log.d("ViewTree", "${indent}${view.javaClass.simpleName} (id=${view.id})")
 
-    // 使用 LayoutInflater 加载 XML 布局
-    val layoutInflater = LayoutInflater.from(context)
-    val viewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
-
-    // 使用 AndroidView 来显示加载的 XML 布局
-    AndroidView(
-        factory = { viewGroup },
-        modifier = Modifier.fillMaxSize()
-    )
-}
-
-@Composable
-fun XMLLayoutWithPlayerView() {
-    val context = LocalContext.current
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build()
-    }
-
-    // 使用 LayoutInflater 加载 XML 布局
-    val layoutInflater = LayoutInflater.from(context)
-    val viewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
-
-    // 获取 XML 布局中的 PlayerView
-    val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view)
-    playerView.player = exoPlayer  // 设置 ExoPlayer
-
-    // 播放音频
-    val mediaItem = MediaItem.fromUri("https://www.example.com/audio.mp3")
-    exoPlayer.setMediaItem(mediaItem)
-    exoPlayer.prepare()
-
-    // 使用 AndroidView 来显示加载的 XML 布局
-    AndroidView(
-        factory = { viewGroup },
-        modifier = Modifier.fillMaxSize()
-    )
-
-    // 释放 ExoPlayer
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            exoPlayer.release()
+    if (view is ViewGroup) {
+        for (i in 0 until view.childCount) {
+            printAllChildViews(view.getChildAt(i), depth + 1)
         }
     }
 }
 
-@Composable
-fun XMLLayoutWithPlayerView(exoPlayer: ExoPlayer?) {
-    val context = LocalContext.current
+fun printAllChildViewsAndBackground(view: View, depth: Int = 0) {
+    val indent = " ".repeat(depth * 2) // 控制缩进，方便查看层级关系
+    val viewName = view.javaClass.simpleName
+    val viewId =
+        if (view.id != View.NO_ID) view.resources.getResourceEntryName(view.id) else "NO_ID"
 
+    // 获取背景颜色
+    val background = view.background
+    val backgroundColor = if (background is ColorDrawable) {
+        String.format("#%06X", 0xFFFFFF and background.color)
+    } else {
+        "No Color (Drawable or Null)"
+    }
 
-    // 使用 LayoutInflater 加载 XML 布局
-    val layoutInflater = LayoutInflater.from(context)
-    val viewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
+    // 打印 View 信息
+    Log.d("ViewTree", "$indent$viewName (id=$viewId) - Background: $backgroundColor")
 
-    // 获取 XML 布局中的 PlayerView
-    val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view)
-    playerView.player = exoPlayer  // 设置 ExoPlayer
-
-
-    // 使用 AndroidView 来显示加载的 XML 布局
-    AndroidView(
-        factory = { viewGroup },
-        modifier = Modifier.fillMaxSize(),
-        update = { viewGroup ->
-            val playerView = viewGroup.findViewById<PlayerView>(R.id.player_view)
-            playerView.player = exoPlayer
-
-
+    // 递归遍历 ViewGroup 内的所有子 View
+    if (view is ViewGroup) {
+        for (i in 0 until view.childCount) {
+            printAllChildViewsAndBackground(view.getChildAt(i), depth + 1)
         }
-    )
-
-
+    }
 }

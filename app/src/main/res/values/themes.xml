@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ExoPlayer Theme Overlay for Material3 -->
+    <style name="ThemeOverlay.CustomExoPlayer" parent="Theme.Material3.Light.NoActionBar">
 
-    <style name="Theme.Musix2025" parent="android:Theme.Material.Light.NoActionBar" >
-
-
-
+        <item name="pause_icon">@drawable/exo_styled_controls_play</item>
     </style>
 
-
+    <style name="CustomStyledPlayerView">
+        <item name="controlBackground">@color/exo</item>
+    </style>
 
 </resources>

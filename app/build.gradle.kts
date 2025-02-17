@@ -63,14 +63,17 @@ dependencies {
 
     implementation(libs.androidx.adaptive)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation (libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.okhttp)
-    implementation (libs.gson)
+    implementation(libs.gson)
 
-    implementation (libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.coil.compose)
 
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.exoplayer.dash)
     implementation(libs.androidx.media3.ui)
+
+    implementation(libs.material)
+
 }

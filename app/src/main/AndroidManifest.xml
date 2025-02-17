@@ -14,23 +14,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Musix2025"
+        android:theme="@style/ThemeOverlay.CustomExoPlayer"
         tools:targetApi="31">
         <activity
             android:name=".PlayActivity"
             android:exported="false"
             android:label="@string/title_activity_play"
-            android:theme="@style/Theme.Musix2025" />
+            android:theme="@style/ThemeOverlay.CustomExoPlayer" />
         <activity
             android:name=".LandActivity"
             android:exported="false"
             android:label="@string/title_activity_land"
-            android:theme="@style/Theme.Musix2025" />
+            android:theme="@style/ThemeOverlay.CustomExoPlayer" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Musix2025">
+            android:theme="@style/ThemeOverlay.CustomExoPlayer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

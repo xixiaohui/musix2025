@@ -1,25 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-
-    <!-- ExoPlayer 的 PlayerView -->
     <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/ab1_inversions"
-        android:theme="@style/Theme.Musix2025"
-        app:default_artwork="@drawable/ab1_inversions"
-        app:surface_type="none"
-        app:use_artwork="true"
-
-        app:use_controller="true" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--<androidx.media3.ui.PlayerView-->
+<!--android:id="@+id/player_view"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--app:use_controller="true"-->
+<!--app:use_artwork="true"-->
+<!--app:surface_type="none"-->
+
+<!--app:hide_on_touch="false"-->
+<!--app:show_buffering="always"-->
+<!--app:show_timeout="0"-->
+<!--app:shutter_background_color="@color/exo"/>-->
+    <!-- ExoPlayer 的 PlayerView -->
+    <!--    <androidx.media3.ui.PlayerView-->
+    <!--        android:id="@+id/player_view"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="230dp"-->
+    <!--        android:background="@drawable/ab1_inversions"-->
+    <!--        app:default_artwork="@drawable/ab1_inversions"-->
+    <!--        app:surface_type="none"-->
+    <!--        app:auto_show="true"-->
+    <!--        app:show_buffering="always"-->
+
+    <!--        app:use_artwork="true"-->
+    <!--        app:use_controller="true"-->
+    <!--        app:hide_on_touch="false"-->
+
+    <!--        app:play_icon="@drawable/play_icon"-->
+    <!--        app:pause_icon="@drawable/pause_icon"-->
+    <!--        app:next_icon="@drawable/skip_next_24px"-->
+    <!--        app:previous_icon="@drawable/outline_skip_previous_24"-->
+    <!--        app:buffered_color="@color/exo"-->
+    <!--        app:played_color="@color/purple_700"-->
+    <!--        app:fastforward_icon="@drawable/forward_10_24px"-->
+    <!--        app:rewind_icon="@drawable/replay_5_24px"-->
+    <!--        app:controller_layout_id="@layout/custom_exo_controller"-->
+    <!--        />-->

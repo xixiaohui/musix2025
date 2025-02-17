@@ -20,4 +20,6 @@
     <string name="bottom_navigation_profile">Profile</string>
     <string name="placeholder_search">Search</string>
     <string name="title_activity_play">PlayActivity</string>
+    <string name="play">play</string>
+    <string name="pause">pause</string>
 </resources>
