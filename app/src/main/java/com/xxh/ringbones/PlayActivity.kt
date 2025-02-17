@@ -2,10 +2,14 @@ package com.xxh.ringbones
 
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
@@ -64,6 +68,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -170,6 +176,79 @@ class PlayActivity : ComponentActivity() {
                     }
                 }
             })
+        }
+
+
+        fun setRingtone(context: Context, sourceFilePath: String) {
+            val sourceFile = File(sourceFilePath)
+
+            // 确保文件存在
+            if (!sourceFile.exists()) {
+                return
+            }
+
+            // 将文件复制到铃声目录
+            val ringtoneDir = File(context.getExternalFilesDir(null), "Ringtones")
+            if (!ringtoneDir.exists()) {
+                ringtoneDir.mkdirs()
+            }
+
+            val destinationFile = File(ringtoneDir, sourceFile.name)
+            try {
+                copyFile(sourceFile, destinationFile)
+
+                // 将文件注册为铃声
+                addRingtoneToMediaStore(context, destinationFile)
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+
+        private fun copyFile(source: File, destination: File) {
+            FileInputStream(source).use { input ->
+                FileOutputStream(destination).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+
+        private fun addRingtoneToMediaStore(context: Context, ringtoneFile: File) {
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.DATA, ringtoneFile.absolutePath)
+                put(MediaStore.MediaColumns.TITLE, ringtoneFile.name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
+                put(MediaStore.Audio.Media.IS_RINGTONE, true)
+                put(MediaStore.Audio.Media.IS_NOTIFICATION, false)
+                put(MediaStore.Audio.Media.IS_ALARM, false)
+                put(MediaStore.Audio.Media.IS_MUSIC, false)
+            }
+
+            // 插入铃声到 MediaStore
+            val uri: Uri? = context.contentResolver.insert(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
+
+            // 如果需要将其设置为默认铃声
+            uri?.let {
+                setDefaultRingtone(context, ringtoneFile)
+            }
+        }
+
+        private fun setDefaultRingtone(context: Context, ringtoneFile: File) {
+            val ringtoneUri = Uri.fromFile(ringtoneFile)
+            val ringtoneManager = RingtoneManager(context)
+
+            // 设置默认铃声
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // For Android 12 and above, you need to use the system's ringtone manager.
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    context, RingtoneManager.TYPE_RINGTONE, ringtoneUri)
+            } else {
+                // For lower versions, you can use the legacy way to set the ringtone
+                val ringtoneUri = Uri.fromFile(ringtoneFile)
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    context, RingtoneManager.TYPE_RINGTONE, ringtoneUri)
+            }
         }
     }
 

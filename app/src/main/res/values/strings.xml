@@ -32,6 +32,8 @@
 
     <string name="set_ringtone">Set this ringtone as your phone ringtone?</string>
     <string name="set_ringtone2">As your phone ringtone</string>
+    <string name="set_ringtone3">Ringtone is not exit! Please download first.</string>
+    <string name="set_ringtone_success">Set ringtone success.</string>
 
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>

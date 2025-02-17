@@ -63,6 +63,7 @@ import androidx.media3.ui.PlayerView
 import com.google.android.material.snackbar.Snackbar
 import com.xxh.ringbones.PlayActivity
 import kotlinx.coroutines.delay
+import java.io.File
 
 
 @Composable
@@ -89,6 +90,7 @@ fun Media3PlayerView(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
+
         Media3AndroidView(player)
 //        player?.let { XMLLayoutWithPlayerView(context, it) }
     }
@@ -104,7 +106,7 @@ fun getCurrentActivity(): PlayActivity? {
 }
 
 
-fun addDownloadButton(context: Context,player: ExoPlayer?):ImageButton {
+fun addDownloadButton(context: Context, player: ExoPlayer?): ImageButton {
     // 创建 ImageButton
     val downloadButton = ImageButton(context).apply {
         layoutParams = FrameLayout.LayoutParams(100, 100).apply {
@@ -113,15 +115,17 @@ fun addDownloadButton(context: Context,player: ExoPlayer?):ImageButton {
         }
         setImageResource(com.xxh.ringbones.R.drawable.download_24px)
         setBackgroundColor(Color.TRANSPARENT)
-        setColorFilter(ContextCompat.getColor(context, com.xxh.ringbones.R.color.white), PorterDuff.Mode.SRC_IN)
+        setColorFilter(
+            ContextCompat.getColor(context, com.xxh.ringbones.R.color.white),
+            PorterDuff.Mode.SRC_IN
+        )
     }
 
-    downloadButton.setOnClickListener{
+    downloadButton.setOnClickListener {
         AlertDialog.Builder(context)
             .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
             .setMessage(context.getString(com.xxh.ringbones.R.string.downloadTips))
             .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
-
 
 
                 //download
@@ -135,9 +139,13 @@ fun addDownloadButton(context: Context,player: ExoPlayer?):ImageButton {
                     Log.v("musixRingtone+", it.localClassName)
                 }
 
-                PlayActivity.Utility.downloadMusic(activity ,audioUrl)
+                PlayActivity.Utility.downloadMusic(activity, audioUrl)
 
-                Snackbar.make(downloadButton, context.getString(com.xxh.ringbones.R.string.downloadTips2), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    downloadButton,
+                    context.getString(com.xxh.ringbones.R.string.downloadTips2),
+                    Snackbar.LENGTH_SHORT
+                ).show()
 //                Snackbar.make(downloadButton, "当前播放的音频链接 $audioUrl",Snackbar.LENGTH_SHORT).show()
 
             }
@@ -147,7 +155,7 @@ fun addDownloadButton(context: Context,player: ExoPlayer?):ImageButton {
     return downloadButton
 }
 
-fun addFavoriteButton(context: Context):ImageButton {
+fun addFavoriteButton(context: Context): ImageButton {
     // 创建 ImageButton
     val favoriteButton = ImageButton(context).apply {
         layoutParams = FrameLayout.LayoutParams(100, 100).apply {
@@ -156,15 +164,22 @@ fun addFavoriteButton(context: Context):ImageButton {
         }
         setImageResource(com.xxh.ringbones.R.drawable.favorite_24px)
         setBackgroundColor(Color.TRANSPARENT)
-        setColorFilter(ContextCompat.getColor(context, com.xxh.ringbones.R.color.white), PorterDuff.Mode.SRC_IN)
+        setColorFilter(
+            ContextCompat.getColor(context, com.xxh.ringbones.R.color.white),
+            PorterDuff.Mode.SRC_IN
+        )
     }
 
-    favoriteButton.setOnClickListener{
+    favoriteButton.setOnClickListener {
         AlertDialog.Builder(context)
             .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
             .setMessage(context.getString(com.xxh.ringbones.R.string.add_to_fav_list))
             .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
-                Snackbar.make(favoriteButton, context.getString(com.xxh.ringbones.R.string.add_to_fav_list2), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    favoriteButton,
+                    context.getString(com.xxh.ringbones.R.string.add_to_fav_list2),
+                    Snackbar.LENGTH_SHORT
+                ).show()
 
             }
             .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
@@ -174,7 +189,7 @@ fun addFavoriteButton(context: Context):ImageButton {
     return favoriteButton
 }
 
-fun addSetRingtoneButton(context: Context):ImageButton {
+fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
     // 创建 ImageButton
     val setRingtoneButton = ImageButton(context).apply {
         layoutParams = FrameLayout.LayoutParams(100, 100).apply {
@@ -183,15 +198,45 @@ fun addSetRingtoneButton(context: Context):ImageButton {
         }
         setImageResource(com.xxh.ringbones.R.drawable.notification_add_24px)
         setBackgroundColor(Color.TRANSPARENT)
-        setColorFilter(ContextCompat.getColor(context, com.xxh.ringbones.R.color.white), PorterDuff.Mode.SRC_IN)
+        setColorFilter(
+            ContextCompat.getColor(context, com.xxh.ringbones.R.color.white),
+            PorterDuff.Mode.SRC_IN
+        )
     }
 
-    setRingtoneButton.setOnClickListener{
+    setRingtoneButton.setOnClickListener {
         AlertDialog.Builder(context)
             .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
             .setMessage(context.getString(com.xxh.ringbones.R.string.set_ringtone))
             .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
-                Snackbar.make(setRingtoneButton, context.getString(com.xxh.ringbones.R.string.set_ringtone2), Snackbar.LENGTH_SHORT).show()
+
+
+                //设置铃音
+
+                val currentMediaItem = player?.currentMediaItem
+                val audioUrl = currentMediaItem?.localConfiguration?.uri.toString()
+
+                val activity = context as PlayActivity
+
+                val file = File(audioUrl)
+
+                if (file.exists()) {
+                    PlayActivity.Utility.setRingtone(activity, audioUrl)
+
+                    Snackbar.make(
+                        setRingtoneButton,
+                        context.getString(com.xxh.ringbones.R.string.set_ringtone_success),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }else{
+
+                    Snackbar.make(
+                        setRingtoneButton,
+                        context.getString(com.xxh.ringbones.R.string.set_ringtone3)+ audioUrl,
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+
 
             }
             .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
@@ -246,7 +291,6 @@ fun Media3AndroidView(player: ExoPlayer?) {
             factory = { context ->
 
 
-
                 // 将按钮添加到 PlayerView
 
 
@@ -258,9 +302,9 @@ fun Media3AndroidView(player: ExoPlayer?) {
                 playerView.controllerShowTimeoutMs = 0
                 playerView.controllerHideOnTouch = false
 
-                (playView as ViewGroup).addView(addDownloadButton(context,player))
+                (playView as ViewGroup).addView(addDownloadButton(context, player))
                 (playView as ViewGroup).addView(addFavoriteButton(context))
-                (playView as ViewGroup).addView(addSetRingtoneButton(context))
+                (playView as ViewGroup).addView(addSetRingtoneButton(context, player))
 
             },
             modifier = Modifier.fillMaxWidth()
@@ -270,9 +314,6 @@ fun Media3AndroidView(player: ExoPlayer?) {
     }
 
 }
-
-
-
 
 
 //fun main() {

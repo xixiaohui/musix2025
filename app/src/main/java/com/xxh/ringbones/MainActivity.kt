@@ -96,9 +96,6 @@ class MainActivity : ComponentActivity() {
             readRingtoneDirectory()
         }
 
-
-
-
     }
 
 
