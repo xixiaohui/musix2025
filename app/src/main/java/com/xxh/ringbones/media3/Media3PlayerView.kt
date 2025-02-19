@@ -1,14 +1,11 @@
 package com.xxh.ringbones.media3
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import android.os.Environment
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,45 +13,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.annotation.OptIn
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
-
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -62,7 +38,6 @@ import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
 import com.google.android.material.snackbar.Snackbar
 import com.xxh.ringbones.PlayActivity
-import kotlinx.coroutines.delay
 import java.io.File
 
 
@@ -90,9 +65,7 @@ fun Media3PlayerView(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-
         Media3AndroidView(player)
-//        player?.let { XMLLayoutWithPlayerView(context, it) }
     }
 }
 
@@ -133,20 +106,24 @@ fun addDownloadButton(context: Context, player: ExoPlayer?): ImageButton {
                 val currentMediaItem = player?.currentMediaItem
                 val audioUrl = currentMediaItem?.localConfiguration?.uri.toString()
 
-                val activity = context as PlayActivity
+                if (audioUrl.startsWith("file")) {
+                    Snackbar.make(
+                        downloadButton,
+                        context.getString(com.xxh.ringbones.R.string.downloadTips3),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
 
-                activity.let {
-                    Log.v("musixRingtone+", it.localClassName)
+                } else {
+                    //从网络下载铃音
+                    val activity = context as PlayActivity
+                    PlayActivity.Utility.downloadMusic(activity, audioUrl)
+
+                    Snackbar.make(
+                        downloadButton,
+                        context.getString(com.xxh.ringbones.R.string.downloadTips2),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 }
-
-                PlayActivity.Utility.downloadMusic(activity, audioUrl)
-
-                Snackbar.make(
-                    downloadButton,
-                    context.getString(com.xxh.ringbones.R.string.downloadTips2),
-                    Snackbar.LENGTH_SHORT
-                ).show()
-//                Snackbar.make(downloadButton, "当前播放的音频链接 $audioUrl",Snackbar.LENGTH_SHORT).show()
 
             }
             .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
@@ -212,15 +189,11 @@ fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
 
 
                 //设置铃音
-
                 val currentMediaItem = player?.currentMediaItem
                 val audioUrl = currentMediaItem?.localConfiguration?.uri.toString()
 
-                val activity = context as PlayActivity
-
-                val file = File(audioUrl)
-
-                if (file.exists()) {
+                if (audioUrl.startsWith("file")) {
+                    val activity = context as PlayActivity
                     PlayActivity.Utility.setRingtone(activity, audioUrl)
 
                     Snackbar.make(
@@ -228,18 +201,15 @@ fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
                         context.getString(com.xxh.ringbones.R.string.set_ringtone_success),
                         Snackbar.LENGTH_SHORT
                     ).show()
-                }else{
-
+                } else {
                     Snackbar.make(
                         setRingtoneButton,
-                        context.getString(com.xxh.ringbones.R.string.set_ringtone3)+ audioUrl,
+                        context.getString(com.xxh.ringbones.R.string.set_ringtone3) + audioUrl,
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
-
-
             }
-            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
+            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel),null)
             .show()
     }
 
@@ -290,10 +260,6 @@ fun Media3AndroidView(player: ExoPlayer?) {
         AndroidView(
             factory = { context ->
 
-
-                // 将按钮添加到 PlayerView
-
-
                 playView
             },
             update = { playerView ->
@@ -314,95 +280,6 @@ fun Media3AndroidView(player: ExoPlayer?) {
     }
 
 }
-
-
-//fun main() {
-//
-//    val ringtone_url = "https://www.compocore.com/ringtones/test.mp3"
-//    val fileName = ringtone_url.split("/").last()
-//    println(fileName)
-//}
-
-@Composable
-fun rememberExoPlayer(audioUri: Uri): ExoPlayer {
-    val context = LocalContext.current
-    return remember {
-        ExoPlayer.Builder(context).build().apply {
-            val mediaItem = MediaItem.fromUri(audioUri)
-            setMediaItem(mediaItem)
-            prepare()
-        }
-    }
-}
-
-@Composable
-fun CustomAudioPlayer(audioUri: Uri) {
-    val exoPlayer = rememberExoPlayer(audioUri)
-    val isPlaying by remember { derivedStateOf { exoPlayer.isPlaying } }
-    val duration = exoPlayer.duration.coerceAtLeast(0L)
-    var sliderPosition by remember { mutableStateOf(0f) }
-
-    // 更新进度条
-    LaunchedEffect(exoPlayer) {
-        while (true) {
-            sliderPosition = exoPlayer.currentPosition / duration.toFloat()
-            delay(1000L)
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // 播放/暂停按钮
-        IconButton(onClick = {
-            if (isPlaying) {
-                exoPlayer.pause()
-            } else {
-                exoPlayer.play()
-            }
-        }) {
-            Icon(
-                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                contentDescription = if (isPlaying) "Pause" else "Play"
-            )
-        }
-
-        // 进度条
-        Slider(
-            value = sliderPosition,
-            onValueChange = { newPosition ->
-                sliderPosition = newPosition
-                exoPlayer.seekTo((duration * newPosition).toLong())
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-fun VolumeControl(exoPlayer: ExoPlayer) {
-    var volume by remember { mutableStateOf(1f) }
-
-    // 控制音量
-    LaunchedEffect(volume) {
-        exoPlayer.volume = volume
-    }
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Volume")
-        Slider(
-            value = volume,
-            onValueChange = { newVolume ->
-                volume = newVolume
-            },
-            valueRange = 0f..1f,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
 
 @OptIn(UnstableApi::class)
 @Composable

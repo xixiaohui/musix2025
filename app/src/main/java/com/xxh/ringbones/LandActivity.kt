@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -96,7 +95,6 @@ private data class DrawableStringPair(
     @StringRes val text: Int
 )
 
-//@Preview(showBackground = true)
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier
@@ -151,18 +149,6 @@ fun AlignYourBodyElement(
     }
 }
 
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
-@Composable
-fun AlignYourBodyElementPreview() {
-    Musix2025Theme {
-        AlignYourBodyElement(
-            text = R.string.ab1_inversions,
-            drawable = R.drawable.ab1_inversions,
-            modifier = Modifier.padding(8.dp)
-        )
-    }
-}
-
 @Composable
 fun FavoriteCollectionCard(
     @DrawableRes drawable: Int,
@@ -193,9 +179,7 @@ fun FavoriteCollectionCard(
     }
 }
 
-
-
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
+@Preview
 @Composable
 fun FavoriteCollectionCardPreview() {
     Musix2025Theme {
@@ -207,7 +191,6 @@ fun FavoriteCollectionCardPreview() {
     }
 }
 
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun AlignYourBodyRow(
     modifier: Modifier = Modifier
@@ -223,7 +206,6 @@ fun AlignYourBodyRow(
     }
 }
 
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun FavoriteCollectionsGrid(
     modifier: Modifier = Modifier
@@ -259,7 +241,7 @@ fun HomeSection(
     }
 }
 
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
+
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     Column(
@@ -314,7 +296,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
     }
 }
 
-//@Preview(showBackground = true)
+
 @Composable
 fun MySootheAppPortrait() {
     Musix2025Theme {
@@ -326,7 +308,6 @@ fun MySootheAppPortrait() {
     }
 }
 
-//@Preview(showBackground = true)
 @Composable
 private fun SootheNavigationRail(modifier: Modifier = Modifier) {
     NavigationRail(

@@ -28,19 +28,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,12 +46,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.xxh.ringbones.gson.MusixRingtonesList
 import com.xxh.ringbones.gson.Ringtone
-import com.xxh.ringbones.helper.SongHelper
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -75,111 +65,96 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+
         setContent {
             Musix2025Theme {
                 MainScreen()
             }
         }
 
-        // 请求读取权限
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            != android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION_CODE
-            )
-        }else{
-            readRingtoneDirectory()
-        }
+
 
     }
 
+//    private fun readRingtoneDirectory() {
+//        // 检查外部存储是否可用
+//        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+//            // 获取外部存储的 Ringtones 目录
+//            val ringtoneDirectory = File(getExternalFilesDir(Environment.DIRECTORY_RINGTONES), "")
+//
+//            // 判断该目录是否存在
+//            if (ringtoneDirectory.exists() && ringtoneDirectory.isDirectory) {
+//                // 列出该目录下的所有文件
+//                val ringtoneFiles = ringtoneDirectory.listFiles { file ->
+//                    // 过滤出文件类型为铃音文件（比如 .mp3, .ogg）
+//                    file.isFile && (file.extension == "mp3" || file.extension == "ogg")
+//                }
+//
+//                // 打印出所有找到的铃音文件
+//                ringtoneFiles?.forEach {
+//                    Log.d("musixRingtone", "Found ringtone: ${it.absolutePath}")
+//                }
+//            } else {
+//                Log.e("musixRingtone", "Ringtones directory does not exist or is not a directory")
+//            }
+//        } else {
+//            Log.e("musixRingtone", "External storage is not available")
+//        }
+//    }
+//
+//
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray,
+//        deviceId: Int
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
+//
+//        // 检查请求代码是否匹配
+//        if (requestCode == REQUEST_PERMISSION_CODE) {
+//            // 如果请求被授权
+//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // 权限被授权，执行文件操作
+//                readRingtoneDirectory()
+//            } else {
+//                // 权限被拒绝，提示用户
+//                Toast.makeText(this, "权限被拒绝，无法读取存储", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-        deviceId: Int
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
 
-        // 检查请求代码是否匹配
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            // 如果请求被授权
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 权限被授权，执行文件操作
-                readRingtoneDirectory()
-            } else {
-                // 权限被拒绝，提示用户
-                Toast.makeText(this, "权限被拒绝，无法读取存储", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun readRingtoneDirectory() {
-        // 检查外部存储是否可用
-        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-            // 获取外部存储的 Ringtones 目录
-            val ringtoneDirectory = File(getExternalFilesDir(Environment.DIRECTORY_RINGTONES), "")
-
-
-            // 判断该目录是否存在
-            if (ringtoneDirectory.exists() && ringtoneDirectory.isDirectory) {
-                // 列出该目录下的所有文件
-                val ringtoneFiles = ringtoneDirectory.listFiles { file ->
-                    // 过滤出文件类型为铃音文件（比如 .mp3, .ogg）
-                    file.isFile && (file.extension == "mp3" || file.extension == "ogg")
-                }
-
-                // 打印出所有找到的铃音文件
-                ringtoneFiles?.forEach {
-                    Log.d("musixRingtone", "Found ringtone: ${it.absolutePath}")
-                }
-            } else {
-                Log.e("musixRingtone", "Ringtones directory does not exist or is not a directory")
-            }
-        } else {
-            Log.e("musixRingtone", "External storage is not available")
-        }
-    }
 
 
     @Preview
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun MainScreen() {
 
         Scaffold(
-            topBar = {
-                TopAppBar(title = { Text("Musix Ringtone") }, navigationIcon = {
-                    IconButton(onClick = {
-
-                    }) {
-                        Icon(
-                            Icons.Filled.Menu, contentDescription = "Localized description"
-                        )
-                    }
-                })
-            },
+//            topBar = {
+//                TopAppBar(title = { Text("Musix Ringtone") }, navigationIcon = {
+//                    IconButton(onClick = {
+//
+//                    }) {
+//                        Icon(
+//                            Icons.Filled.Menu, contentDescription = "Localized description"
+//                        )
+//                    }
+//                })
+//            },
         ) { innerPadding ->
-            MainScreen(innerPadding)
+            MainScreenCenter(innerPadding)
         }
     }
 
 
     @Composable
-    fun MainScreen(innerPadding: PaddingValues) {
+    fun MainScreenCenter(innerPadding: PaddingValues) {
 
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-//            Spacer(modifier = Modifier.size(8.dp))
-//            TopMenu()
-//            Spacer(modifier = Modifier.size(8.dp))
 
             RingtonesList()
         }
@@ -218,16 +193,16 @@ class MainActivity : ComponentActivity() {
         Musix2025Theme {
             LazyRow(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(top = 24.dp)
             ) {
                 itemsIndexed(itemList) { index, it ->
-                    Button(modifier = Modifier.padding(horizontal = 4.dp), onClick = {
+                    Button(modifier = Modifier.padding(horizontal = 5.dp), onClick = {
 
                         val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
                             .append(MusixRingtonesList.ringtoneUrlList[index])
 
                         ringtoneUrl = ringtonesUrl.toString()
                         loading = true
-//                            Log.v("MainActivity", ringtoneUrl)
 
                     }) {
                         Text(text = it.dropLast(5))
@@ -242,9 +217,9 @@ class MainActivity : ComponentActivity() {
         }
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .padding(top = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
         ) {
 
             LazyColumn {
@@ -252,6 +227,7 @@ class MainActivity : ComponentActivity() {
                     RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
                 }
             }
+
         }
     }
 
@@ -282,12 +258,10 @@ class MainActivity : ComponentActivity() {
     fun RingtoneCard(ringtone: Ringtone, navigateToPlay: (Ringtone) -> Unit) {
 
         OutlinedCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 2.dp, end = 2.dp),
             onClick = {
-
                 navigateToPlay(ringtone)
-
-                SongHelper.stopStream()
             }
         ) {
             Row(
@@ -314,17 +288,13 @@ class MainActivity : ComponentActivity() {
                         text = ringtone.des,
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    Icon(
-                        modifier = Modifier.padding(start = 200.dp, top = 20.dp),
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "play"
-                    )
+
                 }
             }
         }
     }
 
-    suspend fun mySuspendFunction(url: String): String {
+    private suspend fun mySuspendFunction(url: String): String {
         delay(1000)
 
         val musixRingtonesList = MusixRingtonesList()
@@ -332,39 +302,7 @@ class MainActivity : ComponentActivity() {
 
         return result
     }
-
-    /**
-     * 横向的导航菜单列表
-     */
-//@Preview
-    @Composable
-    private fun TopMenu() {
-
-        val itemList = MusixRingtonesList.ringtoneUrlList
-
-        Musix2025Theme {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                itemsIndexed(itemList) { index, it ->
-                    Button(modifier = Modifier.padding(horizontal = 4.dp), onClick = {
-
-
-                        val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
-                            .append(MusixRingtonesList.ringtoneUrlList[index])
-
-//                        currentRingtoneUrl = ringtonesUrl.toString()
-//                        Log.v("MainActivity", currentRingtoneUrl)
-
-
-                    }) {
-                        Text(text = it.dropLast(5))
-                    }
-                }
-            }
-        }
-    }
-
+    
     @Preview
     @Composable
     fun IndeterminateCircularIndicator() {
