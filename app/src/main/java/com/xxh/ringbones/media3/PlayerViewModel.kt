@@ -2,6 +2,7 @@ package com.xxh.ringbones.media3
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -26,6 +27,9 @@ class PlayerViewModel : ViewModel() {
                 val exoPlayer = ExoPlayer.Builder(context).build().also {
 
                     val mediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
+
+                    Log.d("com.xxh.ringtone---",Uri.parse(videoUrl).toString())
+
                     it.setMediaItem(mediaItem)
                     it.prepare()
                     it.playWhenReady = true

@@ -83,8 +83,9 @@ class PlayActivity : ComponentActivity() {
             }
         }
 
+
         setContent {
-            ExoPlayerView()
+            ExoPlayerView(ringtone)
         }
 
 //        val url = MusixRingtonesList.audioURL
@@ -282,11 +283,13 @@ class PlayActivity : ComponentActivity() {
         return file
     }
 
-    @Preview
-    @Composable
-    private fun ExoPlayerView() {
 
-        var videoUrl = MusixRingtonesList.audioURL
+    @Composable
+    private fun ExoPlayerView(ringtone: Ringtone?) {
+
+        var videoUrl = ringtone!!.url
+
+        Log.d("com.xxh.ringtone---",videoUrl)
 
         //如果本地文件存在，就播放本地的音乐文件
         val file = getRingtoneFileFile(videoUrl)

@@ -132,46 +132,12 @@ fun addDownloadButton(context: Context, player: ExoPlayer?): ImageButton {
     return downloadButton
 }
 
-fun addFavoriteButton(context: Context): ImageButton {
-    // 创建 ImageButton
-    val favoriteButton = ImageButton(context).apply {
-        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
-            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
-            setMargins(0, 0, 160, 10) // 距离底部100dp
-        }
-        setImageResource(com.xxh.ringbones.R.drawable.favorite_24px)
-        setBackgroundColor(Color.TRANSPARENT)
-        setColorFilter(
-            ContextCompat.getColor(context, com.xxh.ringbones.R.color.white),
-            PorterDuff.Mode.SRC_IN
-        )
-    }
-
-    favoriteButton.setOnClickListener {
-        AlertDialog.Builder(context)
-            .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
-            .setMessage(context.getString(com.xxh.ringbones.R.string.add_to_fav_list))
-            .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
-                Snackbar.make(
-                    favoriteButton,
-                    context.getString(com.xxh.ringbones.R.string.add_to_fav_list2),
-                    Snackbar.LENGTH_SHORT
-                ).show()
-
-            }
-            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
-            .show()
-    }
-
-    return favoriteButton
-}
-
 fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
     // 创建 ImageButton
     val setRingtoneButton = ImageButton(context).apply {
         layoutParams = FrameLayout.LayoutParams(100, 100).apply {
             gravity = Gravity.BOTTOM or Gravity.END  // 右下角
-            setMargins(0, 0, 250, 10) // 距离底部100dp
+            setMargins(0, 0, 160, 10) // 距离底部100dp
         }
         setImageResource(com.xxh.ringbones.R.drawable.notification_add_24px)
         setBackgroundColor(Color.TRANSPARENT)
@@ -216,6 +182,40 @@ fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
     return setRingtoneButton
 }
 
+fun addFavoriteButton(context: Context): ImageButton {
+    // 创建 ImageButton
+    val favoriteButton = ImageButton(context).apply {
+        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
+            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
+            setMargins(0, 0, 250, 10) // 距离底部100dp
+        }
+        setImageResource(com.xxh.ringbones.R.drawable.favorite_24px)
+        setBackgroundColor(Color.TRANSPARENT)
+        setColorFilter(
+            ContextCompat.getColor(context, com.xxh.ringbones.R.color.white),
+            PorterDuff.Mode.SRC_IN
+        )
+    }
+
+    favoriteButton.setOnClickListener {
+        AlertDialog.Builder(context)
+            .setTitle(context.getString(com.xxh.ringbones.R.string.tips))
+            .setMessage(context.getString(com.xxh.ringbones.R.string.add_to_fav_list))
+            .setPositiveButton(context.getString(com.xxh.ringbones.R.string.confirm)) { _, _ ->
+                Snackbar.make(
+                    favoriteButton,
+                    context.getString(com.xxh.ringbones.R.string.add_to_fav_list2),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+
+            }
+            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
+            .show()
+    }
+
+    return favoriteButton
+}
+
 
 @SuppressLint("ResourceAsColor")
 @OptIn(UnstableApi::class)
@@ -250,7 +250,6 @@ fun Media3AndroidView(player: ExoPlayer?) {
             val screenWidth = displayMetrics.widthPixels
             this.layoutParams = ViewGroup.LayoutParams(screenWidth, screenWidth)
 
-
         }
     }
     Box(
@@ -269,8 +268,8 @@ fun Media3AndroidView(player: ExoPlayer?) {
                 playerView.controllerHideOnTouch = false
 
                 (playView as ViewGroup).addView(addDownloadButton(context, player))
-                (playView as ViewGroup).addView(addFavoriteButton(context))
                 (playView as ViewGroup).addView(addSetRingtoneButton(context, player))
+//                (playView as ViewGroup).addView(addFavoriteButton(context))
 
             },
             modifier = Modifier.fillMaxWidth()

@@ -7,6 +7,8 @@ import java.io.Serializable
 @Parcelize
 data class Ringtone(
     val title: String,
-    val des: String,
-    val url: String
+    val author: String,
+    val time: String,
+    val url: String,
+    val type: String
 ):Serializable,Parcelable

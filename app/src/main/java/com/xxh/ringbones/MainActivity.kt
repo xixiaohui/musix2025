@@ -4,12 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Environment
 import android.os.Parcelable
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -53,7 +49,6 @@ import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.io.File
 
 
 class MainActivity : ComponentActivity() {
@@ -71,9 +66,6 @@ class MainActivity : ComponentActivity() {
                 MainScreen()
             }
         }
-
-
-
     }
 
 //    private fun readRingtoneDirectory() {
@@ -177,9 +169,12 @@ class MainActivity : ComponentActivity() {
 
         var loading by remember { mutableStateOf(true) }
 
-        var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.ringtoneURL) }
 
-        val itemList = MusixRingtonesList.ringtoneUrlList
+
+        val itemTitle = MusixRingtonesList.ringtoneUrlMap.keys.toList()
+        val itemListJsonFileName = MusixRingtonesList.ringtoneUrlMap.values.toList()
+
+        var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.URL + itemListJsonFileName.first()) }
 
         LaunchedEffect(ringtoneUrl) {
             val result = withContext(Dispatchers.IO) {
@@ -195,17 +190,17 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxWidth()
                     .padding(top = 24.dp)
             ) {
-                itemsIndexed(itemList) { index, it ->
+                itemsIndexed(itemTitle) { index, it ->
                     Button(modifier = Modifier.padding(horizontal = 5.dp), onClick = {
 
                         val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
-                            .append(MusixRingtonesList.ringtoneUrlList[index])
+                            .append(itemListJsonFileName[index])
 
                         ringtoneUrl = ringtonesUrl.toString()
                         loading = true
 
                     }) {
-                        Text(text = it.dropLast(5))
+                        Text(text = it)
                     }
                 }
             }
@@ -236,9 +231,11 @@ class MainActivity : ComponentActivity() {
     private fun ShowRingtoneCard() {
 
         val ringtone = Ringtone(
-            title = "New Ringtone Mp3 2020",
-            des = "2020 ringtone",
-            url = "https://2020/new-ringtone-mp3-2020.mp3"
+            title = "Kailasanadan",
+            author = "Sanu",
+            time = "Dec 30, 2014",
+            url = "https://dl.prokerala.com/downloads/ringtones/files/mp3/satis-song-5294.mp3",
+            type = "audio/mpeg"
         )
 
         RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
@@ -280,13 +277,18 @@ class MainActivity : ComponentActivity() {
                         .padding(start = 5.dp)
                 ) {
                     Text(
-                        text = ringtone.title,
-                        style = MaterialTheme.typography.titleMedium,
+                        text = ringtone.title + "   ringtone by",
+                        style = MaterialTheme.typography.bodySmall,
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = ringtone.des,
-                        style = MaterialTheme.typography.titleSmall,
+                        text = ringtone.author,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = "on " + ringtone.time,
+                        style = MaterialTheme.typography.labelSmall,
                     )
 
                 }
