@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -59,8 +58,6 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity() {
 
 
-    private val REQUEST_PERMISSION_CODE = 100
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,73 +70,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    private fun readRingtoneDirectory() {
-//        // 检查外部存储是否可用
-//        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-//            // 获取外部存储的 Ringtones 目录
-//            val ringtoneDirectory = File(getExternalFilesDir(Environment.DIRECTORY_RINGTONES), "")
-//
-//            // 判断该目录是否存在
-//            if (ringtoneDirectory.exists() && ringtoneDirectory.isDirectory) {
-//                // 列出该目录下的所有文件
-//                val ringtoneFiles = ringtoneDirectory.listFiles { file ->
-//                    // 过滤出文件类型为铃音文件（比如 .mp3, .ogg）
-//                    file.isFile && (file.extension == "mp3" || file.extension == "ogg")
-//                }
-//
-//                // 打印出所有找到的铃音文件
-//                ringtoneFiles?.forEach {
-//                    Log.d("musixRingtone", "Found ringtone: ${it.absolutePath}")
-//                }
-//            } else {
-//                Log.e("musixRingtone", "Ringtones directory does not exist or is not a directory")
-//            }
-//        } else {
-//            Log.e("musixRingtone", "External storage is not available")
-//        }
-//    }
-//
-//
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray,
-//        deviceId: Int
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
-//
-//        // 检查请求代码是否匹配
-//        if (requestCode == REQUEST_PERMISSION_CODE) {
-//            // 如果请求被授权
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // 权限被授权，执行文件操作
-//                readRingtoneDirectory()
-//            } else {
-//                // 权限被拒绝，提示用户
-//                Toast.makeText(this, "权限被拒绝，无法读取存储", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-
 
     @Preview
     @Composable
     fun MainScreen() {
 
         Scaffold(
-//            topBar = {
-//                TopAppBar(title = { Text("Musix Ringtone") }, navigationIcon = {
-//                    IconButton(onClick = {
-//
-//                    }) {
-//                        Icon(
-//                            Icons.Filled.Menu, contentDescription = "Localized description"
-//                        )
-//                    }
-//                })
-//            },
+            modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
-            MainScreenCenter(innerPadding)
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                MainScreenCenter(innerPadding)
+            }
         }
     }
 
@@ -275,9 +218,10 @@ class MainActivity : ComponentActivity() {
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(start = 16.dp)
-                    ) {
+                ) {
                     Image(
                         painter = painterResource(R.drawable.exo_styled_controls_play),
                         contentDescription = null,

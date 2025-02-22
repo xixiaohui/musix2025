@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">musix2025</string>
+    <string name="app_name">Musix</string>
     <string name="title_activity_land">LandActivity</string>
     <string name="favorite_collections">Favorite Collections</string>
     <string name="align_your_body">Align your Body</string>

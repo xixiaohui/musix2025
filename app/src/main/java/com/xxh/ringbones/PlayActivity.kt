@@ -14,22 +14,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.xxh.ringbones.gson.MusixRingtonesList
 import com.xxh.ringbones.gson.Ringtone
 import com.xxh.ringbones.media3.Media3PlayerView
 import com.xxh.ringbones.ui.theme.Musix2025Theme
-
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -48,33 +41,6 @@ class PlayActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // 请求存储权限
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            != android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 100
-            )
-        }
-
-        // 请求读取权限
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            != android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 100
-            )
-        }
-//        readRingtoneDirectory()
-
 
         //获取ringtone
         val bundle: Bundle? = intent.extras
@@ -90,15 +56,8 @@ class PlayActivity : ComponentActivity() {
             ExoPlayerView(ringtone)
         }
 
-//        val url = MusixRingtonesList.audioURL
-//        downloadMusic(url)
     }
 
-    override fun onResume() {
-        super.onResume()
-
-
-    }
 
     private fun readRingtoneDirectory() {
         // 检查外部存储是否可用
@@ -310,9 +269,10 @@ class PlayActivity : ComponentActivity() {
             )
             { innerPadding ->
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(innerPadding)
-                ){
+                ) {
                     Media3PlayerView(
                         modifier = Modifier.fillMaxSize(),
                         videoUrl = videoUrl

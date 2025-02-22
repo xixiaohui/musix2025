@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.util.TypedValueCompat.dpToPx
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -64,7 +66,8 @@ fun Media3PlayerView(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .background(androidx.compose.ui.graphics.Color(0xFF6200EE))
     ) {
         Media3AndroidView(player)
@@ -81,15 +84,38 @@ fun getCurrentActivity(): PlayActivity? {
 }
 
 
+/**
+ * 获取屏幕像素px ,然后换算成dp
+ */
+fun getScreenWidthDp(context: Context): Float {
+    val displayMetrics = context.resources.displayMetrics
+    return displayMetrics.widthPixels / displayMetrics.density
+}
+
+
 fun addDownloadButton(context: Context, player: ExoPlayer?): ImageButton {
     // 创建 ImageButton
     val downloadButton = ImageButton(context).apply {
-        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
-            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
-            setMargins(0, 0, 80, 10) // 距离底部100dp
+        layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER or Gravity.BOTTOM
+
+            val marginBottomPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 10f, context.resources.displayMetrics
+            ).toInt()
+
+            val marginLeftPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 20f, context.resources.displayMetrics
+            ).toInt()
+
+            setMargins(marginLeftPx, 0, 0, marginBottomPx)
         }
         setImageResource(com.xxh.ringbones.R.drawable.download_24px)
         setBackgroundColor(Color.TRANSPARENT)
+//        setBackgroundColor(android.graphics.Color.GREEN)
+
         setColorFilter(
             ContextCompat.getColor(context, com.xxh.ringbones.R.color.white),
             PorterDuff.Mode.SRC_IN
@@ -137,9 +163,19 @@ fun addDownloadButton(context: Context, player: ExoPlayer?): ImageButton {
 fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
     // 创建 ImageButton
     val setRingtoneButton = ImageButton(context).apply {
-        layoutParams = FrameLayout.LayoutParams(100, 100).apply {
-            gravity = Gravity.BOTTOM or Gravity.END  // 右下角
-            setMargins(0, 0, 160, 10) // 距离底部100dp
+        layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER or Gravity.BOTTOM
+
+            val marginBottomPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 10f, context.resources.displayMetrics
+            ).toInt()
+
+            val marginLeftPx = getScreenWidthDp(context) / 2
+
+            setMargins(marginLeftPx.toInt(), 0, 0, marginBottomPx)
         }
         setImageResource(com.xxh.ringbones.R.drawable.notification_add_24px)
         setBackgroundColor(Color.TRANSPARENT)
@@ -177,7 +213,7 @@ fun addSetRingtoneButton(context: Context, player: ExoPlayer?): ImageButton {
                     ).show()
                 }
             }
-            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel),null)
+            .setNegativeButton(context.getString(com.xxh.ringbones.R.string.cancel), null)
             .show()
     }
 

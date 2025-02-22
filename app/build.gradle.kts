@@ -6,10 +6,6 @@ plugins {
     id("kotlin-parcelize")
 }
 
-//        sh
-//        keytool -genkeypair -v -keystore musix.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias musix
-
-
 android {
     namespace = "com.xxh.ringbones"
     compileSdk = 35
@@ -19,7 +15,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 12
-        versionName = "4.0"
+        versionName = "4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
