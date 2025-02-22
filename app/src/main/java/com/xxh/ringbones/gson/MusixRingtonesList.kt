@@ -12,7 +12,8 @@ class MusixRingtonesList {
     companion object {
         const val ringtoneURL = "https://www.compocore.com/ringtones/rings/malayalam.json"
 
-        const val URL = "https://www.compocore.com/ringtones/rings/"
+//        const val URL = "https://www.compocore.com/ringtones/rings/"
+        const val URL = "https://compocore.com/wp-content/uploads/2025/02/"
 
         val ringtoneUrlMap = mapOf(
             "hindi-bollywood" to "hindi-bollywood-ringtones.json",

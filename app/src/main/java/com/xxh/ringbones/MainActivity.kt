@@ -10,13 +10,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -117,8 +122,6 @@ class MainActivity : ComponentActivity() {
 //    }
 
 
-
-
     @Preview
     @Composable
     fun MainScreen() {
@@ -170,7 +173,6 @@ class MainActivity : ComponentActivity() {
         var loading by remember { mutableStateOf(true) }
 
 
-
         val itemTitle = MusixRingtonesList.ringtoneUrlMap.keys.toList()
         val itemListJsonFileName = MusixRingtonesList.ringtoneUrlMap.values.toList()
 
@@ -187,7 +189,8 @@ class MainActivity : ComponentActivity() {
 
         Musix2025Theme {
             LazyRow(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 24.dp)
             ) {
                 itemsIndexed(itemTitle) { index, it ->
@@ -212,7 +215,8 @@ class MainActivity : ComponentActivity() {
         }
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(top = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -220,6 +224,7 @@ class MainActivity : ComponentActivity() {
             LazyColumn {
                 items(ringtoneList) { ringtone ->
                     RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
+                    Spacer(Modifier.size(2.dp))
                 }
             }
 
@@ -255,44 +260,61 @@ class MainActivity : ComponentActivity() {
     fun RingtoneCard(ringtone: Ringtone, navigateToPlay: (Ringtone) -> Unit) {
 
         OutlinedCard(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
                 .padding(start = 2.dp, end = 2.dp),
+
             onClick = {
                 navigateToPlay(ringtone)
             }
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(R.drawable.ab1_inversions),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(140.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize()
+                        .padding(start = 16.dp)
+                    ) {
+                    Image(
+                        painter = painterResource(R.drawable.exo_styled_controls_play),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(24.dp)
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 5.dp)
-                ) {
-                    Text(
-                        text = ringtone.title + "   ringtone by",
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = ringtone.author,
-                        style = MaterialTheme.typography.labelSmall,
-                    )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = "on " + ringtone.time,
-                        style = MaterialTheme.typography.labelSmall,
+                            .background(
+                                androidx.compose.ui.graphics.Color(0xFF3700B3),
+                                shape = CircleShape
+                            )
                     )
 
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 24.dp)
+                    ) {
+                        Text(
+                            text = ringtone.title + "   ringtone by",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = ringtone.author,
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "on " + ringtone.time,
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+
+                    }
                 }
             }
+
         }
     }
 
@@ -304,7 +326,7 @@ class MainActivity : ComponentActivity() {
 
         return result
     }
-    
+
     @Preview
     @Composable
     fun IndeterminateCircularIndicator() {

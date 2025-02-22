@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import androidx.annotation.OptIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,6 +65,7 @@ fun Media3PlayerView(
 
     Column(
         modifier = modifier.fillMaxWidth()
+            .background(androidx.compose.ui.graphics.Color(0xFF6200EE))
     ) {
         Media3AndroidView(player)
     }
@@ -226,14 +228,19 @@ fun Media3AndroidView(player: ExoPlayer?) {
 
     val playView = remember {
         PlayerView(context).apply {
+
+
             this.player = player
             this.showController()
             this.controllerShowTimeoutMs = 0
             this.controllerHideOnTouch = false
 
+            setBackgroundColor(Color.TRANSPARENT)
+
+
             this.artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FILL
             this.defaultArtwork =
-                ContextCompat.getDrawable(context, com.xxh.ringbones.R.drawable.ab1_inversions)
+                ContextCompat.getDrawable(context, com.xxh.ringbones.R.drawable.amplitude)
 
             val defaultTimeBar =
                 this.findViewById<DefaultTimeBar>(androidx.media3.ui.R.id.exo_progress).apply {
@@ -246,9 +253,9 @@ fun Media3AndroidView(player: ExoPlayer?) {
                 }
 
             // 获取屏幕宽度
-            val displayMetrics = resources.displayMetrics
-            val screenWidth = displayMetrics.widthPixels
-            this.layoutParams = ViewGroup.LayoutParams(screenWidth, screenWidth)
+//            val displayMetrics = resources.displayMetrics
+//            val screenWidth = displayMetrics.widthPixels
+//            this.layoutParams = ViewGroup.LayoutParams(screenWidth, screenWidth)
 
         }
     }
@@ -275,9 +282,7 @@ fun Media3AndroidView(player: ExoPlayer?) {
             modifier = Modifier.fillMaxWidth()
         )
 
-
     }
-
 }
 
 @OptIn(UnstableApi::class)

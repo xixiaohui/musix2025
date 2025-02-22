@@ -14,6 +14,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 
@@ -289,7 +291,7 @@ class PlayActivity : ComponentActivity() {
 
         var videoUrl = ringtone!!.url
 
-        Log.d("com.xxh.ringtone---",videoUrl)
+        Log.d("com.xxh.ringtone---", videoUrl)
 
         //如果本地文件存在，就播放本地的音乐文件
         val file = getRingtoneFileFile(videoUrl)
@@ -302,11 +304,21 @@ class PlayActivity : ComponentActivity() {
 
         Musix2025Theme {
 
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                Media3PlayerView(
-                    modifier = Modifier.padding(innerPadding),
-                    videoUrl = videoUrl
-                )
+            Scaffold(
+                modifier = Modifier.fillMaxSize()
+
+            )
+            { innerPadding ->
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(innerPadding)
+                ){
+                    Media3PlayerView(
+                        modifier = Modifier.fillMaxSize(),
+                        videoUrl = videoUrl
+                    )
+                }
+
             }
         }
     }
