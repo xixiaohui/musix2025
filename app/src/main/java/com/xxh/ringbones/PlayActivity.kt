@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.xxh.ringbones.gson.Ringtone
+import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.media3.Media3PlayerView
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import okhttp3.Call

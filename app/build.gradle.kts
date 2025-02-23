@@ -1,3 +1,4 @@
+import org.gradle.internal.declarativedsl.parsing.main
 
 plugins {
     alias(libs.plugins.android.application)
@@ -17,7 +18,7 @@ android {
         applicationId = "com.xxh.ringbones"
         minSdk = 24
         targetSdk = 35
-        versionCode = 14
+        versionCode = 16
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -34,11 +35,16 @@ android {
 
     buildTypes {
         getByName("release") {
+
+
             isMinifyEnabled = true
+            isShrinkResources = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -52,6 +58,24 @@ android {
     buildFeatures {
         compose = true
     }
+
+
+//    sourceSets {
+//        // 配置 main 源集
+//        getByName("main") {
+//            // Kotlin 源代码文件目录
+//            java.srcDirs("src/main/kotlin", "src/main/java")
+//            // 资源文件目录
+//            res.srcDirs("src/main/res")
+//            // assets 目录
+//            assets.srcDirs("src/main/assets")
+//            // JNI 库目录
+//            jniLibs.srcDirs("src/main/jniLibs")
+//            // Manifest 文件目录
+//            manifest.srcFile("src/main/AndroidManifest.xml")
+//        }
+//    }
+
 
 
 }

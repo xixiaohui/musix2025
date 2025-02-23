@@ -1,4 +1,4 @@
-package com.xxh.ringbones.gson
+package com.xxh.ringbones.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

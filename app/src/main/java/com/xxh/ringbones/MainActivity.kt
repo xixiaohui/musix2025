@@ -52,9 +52,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.xxh.ringbones.gson.JsonReader
-import com.xxh.ringbones.gson.MusixRingtonesList
-import com.xxh.ringbones.gson.Ringtone
+import com.xxh.ringbones.data.xxhJsonReader
+import com.xxh.ringbones.data.MusixRingtonesList
+import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -103,12 +103,9 @@ class MainActivity : ComponentActivity() {
         var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.URL + itemListJsonFileName.first()) }
 
 
-
-        val context = LocalContext.current
+//        val context = LocalContext.current
         var ringtoneList by remember {
-            mutableStateOf(
-                JsonReader.readJsonFromAssetsToList(context = context)
-            )
+            mutableStateOf(MusixRingtonesList.firstPageRingtones)
         }
 
         //标记横向导航按钮是否被按下
@@ -118,7 +115,7 @@ class MainActivity : ComponentActivity() {
         val isFirstRun = remember { mutableStateOf(true) }
 
         //标记当前按下的按钮索引
-        val isButtonIndexpressed = remember { mutableIntStateOf(0) }
+        val isButtonIndexpressed = remember { mutableIntStateOf(-1) }
 
         LaunchedEffect(loading) {
             if (!isFirstRun.value) {
@@ -153,13 +150,14 @@ class MainActivity : ComponentActivity() {
                             onClickCallback = { state ->
 
                                 for ((i, item) in isPressedList.value.withIndex()) {
-                                    isPressedList.value[i]= false
+                                    isPressedList.value[i] = false
                                 }
                                 isPressedList.value[index] = true
 
-                                if (isButtonIndexpressed.intValue != index){
-                                    val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
-                                        .append(itemListJsonFileName[index])
+                                if (isButtonIndexpressed.intValue != index) {
+                                    val ringtonesUrl =
+                                        StringBuilder().append(MusixRingtonesList.URL)
+                                            .append(itemListJsonFileName[index])
 
                                     ringtoneUrl = ringtonesUrl.toString()
                                     loading = true
