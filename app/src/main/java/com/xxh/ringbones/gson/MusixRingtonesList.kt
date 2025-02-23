@@ -16,17 +16,17 @@ class MusixRingtonesList {
         const val URL = "https://compocore.com/wp-content/uploads/2025/02/"
 
         val ringtoneUrlMap = mapOf(
-            "hindi-bollywood" to "hindi-bollywood-ringtones.json",
-            "tamil" to "tamil.json",
-            "sms" to "sms.json",
-            "music" to "music.json",
-            "malayalam" to "malayalam.json",
-            "funny" to "funny.json",
-            "sound" to "sound_effects.json",
-            "miscellaneous" to "miscellaneous_ringtones.json",
-            "devotional" to "devotional_ringtones.json",
-            "baby" to "baby_ringtones.json",
-            "iphone" to "iphone_ringtones.json"
+            "Hindi-bollywood" to "hindi-bollywood-ringtones.json",
+            "Tamil" to "tamil.json",
+            "Sms" to "sms.json",
+            "Music" to "music.json",
+            "Malayalam" to "malayalam.json",
+            "Funny" to "funny.json",
+            "Sound" to "sound_effects.json",
+            "Miscellaneous" to "miscellaneous_ringtones.json",
+            "Devotional" to "devotional_ringtones.json",
+            "Baby" to "baby_ringtones.json",
+            "Iphone" to "iphone_ringtones.json"
         )
 
 //        const val audioURL = "https://www.compocore.com/ringtones/test.mp3"

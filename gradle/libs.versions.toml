@@ -2,6 +2,7 @@
 adaptive = "1.1.0-beta02"
 agp = "8.8.1"
 coilCompose = "3.1.0"
+firebaseBom = "33.9.0"
 gson = "2.12.1"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
@@ -34,6 +35,8 @@ androidx-media3-offline = { module = "androidx.media3:media3-offline", version.r
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

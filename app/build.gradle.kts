@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
+
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -14,8 +17,8 @@ android {
         applicationId = "com.xxh.ringbones"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12
-        versionName = "4.1"
+        versionCode = 14
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,4 +90,6 @@ dependencies {
 
     implementation(libs.material)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }

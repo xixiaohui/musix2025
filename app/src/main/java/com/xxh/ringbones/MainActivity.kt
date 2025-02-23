@@ -1,5 +1,6 @@
 package com.xxh.ringbones
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -29,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -37,16 +39,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import com.xxh.ringbones.gson.JsonReader
 import com.xxh.ringbones.gson.MusixRingtonesList
 import com.xxh.ringbones.gson.Ringtone
 import com.xxh.ringbones.ui.theme.Musix2025Theme
@@ -87,14 +93,87 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @SuppressLint("MutableCollectionMutableState")
     @Composable
     fun MainScreenCenter(innerPadding: PaddingValues) {
+
+        var loading by remember { mutableStateOf(false) }
+        val itemTitle = MusixRingtonesList.ringtoneUrlMap.keys.toList()
+        val itemListJsonFileName = MusixRingtonesList.ringtoneUrlMap.values.toList()
+        var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.URL + itemListJsonFileName.first()) }
+
+
+
+        val context = LocalContext.current
+        var ringtoneList by remember {
+            mutableStateOf(
+                JsonReader.readJsonFromAssetsToList(context = context)
+            )
+        }
+
+        //标记横向导航按钮是否被按下
+        val isPressedList = remember { mutableStateOf(MutableList(itemTitle.size) { false }) }
+
+        // 记住一个状态来判断是否是第一次
+        val isFirstRun = remember { mutableStateOf(true) }
+
+        //标记当前按下的按钮索引
+        val isButtonIndexpressed = remember { mutableIntStateOf(0) }
+
+        LaunchedEffect(loading) {
+            if (!isFirstRun.value) {
+                val result = withContext(Dispatchers.IO) {
+                    mySuspendFunction(ringtoneUrl)
+                }
+                val gson = Gson()
+                ringtoneList = gson.fromJson(result, Array<Ringtone>::class.java).toList()
+                loading = false
+            }
+
+            isFirstRun.value = false
+        }
+
+
 
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
 
-            RingtonesList()
+            Musix2025Theme {
+
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                ) {
+                    itemsIndexed(itemTitle) { index, it ->
+
+                        ButtonWithPressedState(
+                            isPressed = isPressedList.value[index],
+                            onClickCallback = { state ->
+
+                                for ((i, item) in isPressedList.value.withIndex()) {
+                                    isPressedList.value[i]= false
+                                }
+                                isPressedList.value[index] = true
+
+                                if (isButtonIndexpressed.intValue != index){
+                                    val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
+                                        .append(itemListJsonFileName[index])
+
+                                    ringtoneUrl = ringtonesUrl.toString()
+                                    loading = true
+                                    isButtonIndexpressed.intValue = index
+                                }
+
+                            }, it
+                        )
+                    }
+                }
+            }
+
+
+            RingtonesList(loading, ringtoneList)
         }
     }
 
@@ -109,69 +188,51 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun RingtonesList() {
+    fun ButtonWithPressedState(isPressed: Boolean, onClickCallback: (Boolean) -> Unit, it: String) {
 
-        var ringtoneList by remember { mutableStateOf(listOf<Ringtone>()) }
-
-        var loading by remember { mutableStateOf(true) }
-
-
-        val itemTitle = MusixRingtonesList.ringtoneUrlMap.keys.toList()
-        val itemListJsonFileName = MusixRingtonesList.ringtoneUrlMap.values.toList()
-
-        var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.URL + itemListJsonFileName.first()) }
-
-        LaunchedEffect(ringtoneUrl) {
-            val result = withContext(Dispatchers.IO) {
-                mySuspendFunction(ringtoneUrl)
+        Button(
+            modifier = Modifier.padding(horizontal = 5.dp),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = if (isPressed) Color(0xFFFF4081) else Color.White
+            ),
+            onClick = {
+                onClickCallback(isPressed)
             }
-            val gson = Gson()
-            ringtoneList = gson.fromJson(result, Array<Ringtone>::class.java).toList()
-            loading = false
+
+        ) {
+
+            Text(text = it)
         }
 
-        Musix2025Theme {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp)
-            ) {
-                itemsIndexed(itemTitle) { index, it ->
-                    Button(modifier = Modifier.padding(horizontal = 5.dp), onClick = {
+//        Log.d("musixButton", "Button is pressed: $isPressed")
+    }
 
-                        val ringtonesUrl = StringBuilder().append(MusixRingtonesList.URL)
-                            .append(itemListJsonFileName[index])
+    @Composable
+    fun RingtonesList(loading: Boolean, ringtoneList: List<Ringtone>) {
 
-                        ringtoneUrl = ringtonesUrl.toString()
-                        loading = true
-
-                    }) {
-                        Text(text = it)
-                    }
-                }
-            }
-        }
 
         if (loading) {
             IndeterminateCircularIndicator()
-            return
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        Musix2025Theme {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
 
-            LazyColumn {
-                items(ringtoneList) { ringtone ->
-                    RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
-                    Spacer(Modifier.size(2.dp))
+                LazyColumn {
+                    items(ringtoneList) { ringtone ->
+                        RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
+                        Spacer(Modifier.size(2.dp))
+                    }
                 }
-            }
 
+            }
         }
+
     }
 
     @Preview
@@ -277,12 +338,12 @@ class MainActivity : ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(50.dp),
+                .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.width(64.dp),
+                modifier = Modifier.width(32.dp),
                 color = MaterialTheme.colorScheme.secondary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
