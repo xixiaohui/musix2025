@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1001702189092",
+    "firebase_url": "https://musix-385bc.firebaseio.com",
+    "project_id": "musix-385bc",
+    "storage_bucket": "musix-385bc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001702189092:android:e2dc8902bf403f814bd0b1",
+        "android_client_info": {
+          "package_name": "com.xxh.ringbones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001702189092-rq9i57q4tac79e4k7dj8oor3ucs8l6up.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xxh.ringbones",
+            "certificate_hash": "f8e366712afd1bb22a1a768f37c10abb9c227ae5"
+          }
+        },
+        {
+          "client_id": "1001702189092-9vr0nca8uq65f0vj31a12oet7i5gl6r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPwKa0tb3CAqhIzOz2TP7Tp_tg4NXRqlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001702189092-9vr0nca8uq65f0vj31a12oet7i5gl6r8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
