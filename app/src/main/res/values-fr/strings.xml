@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Musix</string>
+      
+  <string name="title_activity_land">Activité terrestre</string>
+      
+  <string name="favorite_collections">Collections préférées</string>
+      
+  <string name="align_your_body">Alignez votre corps</string>
+      
+  <string name="ab1_inversions">Inversions</string>
+      
+  <string name="ab2_quick_yoga">Yoga rapide</string>
+      
+  <string name="ab3_stretching">Étirage</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">HIIT</string>
+      
+  <string name="ab6_pre_natal_yoga">Yoga prénatal</string>
+      
+  <string name="fc1_short_mantras">Mantras courts</string>
+      
+  <string name="fc2_nature_meditations">Méditations sur la nature</string>
+      
+  <string name="fc3_stress_and_anxiety">Stress et anxiété</string>
+      
+  <string name="fc4_self_massage">Auto-massage</string>
+      
+  <string name="fc5_overwhelmed">Accablé</string>
+      
+  <string name="fc6_nightly_wind_down">Détente nocturne</string>
+      
+  <string name="cd_fab_start">commencer</string>
+      
+  <string name="bottom_navigation_home">Maison</string>
+      
+  <string name="bottom_navigation_profile">Profil</string>
+      
+  <string name="placeholder_search">Recherche</string>
+      
+  <string name="title_activity_play">Activité de jeu</string>
+      
+  <string name="play">jouer</string>
+      
+  <string name="pause">pause</string>
+      
+  <string name="tips">Conseils</string>
+      
+  <string name="downloadTips">Télécharger cette sonnerie ?</string>
+      
+  <string name="downloadTips2">Téléchargez cette sonnerie sur Internet.</string>
+      
+  <string name="downloadTips3">Le fichier de sonnerie est terminé.</string>
+      
+  <string name="add_to_fav_list">Ajouter à la liste des favoris ?</string>
+      
+  <string name="add_to_fav_list2">Ajouter à la liste des favoris</string>
+      
+  <string name="set_ringtone">Définir cette sonnerie comme sonnerie de votre téléphone ?</string>
+      
+  <string name="set_ringtone2">Comme sonnerie de votre téléphone</string>
+      
+  <string name="set_ringtone3">La sonnerie n\'est pas de sortie ! Veuillez d\'abord télécharger.</string>
+      
+  <string name="set_ringtone_success">Définir la sonnerie avec succès.</string>
+      
+  <string name="cancel">Annuler</string>
+      
+  <string name="confirm">Confirmer</string>
+  
+</resources>
