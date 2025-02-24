@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Música</string>
+      
+  <string name="title_activity_land">Actividad terrestre</string>
+      
+  <string name="favorite_collections">Colecciones favoritas</string>
+      
+  <string name="align_your_body">Alinea tu cuerpo</string>
+      
+  <string name="ab1_inversions">Inversiones</string>
+      
+  <string name="ab2_quick_yoga">Yoga rápido</string>
+      
+  <string name="ab3_stretching">Extensión</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">Entrenamiento de alta intensidad (HIIT)</string>
+      
+  <string name="ab6_pre_natal_yoga">Yoga prenatal</string>
+      
+  <string name="fc1_short_mantras">Mantras cortos</string>
+      
+  <string name="fc2_nature_meditations">Meditaciones de la naturaleza</string>
+      
+  <string name="fc3_stress_and_anxiety">Estrés y ansiedad</string>
+      
+  <string name="fc4_self_massage">Automasaje</string>
+      
+  <string name="fc5_overwhelmed">Abrumado</string>
+      
+  <string name="fc6_nightly_wind_down">Relajación nocturna</string>
+      
+  <string name="cd_fab_start">comenzar</string>
+      
+  <string name="bottom_navigation_home">Hogar</string>
+      
+  <string name="bottom_navigation_profile">Perfil</string>
+      
+  <string name="placeholder_search">Buscar</string>
+      
+  <string name="title_activity_play">Actividad de juego</string>
+      
+  <string name="play">jugar</string>
+      
+  <string name="pause">pausa</string>
+      
+  <string name="tips">Consejos</string>
+      
+  <string name="downloadTips">¿Descargar este tono de llamada?</string>
+      
+  <string name="downloadTips2">Descargue este tono de llamada de internet.</string>
+      
+  <string name="downloadTips3">El archivo de tono de llamada está disponible.</string>
+      
+  <string name="add_to_fav_list">¿Añadir a la lista de favoritos?</string>
+      
+  <string name="add_to_fav_list2">Añadir a la lista de favoritos</string>
+      
+  <string name="set_ringtone">¿Establecer este tono de llamada como tono de llamada de su teléfono?</string>
+      
+  <string name="set_ringtone2">Como tono de llamada de tu teléfono</string>
+      
+  <string name="set_ringtone3">¡El tono de llamada no sale! Por favor descargue primero.</string>
+      
+  <string name="set_ringtone_success">Establecer tono de llamada exitoso.</string>
+      
+  <string name="cancel">Cancelar</string>
+      
+  <string name="confirm">Confirmar</string>
+  
+</resources>

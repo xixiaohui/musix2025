@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">音乐</string>
+      
+  <string name="title_activity_land">土地活动</string>
+      
+  <string name="favorite_collections">最喜爱的收藏</string>
+      
+  <string name="align_your_body">调整身体</string>
+      
+  <string name="ab1_inversions">倒置</string>
+      
+  <string name="ab2_quick_yoga">快速瑜伽</string>
+      
+  <string name="ab3_stretching">伸展运动</string>
+      
+  <string name="ab4_tabata">田端</string>
+      
+  <string name="ab5_hiit">高强度间歇训练</string>
+      
+  <string name="ab6_pre_natal_yoga">产前瑜伽</string>
+      
+  <string name="fc1_short_mantras">短咒语</string>
+      
+  <string name="fc2_nature_meditations">自然冥想</string>
+      
+  <string name="fc3_stress_and_anxiety">压力和焦虑</string>
+      
+  <string name="fc4_self_massage">自我按摩</string>
+      
+  <string name="fc5_overwhelmed">不知所措</string>
+      
+  <string name="fc6_nightly_wind_down">夜间放松</string>
+      
+  <string name="cd_fab_start">开始</string>
+      
+  <string name="bottom_navigation_home">家</string>
+      
+  <string name="bottom_navigation_profile">轮廓</string>
+      
+  <string name="placeholder_search">搜索</string>
+      
+  <string name="title_activity_play">玩活动</string>
+      
+  <string name="play">玩</string>
+      
+  <string name="pause">暂停</string>
+      
+  <string name="tips">尖端</string>
+      
+  <string name="downloadTips">下载这个铃声吗？</string>
+      
+  <string name="downloadTips2">从互联网上下载此铃声。</string>
+      
+  <string name="downloadTips3">铃声文件已退出。</string>
+      
+  <string name="add_to_fav_list">添加到收藏夹列表？</string>
+      
+  <string name="add_to_fav_list2">添加至收藏夹列表</string>
+      
+  <string name="set_ringtone">将此铃声设置为您的手机铃声吗？</string>
+      
+  <string name="set_ringtone2">作为你的手机铃声</string>
+      
+  <string name="set_ringtone3">铃声未退出！请先下载。</string>
+      
+  <string name="set_ringtone_success">设置铃声成功。</string>
+      
+  <string name="cancel">取消</string>
+      
+  <string name="confirm">确认</string>
+  
+</resources>
