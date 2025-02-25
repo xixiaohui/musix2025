@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">มิวสิก</string>
+      
+  <string name="title_activity_land">กิจกรรมที่ดิน</string>
+      
+  <string name="favorite_collections">คอลเลคชั่นที่ชื่นชอบ</string>
+      
+  <string name="align_your_body">จัดตำแหน่งร่างกายของคุณ</string>
+      
+  <string name="ab1_inversions">การกลับด้าน</string>
+      
+  <string name="ab2_quick_yoga">โยคะด่วน</string>
+      
+  <string name="ab3_stretching">การยืดกล้ามเนื้อ</string>
+      
+  <string name="ab4_tabata">ทาบาตะ</string>
+      
+  <string name="ab5_hiit">ไฮไอที</string>
+      
+  <string name="ab6_pre_natal_yoga">โยคะก่อนคลอด</string>
+      
+  <string name="fc1_short_mantras">บทสวดมนต์สั้น ๆ</string>
+      
+  <string name="fc2_nature_meditations">การทำสมาธิธรรมชาติ</string>
+      
+  <string name="fc3_stress_and_anxiety">ความเครียดและความวิตกกังวล</string>
+      
+  <string name="fc4_self_massage">การนวดตัวเอง</string>
+      
+  <string name="fc5_overwhelmed">ท่วมท้น</string>
+      
+  <string name="fc6_nightly_wind_down">ผ่อนคลายยามค่ำคืน</string>
+      
+  <string name="cd_fab_start">เริ่ม</string>
+      
+  <string name="bottom_navigation_home">บ้าน</string>
+      
+  <string name="bottom_navigation_profile">ประวัติโดยย่อ</string>
+      
+  <string name="placeholder_search">ค้นหา</string>
+      
+  <string name="title_activity_play">เล่นกิจกรรม</string>
+      
+  <string name="play">เล่น</string>
+      
+  <string name="pause">หยุดชั่วคราว</string>
+      
+  <string name="tips">เคล็ดลับ</string>
+      
+  <string name="downloadTips">ดาวน์โหลดริงโทนนี้?</string>
+      
+  <string name="downloadTips2">ดาวน์โหลดริงโทนนี้จากอินเทอร์เน็ต</string>
+      
+  <string name="downloadTips3">ไฟล์ริงโทนออกแล้ว</string>
+      
+  <string name="add_to_fav_list">เพิ่มไปยังรายการโปรด?</string>
+      
+  <string name="add_to_fav_list2">เพิ่มไปยังรายการโปรด</string>
+      
+  <string name="set_ringtone">ตั้งเสียงเรียกเข้านี้เป็นเสียงเรียกเข้าโทรศัพท์ของคุณใช่ไหม?</string>
+      
+  <string name="set_ringtone2">เป็นเสียงเรียกเข้าโทรศัพท์ของคุณ</string>
+      
+  <string name="set_ringtone3">ริงโทนไม่ออก! กรุณาดาวน์โหลดก่อน</string>
+      
+  <string name="set_ringtone_success">ตั้งเสียงเรียกเข้าสำเร็จแล้ว</string>
+      
+  <string name="cancel">ยกเลิก</string>
+      
+  <string name="confirm">ยืนยัน</string>
+  
+</resources>

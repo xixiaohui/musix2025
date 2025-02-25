@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Musica</string>
+      
+  <string name="title_activity_land">Attività sul territorio</string>
+      
+  <string name="favorite_collections">Collezioni preferite</string>
+      
+  <string name="align_your_body">Allinea il tuo corpo</string>
+      
+  <string name="ab1_inversions">Inversioni</string>
+      
+  <string name="ab2_quick_yoga">Yoga veloce</string>
+      
+  <string name="ab3_stretching">Allungamento</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">Allenamento ad alta intensità</string>
+      
+  <string name="ab6_pre_natal_yoga">Yoga prenatale</string>
+      
+  <string name="fc1_short_mantras">Mantra brevi</string>
+      
+  <string name="fc2_nature_meditations">Meditazioni sulla natura</string>
+      
+  <string name="fc3_stress_and_anxiety">Stress e ansia</string>
+      
+  <string name="fc4_self_massage">Automassaggio</string>
+      
+  <string name="fc5_overwhelmed">Sopraffatto</string>
+      
+  <string name="fc6_nightly_wind_down">Rilassamento notturno</string>
+      
+  <string name="cd_fab_start">inizio</string>
+      
+  <string name="bottom_navigation_home">Casa</string>
+      
+  <string name="bottom_navigation_profile">Profilo</string>
+      
+  <string name="placeholder_search">Ricerca</string>
+      
+  <string name="title_activity_play">GiocaAttività</string>
+      
+  <string name="play">giocare</string>
+      
+  <string name="pause">pausa</string>
+      
+  <string name="tips">Suggerimenti</string>
+      
+  <string name="downloadTips">Vuoi scaricare questa suoneria?</string>
+      
+  <string name="downloadTips2">Scarica questa suoneria da Internet.</string>
+      
+  <string name="downloadTips3">Il file della suoneria è in uscita.</string>
+      
+  <string name="add_to_fav_list">Aggiungere all\'elenco dei preferiti?</string>
+      
+  <string name="add_to_fav_list2">Aggiungi alla lista dei preferiti</string>
+      
+  <string name="set_ringtone">Vuoi impostare questa suoneria come suoneria del telefono?</string>
+      
+  <string name="set_ringtone2">Come suoneria del tuo telefono</string>
+      
+  <string name="set_ringtone3">La suoneria non è uscita! Si prega di scaricare prima.</string>
+      
+  <string name="set_ringtone_success">Impostazione suoneria riuscita.</string>
+      
+  <string name="cancel">Cancellare</string>
+      
+  <string name="confirm">Confermare</string>
+  
+</resources>

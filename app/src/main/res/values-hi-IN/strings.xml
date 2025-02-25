@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">म्यूज़िक्स</string>
+      
+  <string name="title_activity_land">भूमि गतिविधि</string>
+      
+  <string name="favorite_collections">पसंदीदा संग्रह</string>
+      
+  <string name="align_your_body">अपने शरीर को संरेखित करें</string>
+      
+  <string name="ab1_inversions">इन्वर्ज़न</string>
+      
+  <string name="ab2_quick_yoga">त्वरित योग</string>
+      
+  <string name="ab3_stretching">स्ट्रेचिंग</string>
+      
+  <string name="ab4_tabata">तबाता</string>
+      
+  <string name="ab5_hiit">एचआईआईटी</string>
+      
+  <string name="ab6_pre_natal_yoga">प्रसव पूर्व योग</string>
+      
+  <string name="fc1_short_mantras">लघु मंत्र</string>
+      
+  <string name="fc2_nature_meditations">प्रकृति ध्यान</string>
+      
+  <string name="fc3_stress_and_anxiety">तनाव और चिंता</string>
+      
+  <string name="fc4_self_massage">स्वयं मालिश</string>
+      
+  <string name="fc5_overwhelmed">अभिभूत</string>
+      
+  <string name="fc6_nightly_wind_down">रात्रि विश्राम</string>
+      
+  <string name="cd_fab_start">शुरू</string>
+      
+  <string name="bottom_navigation_home">घर</string>
+      
+  <string name="bottom_navigation_profile">प्रोफ़ाइल</string>
+      
+  <string name="placeholder_search">खोज</string>
+      
+  <string name="title_activity_play">खेल गतिविधि</string>
+      
+  <string name="play">खेल</string>
+      
+  <string name="pause">विराम</string>
+      
+  <string name="tips">सुझावों</string>
+      
+  <string name="downloadTips">यह रिंगटोन डाउनलोड करें?</string>
+      
+  <string name="downloadTips2">इस रिंगटोन को इंटरनेट से डाउनलोड करें.</string>
+      
+  <string name="downloadTips3">रिंगटोन फ़ाइल बाहर आ गई है.</string>
+      
+  <string name="add_to_fav_list">पसंदीदा सूची में जोड़ें?</string>
+      
+  <string name="add_to_fav_list2">पसंदीदा सूची में जोड़ें</string>
+      
+  <string name="set_ringtone">इस रिंगटोन को अपने फोन रिंगटोन के रूप में सेट करें?</string>
+      
+  <string name="set_ringtone2">आपके फ़ोन की रिंगटोन के रूप में</string>
+      
+  <string name="set_ringtone3">रिंगटोन बाहर नहीं है! कृपया पहले डाउनलोड करें.</string>
+      
+  <string name="set_ringtone_success">रिंगटोन सेट करना सफल.</string>
+      
+  <string name="cancel">रद्द करना</string>
+      
+  <string name="confirm">पुष्टि करना</string>
+  
+</resources>

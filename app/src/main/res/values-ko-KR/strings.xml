@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">음악</string>
+      
+  <string name="title_activity_land">토지 활동</string>
+      
+  <string name="favorite_collections">즐겨찾는 컬렉션</string>
+      
+  <string name="align_your_body">몸을 정렬하세요</string>
+      
+  <string name="ab1_inversions">역전</string>
+      
+  <string name="ab2_quick_yoga">빠른 요가</string>
+      
+  <string name="ab3_stretching">스트레칭</string>
+      
+  <string name="ab4_tabata">타바타</string>
+      
+  <string name="ab5_hiit">HIIT</string>
+      
+  <string name="ab6_pre_natal_yoga">산전 요가</string>
+      
+  <string name="fc1_short_mantras">짧은 만트라</string>
+      
+  <string name="fc2_nature_meditations">자연 명상</string>
+      
+  <string name="fc3_stress_and_anxiety">스트레스와 불안</string>
+      
+  <string name="fc4_self_massage">셀프 마사지</string>
+      
+  <string name="fc5_overwhelmed">압도된</string>
+      
+  <string name="fc6_nightly_wind_down">밤의 휴식</string>
+      
+  <string name="cd_fab_start">시작</string>
+      
+  <string name="bottom_navigation_home">집</string>
+      
+  <string name="bottom_navigation_profile">윤곽</string>
+      
+  <string name="placeholder_search">찾다</string>
+      
+  <string name="title_activity_play">놀이활동</string>
+      
+  <string name="play">놀다</string>
+      
+  <string name="pause">정지시키다</string>
+      
+  <string name="tips">팁</string>
+      
+  <string name="downloadTips">이 벨소리를 다운로드하시겠습니까?</string>
+      
+  <string name="downloadTips2">인터넷에서 이 벨소리를 다운로드하세요.</string>
+      
+  <string name="downloadTips3">벨소리 파일이 종료되었습니다.</string>
+      
+  <string name="add_to_fav_list">즐겨찾기 목록에 추가하시겠습니까?</string>
+      
+  <string name="add_to_fav_list2">즐겨찾기 목록에 추가</string>
+      
+  <string name="set_ringtone">이 벨소리를 휴대폰 벨소리로 설정하시겠습니까?</string>
+      
+  <string name="set_ringtone2">당신의 전화 벨소리로</string>
+      
+  <string name="set_ringtone3">벨소리가 종료되지 않았습니다! 먼저 다운로드해 주세요.</string>
+      
+  <string name="set_ringtone_success">벨소리 설정 성공.</string>
+      
+  <string name="cancel">취소</string>
+      
+  <string name="confirm">확인하다</string>
+  
+</resources>

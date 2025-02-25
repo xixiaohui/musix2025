@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Muzyka</string>
+      
+  <string name="title_activity_land">Aktywność lądowa</string>
+      
+  <string name="favorite_collections">Ulubione kolekcje</string>
+      
+  <string name="align_your_body">Wyrównaj swoje ciało</string>
+      
+  <string name="ab1_inversions">Inwersje</string>
+      
+  <string name="ab2_quick_yoga">Szybka joga</string>
+      
+  <string name="ab3_stretching">Sięgnięcie</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">HIIT</string>
+      
+  <string name="ab6_pre_natal_yoga">Joga prenatalna</string>
+      
+  <string name="fc1_short_mantras">Krótkie mantry</string>
+      
+  <string name="fc2_nature_meditations">Medytacje w naturze</string>
+      
+  <string name="fc3_stress_and_anxiety">Stres i niepokój</string>
+      
+  <string name="fc4_self_massage">Samodzielny masaż</string>
+      
+  <string name="fc5_overwhelmed">Przytłoczony</string>
+      
+  <string name="fc6_nightly_wind_down">Wieczorne wyciszenie</string>
+      
+  <string name="cd_fab_start">start</string>
+      
+  <string name="bottom_navigation_home">Dom</string>
+      
+  <string name="bottom_navigation_profile">Profil</string>
+      
+  <string name="placeholder_search">Szukaj</string>
+      
+  <string name="title_activity_play">Aktywność Play</string>
+      
+  <string name="play">grać</string>
+      
+  <string name="pause">pauza</string>
+      
+  <string name="tips">Porady</string>
+      
+  <string name="downloadTips">Pobrać ten dzwonek?</string>
+      
+  <string name="downloadTips2">Pobierz ten dzwonek z Internetu.</string>
+      
+  <string name="downloadTips3">Plik dzwonka został usunięty.</string>
+      
+  <string name="add_to_fav_list">Dodać do listy ulubionych?</string>
+      
+  <string name="add_to_fav_list2">Dodaj do listy ulubionych</string>
+      
+  <string name="set_ringtone">Ustawić ten dzwonek jako dzwonek telefonu?</string>
+      
+  <string name="set_ringtone2">Jako dzwonek telefonu</string>
+      
+  <string name="set_ringtone3">Dzwonek nie jest wyjściem! Proszę najpierw pobrać.</string>
+      
+  <string name="set_ringtone_success">Ustawienie dzwonka powiodło się.</string>
+      
+  <string name="cancel">Anulować</string>
+      
+  <string name="confirm">Potwierdzać</string>
+  
+</resources>

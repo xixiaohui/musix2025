@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Âm nhạc</string>
+      
+  <string name="title_activity_land">ĐấtHoạt động</string>
+      
+  <string name="favorite_collections">Bộ sưu tập yêu thích</string>
+      
+  <string name="align_your_body">Căn chỉnh cơ thể của bạn</string>
+      
+  <string name="ab1_inversions">Sự đảo ngược</string>
+      
+  <string name="ab2_quick_yoga">Yoga nhanh</string>
+      
+  <string name="ab3_stretching">Kéo giãn</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">Bài tập cường độ cao</string>
+      
+  <string name="ab6_pre_natal_yoga">Yoga trước khi sinh</string>
+      
+  <string name="fc1_short_mantras">Những câu thần chú ngắn</string>
+      
+  <string name="fc2_nature_meditations">Thiền thiên nhiên</string>
+      
+  <string name="fc3_stress_and_anxiety">Căng thẳng và lo âu</string>
+      
+  <string name="fc4_self_massage">Tự massage</string>
+      
+  <string name="fc5_overwhelmed">Quá choáng ngợp</string>
+      
+  <string name="fc6_nightly_wind_down">Gió nhẹ về đêm</string>
+      
+  <string name="cd_fab_start">bắt đầu</string>
+      
+  <string name="bottom_navigation_home">Trang chủ</string>
+      
+  <string name="bottom_navigation_profile">Hồ sơ</string>
+      
+  <string name="placeholder_search">Tìm kiếm</string>
+      
+  <string name="title_activity_play">ChơiHoạt động</string>
+      
+  <string name="play">chơi</string>
+      
+  <string name="pause">tạm dừng</string>
+      
+  <string name="tips">Mẹo</string>
+      
+  <string name="downloadTips">Tải nhạc chuông này xuống?</string>
+      
+  <string name="downloadTips2">Tải nhạc chuông này từ internet.</string>
+      
+  <string name="downloadTips3">Tệp nhạc chuông đã thoát.</string>
+      
+  <string name="add_to_fav_list">Thêm vào danh sách yêu thích?</string>
+      
+  <string name="add_to_fav_list2">Thêm vào danh sách yêu thích</string>
+      
+  <string name="set_ringtone">Cài nhạc chuông này làm nhạc chuông điện thoại của bạn?</string>
+      
+  <string name="set_ringtone2">Là nhạc chuông điện thoại của bạn</string>
+      
+  <string name="set_ringtone3">Nhạc chuông không thoát! Vui lòng tải xuống trước.</string>
+      
+  <string name="set_ringtone_success">Cài đặt nhạc chuông thành công.</string>
+      
+  <string name="cancel">Hủy bỏ</string>
+      
+  <string name="confirm">Xác nhận</string>
+  
+</resources>

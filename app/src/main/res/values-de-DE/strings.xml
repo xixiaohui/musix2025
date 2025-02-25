@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Musix</string>
+      
+  <string name="title_activity_land">LandAktivität</string>
+      
+  <string name="favorite_collections">Beliebteste Kollektionen</string>
+      
+  <string name="align_your_body">Richten Sie Ihren Körper aus</string>
+      
+  <string name="ab1_inversions">Umkehrungen</string>
+      
+  <string name="ab2_quick_yoga">Schnelles Yoga</string>
+      
+  <string name="ab3_stretching">Dehnen</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">HIIT</string>
+      
+  <string name="ab6_pre_natal_yoga">Pränatales Yoga</string>
+      
+  <string name="fc1_short_mantras">Kurze Mantras</string>
+      
+  <string name="fc2_nature_meditations">Naturmeditationen</string>
+      
+  <string name="fc3_stress_and_anxiety">Stress und Angst</string>
+      
+  <string name="fc4_self_massage">Selbstmassage</string>
+      
+  <string name="fc5_overwhelmed">Überwältigt</string>
+      
+  <string name="fc6_nightly_wind_down">Abendliche Entspannung</string>
+      
+  <string name="cd_fab_start">Start</string>
+      
+  <string name="bottom_navigation_home">Heim</string>
+      
+  <string name="bottom_navigation_profile">Profil</string>
+      
+  <string name="placeholder_search">Suchen</string>
+      
+  <string name="title_activity_play">Spielaktivität</string>
+      
+  <string name="play">spielen</string>
+      
+  <string name="pause">Pause</string>
+      
+  <string name="tips">Tipps</string>
+      
+  <string name="downloadTips">Diesen Klingelton herunterladen?</string>
+      
+  <string name="downloadTips2">Laden Sie diesen Klingelton aus dem Internet herunter.</string>
+      
+  <string name="downloadTips3">Klingeltondatei wird beendet.</string>
+      
+  <string name="add_to_fav_list">Zur Favoritenliste hinzufügen?</string>
+      
+  <string name="add_to_fav_list2">Zur Favoritenliste hinzufügen</string>
+      
+  <string name="set_ringtone">Diesen Klingelton als Klingelton für Ihr Telefon festlegen?</string>
+      
+  <string name="set_ringtone2">Als Klingelton für Ihr Telefon</string>
+      
+  <string name="set_ringtone3">Klingelton wird nicht beendet! Bitte zuerst herunterladen.</string>
+      
+  <string name="set_ringtone_success">Klingelton erfolgreich eingestellt.</string>
+      
+  <string name="cancel">Stornieren</string>
+      
+  <string name="confirm">Bestätigen</string>
+  
+</resources>

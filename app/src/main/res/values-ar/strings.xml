@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">موسيقى</string>
+      
+  <string name="title_activity_land">النشاط الأرضي</string>
+      
+  <string name="favorite_collections">المجموعات المفضلة</string>
+      
+  <string name="align_your_body">محاذاة جسمك</string>
+      
+  <string name="ab1_inversions">الانعكاسات</string>
+      
+  <string name="ab2_quick_yoga">يوغا سريعة</string>
+      
+  <string name="ab3_stretching">التمدد</string>
+      
+  <string name="ab4_tabata">تاباتا</string>
+      
+  <string name="ab5_hiit">التدريب المتقطع عالي الكثافة</string>
+      
+  <string name="ab6_pre_natal_yoga">يوغا ما قبل الولادة</string>
+      
+  <string name="fc1_short_mantras">ترانيم قصيرة</string>
+      
+  <string name="fc2_nature_meditations">تأملات الطبيعة</string>
+      
+  <string name="fc3_stress_and_anxiety">التوتر والقلق</string>
+      
+  <string name="fc4_self_massage">التدليك الذاتي</string>
+      
+  <string name="fc5_overwhelmed">مُثقل</string>
+      
+  <string name="fc6_nightly_wind_down">الاسترخاء ليلا</string>
+      
+  <string name="cd_fab_start">يبدأ</string>
+      
+  <string name="bottom_navigation_home">بيت</string>
+      
+  <string name="bottom_navigation_profile">حساب تعريفي</string>
+      
+  <string name="placeholder_search">يبحث</string>
+      
+  <string name="title_activity_play">لعب النشاط</string>
+      
+  <string name="play">يلعب</string>
+      
+  <string name="pause">يوقف</string>
+      
+  <string name="tips">نصائح</string>
+      
+  <string name="downloadTips">تنزيل هذه النغمة؟</string>
+      
+  <string name="downloadTips2">قم بتنزيل نغمة الرنين هذه من الإنترنت.</string>
+      
+  <string name="downloadTips3">تم الخروج من ملف نغمة الرنين.</string>
+      
+  <string name="add_to_fav_list">أضف إلى قائمة المفضلة؟</string>
+      
+  <string name="add_to_fav_list2">أضف إلى قائمة المفضلة</string>
+      
+  <string name="set_ringtone">تعيين هذه النغمة كنغمة رنين لهاتفك؟</string>
+      
+  <string name="set_ringtone2">كنغمة رنين لهاتفك</string>
+      
+  <string name="set_ringtone3">نغمة الرنين ليست خروج! يرجى التنزيل أولاً.</string>
+      
+  <string name="set_ringtone_success">تم ضبط نغمة الرنين بنجاح.</string>
+      
+  <string name="cancel">يلغي</string>
+      
+  <string name="confirm">يتأكد</string>
+  
+</resources>

@@ -22,4 +22,8 @@ proguard-rules保留okhttp3 等，防止网络功能不能生效
 
 打包需要musix.jks(还有一些参数保存在 gradle.properties文件里)
 
+## 2025.2.25
+更换logo
+
+
 

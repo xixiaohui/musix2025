@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Müzik</string>
+      
+  <string name="title_activity_land">Kara Etkinliği</string>
+      
+  <string name="favorite_collections">Favori Koleksiyonlar</string>
+      
+  <string name="align_your_body">Vücudunuzu hizalayın</string>
+      
+  <string name="ab1_inversions">Ters çevirmeler</string>
+      
+  <string name="ab2_quick_yoga">Hızlı yoga</string>
+      
+  <string name="ab3_stretching">Esneme</string>
+      
+  <string name="ab4_tabata">Tabata</string>
+      
+  <string name="ab5_hiit">Yüksek yoğunluklu antrenman</string>
+      
+  <string name="ab6_pre_natal_yoga">Doğum öncesi yoga</string>
+      
+  <string name="fc1_short_mantras">Kısa mantralar</string>
+      
+  <string name="fc2_nature_meditations">Doğa meditasyonları</string>
+      
+  <string name="fc3_stress_and_anxiety">Stres ve kaygı</string>
+      
+  <string name="fc4_self_massage">Kendi kendine masaj</string>
+      
+  <string name="fc5_overwhelmed">Ezilmiş</string>
+      
+  <string name="fc6_nightly_wind_down">Gecelik gevşeme</string>
+      
+  <string name="cd_fab_start">başlangıç</string>
+      
+  <string name="bottom_navigation_home">Ev</string>
+      
+  <string name="bottom_navigation_profile">Profil</string>
+      
+  <string name="placeholder_search">Aramak</string>
+      
+  <string name="title_activity_play">OyunAktivitesi</string>
+      
+  <string name="play">oynamak</string>
+      
+  <string name="pause">duraklama</string>
+      
+  <string name="tips">İpuçları</string>
+      
+  <string name="downloadTips">Bu zil sesini indirmek ister misiniz?</string>
+      
+  <string name="downloadTips2">Bu zil sesini internetten indirin.</string>
+      
+  <string name="downloadTips3">Zil sesi dosyası çıktı.</string>
+      
+  <string name="add_to_fav_list">Favorilere ekle?</string>
+      
+  <string name="add_to_fav_list2">Favorilere ekle</string>
+      
+  <string name="set_ringtone">Bu zil sesini telefonunuzun zil sesi olarak ayarlamak ister misiniz?</string>
+      
+  <string name="set_ringtone2">Telefonunuzun zil sesi olarak</string>
+      
+  <string name="set_ringtone3">Zil sesi çıkmıyor! Lütfen önce indirin.</string>
+      
+  <string name="set_ringtone_success">Zil sesi ayarlama başarılı.</string>
+      
+  <string name="cancel">İptal etmek</string>
+      
+  <string name="confirm">Onaylamak</string>
+  
+</resources>
