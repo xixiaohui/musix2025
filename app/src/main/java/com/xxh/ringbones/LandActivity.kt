@@ -74,12 +74,23 @@ class LandActivity : ComponentActivity() {
 
 private val alignYourBodyData = listOf(
     R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
 
 ).map { DrawableStringPair(it.first, it.second) }
 
 private val favoriteCollectionsData = listOf(
-
-    R.drawable.fc6_nightly_wind_down to R.string.fc6_nightly_wind_down
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
+    R.drawable.ab1_inversions to R.string.ab1_inversions,
 ).map { DrawableStringPair(it.first, it.second) }
 
 private data class DrawableStringPair(
@@ -176,7 +187,7 @@ fun FavoriteCollectionCard(
 fun FavoriteCollectionCardPreview() {
     Musix2025Theme {
         FavoriteCollectionCard(
-            text = R.string.fc2_nature_meditations,
+            text = R.string.ab1_inversions,
             drawable = R.drawable.ab1_inversions,
             modifier = Modifier.padding(8.dp)
         )

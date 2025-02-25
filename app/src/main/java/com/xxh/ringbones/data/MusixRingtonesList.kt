@@ -1,5 +1,6 @@
 package com.xxh.ringbones.data
 
+import com.xxh.ringbones.R
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -15,17 +16,17 @@ class MusixRingtonesList {
         const val URL = "https://compocore.com/wp-content/uploads/2025/02/"
 
         val ringtoneUrlMap = mapOf(
-            "Hindi-bollywood" to "hindi-bollywood-ringtones.json",
-            "Tamil" to "tamil.json",
-            "Sms" to "sms.json",
-            "Music" to "music.json",
-            "Malayalam" to "malayalam.json",
-            "Funny" to "funny.json",
-            "Sound" to "sound_effects.json",
-            "Miscellaneous" to "miscellaneous_ringtones.json",
-            "Devotional" to "devotional_ringtones.json",
-            "Baby" to "baby_ringtones.json",
-            "Iphone" to "iphone_ringtones.json"
+            R.string.hindi_bollywood to "hindi-bollywood-ringtones.json",
+            R.string.tamil to "tamil.json",
+            R.string.sms to "sms.json",
+            R.string.music to "music.json",
+            R.string.malayalam to "malayalam.json",
+            R.string.funny to "funny.json",
+            R.string.sound to "sound_effects.json",
+            R.string.miscellaneous to "miscellaneous_ringtones.json",
+            R.string.devotional to "devotional_ringtones.json",
+            R.string.baby to "baby_ringtones.json",
+            R.string.iphone to "iphone_ringtones.json"
         )
 
         val firstPageRingtones = listOf(
@@ -92,19 +93,27 @@ class MusixRingtonesList {
 
     private var client: OkHttpClient = OkHttpClient()
 
-    @Throws(IOException::class)
-    fun read(url: String): String {
+    private fun read(url: String): String? {
         val request = Request.Builder()
             .url(url)
             .build()
+        return try {
+            client.newCall(request).execute().use { response ->
 
-        client.newCall(request).execute().use { response ->
-            val text = response.body!!.string()
-            return text
+                if (response.isSuccessful){
+                    response.body?.string()
+                }else{
+                    "Error: ${response.code}"
+                }
+            }
+        }catch (ex:IOException){
+            ex.printStackTrace()
+            "Request failed"
         }
+
     }
 
-    fun sendRequestWithOkHttp(url: String): String {
+    fun sendRequestWithOkHttp(url: String): String? {
         return read(url)
     }
 

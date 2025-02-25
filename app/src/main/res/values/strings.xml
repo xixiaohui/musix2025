@@ -4,40 +4,44 @@
     <string name="favorite_collections">Favorite Collections</string>
     <string name="align_your_body">Align your Body</string>
     <string name="ab1_inversions">Inversions</string>
-    <string name="ab2_quick_yoga">Quick yoga</string>
-    <string name="ab3_stretching">Stretching</string>
-    <string name="ab4_tabata">Tabata</string>
-    <string name="ab5_hiit">HIIT</string>
-    <string name="ab6_pre_natal_yoga">Pre-natal yoga</string>
-    <string name="fc1_short_mantras">Short mantras</string>
-    <string name="fc2_nature_meditations">Nature meditations</string>
-    <string name="fc3_stress_and_anxiety">Stress and anxiety</string>
-    <string name="fc4_self_massage">Self massage</string>
-    <string name="fc5_overwhelmed">Overwhelmed</string>
-    <string name="fc6_nightly_wind_down">Nightly wind down</string>
+
     <string name="cd_fab_start">start</string>
     <string name="bottom_navigation_home">Home</string>
     <string name="bottom_navigation_profile">Profile</string>
     <string name="placeholder_search">Search</string>
     <string name="title_activity_play">PlayActivity</string>
+
     <string name="play">play</string>
     <string name="pause">pause</string>
 
     <string name="tips">Tips</string>
+
     <string name="downloadTips">Download this ringtone?</string>
     <string name="downloadTips2">Download this ringtone from internet.</string>
-    <string name="downloadTips3">Ringtone file is exit.</string>
+    <string name="downloadTips3">Ringtone file is exist.</string>
 
     <string name="add_to_fav_list">Add to favorites list?</string>
     <string name="add_to_fav_list2">Add to favorites list</string>
 
     <string name="set_ringtone">Set this ringtone as your phone ringtone?</string>
     <string name="set_ringtone2">As your phone ringtone</string>
-    <string name="set_ringtone3">Ringtone is not exit! Please download first.</string>
+    <string name="set_ringtone3">Ringtone is not exist! Please download first.</string>
     <string name="set_ringtone_success">Set ringtone success.</string>
 
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+
+    <string name="hindi_bollywood" translatable="false">Hindi-bollywood</string>
+    <string name="tamil" translatable="false">Tamil</string>
+    <string name="sms" translatable="false">Sms</string>
+    <string name="music" translatable="false">Music</string>
+    <string name="malayalam" translatable="false">Malayalam</string>
+    <string name="funny" translatable="false">Funny</string>
+    <string name="sound" translatable="false">Sound</string>
+    <string name="miscellaneous" translatable="false">Miscellaneous</string>
+    <string name="devotional" translatable="false">Devotional</string>
+    <string name="baby" translatable="false">Baby</string>
+    <string name="iphone" translatable="false">Iphone</string>
 
 
 </resources>

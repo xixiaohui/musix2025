@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><resources>
       
-  <string name="app_name">音乐</string>
+  <string name="app_name">Musix</string>
       
   <string name="title_activity_land">土地活动</string>
       
@@ -42,17 +42,17 @@
       
   <string name="title_activity_play">玩活动</string>
       
-  <string name="play">玩</string>
+  <string name="play">播放</string>
       
   <string name="pause">暂停</string>
       
-  <string name="tips">尖端</string>
+  <string name="tips">提示</string>
       
   <string name="downloadTips">下载这个铃声吗？</string>
       
   <string name="downloadTips2">从互联网上下载此铃声。</string>
       
-  <string name="downloadTips3">铃声文件已退出。</string>
+  <string name="downloadTips3">铃声文件已存在。</string>
       
   <string name="add_to_fav_list">添加到收藏夹列表？</string>
       
@@ -62,7 +62,7 @@
       
   <string name="set_ringtone2">作为你的手机铃声</string>
       
-  <string name="set_ringtone3">铃声未退出！请先下载。</string>
+  <string name="set_ringtone3">铃声不存在！请先下载。</string>
       
   <string name="set_ringtone_success">设置铃声成功。</string>
       
