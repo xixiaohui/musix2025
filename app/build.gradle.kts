@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
@@ -116,4 +117,11 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx) // Kotlin 扩展库，支持协程和 Flow
+    ksp(libs.androidx.room.compiler) // 注解处理器
+    // 如果需要使用数据库迁移支持
+    implementation(libs.androidx.room.paging)
 }
