@@ -21,7 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "ringtone_database"
+                    context.getDatabasePath("ringtones.db").absolutePath
                 )
                     .fallbackToDestructiveMigration()//数据库升级时销毁旧的数据
                     .build().also { INSTANCE = it }
