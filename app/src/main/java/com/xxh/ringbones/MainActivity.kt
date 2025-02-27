@@ -7,6 +7,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -39,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,10 +54,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.gson.Gson
+import com.xxh.ringbones.MyApplication.Companion.context
+import com.xxh.ringbones.data.AppDatabase
 import com.xxh.ringbones.data.DatabaseHelper
 import com.xxh.ringbones.data.MusixRingtonesList
 import com.xxh.ringbones.data.Ringtone
+import com.xxh.ringbones.data.RingtoneDao
+import com.xxh.ringbones.data.RingtoneViewModel
+import com.xxh.ringbones.data.RingtoneViewModelFactory
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -71,6 +79,10 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
+//        val dbPath = context.getDatabasePath("ringtones.db").absolutePath
+//        Log.v("musixDatabase",dbPath.toString())
+
+
         val databaseHelper = DatabaseHelper(applicationContext)
         try {
             databaseHelper.copyDatabase()
@@ -78,14 +90,46 @@ class MainActivity : ComponentActivity() {
             e.printStackTrace()
         }
 
+        //获取数据库和DAO
+        val database = AppDatabase.getInstance(this)
+        val dao = database.ringtoneDao()
+
+
         setContent {
+            //已发布版本的
 //            Musix2025Theme {
 //                MainScreen()
 //            }
 
-            val size = currentWindowAdaptiveInfo().windowSizeClass
-            Musix2025App(size)
+            //待测试UI 界面
+//            val size = currentWindowAdaptiveInfo().windowSizeClass
+//            Musix2025App(size)
+
+            //测试数据库数据
+            DatabaseScreen(dao)
         }
+    }
+
+
+    @Composable
+    private fun DatabaseScreen(dao: RingtoneDao) {
+        val viewModel: RingtoneViewModel = viewModel(factory = RingtoneViewModelFactory(dao))
+        val ringtones by viewModel.ringtones.collectAsState()
+
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                RingtonesList(false, ringtones)
+            }
+        }
+
+
     }
 
 
@@ -110,8 +154,10 @@ class MainActivity : ComponentActivity() {
     fun MainScreenCenter(innerPadding: PaddingValues) {
 
         var loading by remember { mutableStateOf(false) }
+
         val itemTitle = MusixRingtonesList.ringtoneUrlMap.keys.toList()
         val itemListJsonFileName = MusixRingtonesList.ringtoneUrlMap.values.toList()
+
         var ringtoneUrl by remember { mutableStateOf(MusixRingtonesList.URL + itemListJsonFileName.first()) }
 
 
