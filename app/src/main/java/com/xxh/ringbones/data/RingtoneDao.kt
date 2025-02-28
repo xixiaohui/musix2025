@@ -8,8 +8,15 @@ import androidx.room.Query
 
 @Dao
 interface RingtoneDao {
+
     @Insert
     suspend fun insert(ringtone: Ringtone)
+
+
+    // 获取固定数量的铃音
+    @Query("SELECT * FROM ringtones LIMIT :limit")
+    fun getAllRingtonesLimited(limit: Int): kotlinx.coroutines.flow.Flow<List<Ringtone>>
+
 
     @Query("SELECT * FROM ringtones")
     fun getAllRingtones(): kotlinx.coroutines.flow.Flow<List<Ringtone>>
@@ -22,5 +29,9 @@ interface RingtoneDao {
 
     @Query("SELECT * FROM ringtones")
     fun getAllRingtonesPaging(): PagingSource<Int, Ringtone>
+
+
+    @Query("SELECT * FROM ringtones LIMIT :limit OFFSET :offset")
+    fun getRingtonesPaged(limit: Int, offset: Int): PagingSource<Int, Ringtone>
 }
 
