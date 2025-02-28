@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-//class RingtoneViewModel(private val ringtoneDao: RingtoneDao) : ViewModel(){
-
 class RingtoneViewModel(application: Application) : AndroidViewModel(application){
 
     private val ringtoneDao = AppDatabase.getInstance(application).ringtoneDao()
