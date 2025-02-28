@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import kotlinx.coroutines.flow.Flow
@@ -13,9 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class RingtoneViewModel(private val ringtoneDao: RingtoneDao) : ViewModel(){
-//class RingtoneViewModel(application: Application) : AndroidViewModel(application){
-//    private val ringtoneDao = AppDatabase.getInstance(application).ringtoneDao()
+//class RingtoneViewModel(private val ringtoneDao: RingtoneDao) : ViewModel(){
+
+class RingtoneViewModel(application: Application) : AndroidViewModel(application){
+
+    private val ringtoneDao = AppDatabase.getInstance(application).ringtoneDao()
 
     private val _ringtones = MutableStateFlow<List<Ringtone>>(emptyList())
     val ringtones: StateFlow<List<Ringtone>> = _ringtones.asStateFlow()
@@ -33,13 +36,14 @@ class RingtoneViewModel(private val ringtoneDao: RingtoneDao) : ViewModel(){
         }
     }
 
+    //插入铃音
     fun insert(ringtone: Ringtone) {
         viewModelScope.launch {
             ringtoneDao.insert(ringtone)
         }
     }
 
-
+    //插入铃音
     fun insert(title: String, author: String, time: String, url: String, type: String) {
         viewModelScope.launch {
             ringtoneDao.insert(
@@ -51,6 +55,13 @@ class RingtoneViewModel(private val ringtoneDao: RingtoneDao) : ViewModel(){
                     type = type
                 )
             )
+        }
+    }
+
+    //删除铃音
+    fun deleteRingtone(ringtone: Ringtone){
+        viewModelScope.launch {
+            ringtoneDao.delete(ringtone)
         }
     }
 
