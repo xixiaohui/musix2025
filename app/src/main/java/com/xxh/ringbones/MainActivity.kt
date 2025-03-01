@@ -2,6 +2,7 @@ package com.xxh.ringbones
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,10 +81,6 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-//        val dbPath = context.getDatabasePath("ringtones.db").absolutePath
-//        Log.v("musixDatabase",dbPath.toString())
-
-
         val databaseHelper = DatabaseHelper(applicationContext)
         try {
             databaseHelper.copyDatabase()
@@ -90,47 +88,16 @@ class MainActivity : ComponentActivity() {
             e.printStackTrace()
         }
 
-        //获取数据库和DAO
-        val database = AppDatabase.getInstance(this)
-        val dao = database.ringtoneDao()
-
-
         setContent {
             //已发布版本的
 //            Musix2025Theme {
 //                MainScreen()
 //            }
 
-            //待测试UI 界面
-//            val size = currentWindowAdaptiveInfo().windowSizeClass
-//            Musix2025App(size)
+            val size = currentWindowAdaptiveInfo().windowSizeClass
+            Musix2025App(size)
 
-            //测试数据库数据
-            DatabaseScreen()
         }
-    }
-
-
-    @Composable
-    private fun DatabaseScreen() {
-        val viewModel: RingtoneViewModel = viewModel(factory = RingtoneViewModelFactory(application))
-
-//        val ringtones by viewModel.ringtones.collectAsState()
-
-
-        Scaffold(
-            modifier = Modifier.fillMaxSize()
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                RingtonesList(false, viewModel)
-            }
-        }
-
-
     }
 
 
@@ -261,37 +228,9 @@ class MainActivity : ComponentActivity() {
             Text(text = it)
         }
 
-//        Log.d("musixButton", "Button is pressed: $isPressed")
     }
 
-    @Composable
-    fun RingtonesList(loading: Boolean, ringtoneViewModel: RingtoneViewModel) {
 
-        val ringtoneList by ringtoneViewModel.ringtones.collectAsState()
-
-        if (loading) {
-            IndeterminateCircularIndicator()
-        }
-
-        Musix2025Theme {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-
-                LazyColumn {
-                    items(ringtoneList) { ringtone ->
-                        RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
-                        Spacer(Modifier.size(2.dp))
-                    }
-                }
-
-            }
-        }
-
-    }
 
     @Composable
     fun RingtonesList(loading: Boolean, ringtoneList: List<Ringtone>) {
@@ -336,7 +275,9 @@ class MainActivity : ComponentActivity() {
         RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
     }
 
+
     fun navigateToPlayActivity(ringtone: Ringtone) {
+
         //跳转到下一个activity
         val currentActivity = findActivity()
         val intent = Intent(currentActivity, PlayActivity::class.java).apply {
@@ -434,10 +375,12 @@ class MainActivity : ComponentActivity() {
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
         }
-
     }
 
 }
+
+
+
 
 
 
