@@ -106,15 +106,16 @@ class MainActivity : ComponentActivity() {
 //            Musix2025App(size)
 
             //测试数据库数据
-            DatabaseScreen(dao)
+            DatabaseScreen()
         }
     }
 
 
     @Composable
-    private fun DatabaseScreen(dao: RingtoneDao) {
-        val viewModel: RingtoneViewModel = viewModel(factory = RingtoneViewModelFactory(dao))
-        val ringtones by viewModel.ringtones.collectAsState()
+    private fun DatabaseScreen() {
+        val viewModel: RingtoneViewModel = viewModel(factory = RingtoneViewModelFactory(application))
+
+//        val ringtones by viewModel.ringtones.collectAsState()
 
 
         Scaffold(
@@ -125,7 +126,7 @@ class MainActivity : ComponentActivity() {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                RingtonesList(false, ringtones)
+                RingtonesList(false, viewModel)
             }
         }
 
@@ -261,6 +262,35 @@ class MainActivity : ComponentActivity() {
         }
 
 //        Log.d("musixButton", "Button is pressed: $isPressed")
+    }
+
+    @Composable
+    fun RingtonesList(loading: Boolean, ringtoneViewModel: RingtoneViewModel) {
+
+        val ringtoneList by ringtoneViewModel.ringtones.collectAsState()
+
+        if (loading) {
+            IndeterminateCircularIndicator()
+        }
+
+        Musix2025Theme {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                LazyColumn {
+                    items(ringtoneList) { ringtone ->
+                        RingtoneCard(ringtone = ringtone, ::navigateToPlayActivity)
+                        Spacer(Modifier.size(2.dp))
+                    }
+                }
+
+            }
+        }
+
     }
 
     @Composable

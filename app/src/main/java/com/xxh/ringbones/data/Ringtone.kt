@@ -1,30 +1,30 @@
 package com.xxh.ringbones.data
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import javax.annotation.Nonnull
 
 @Entity(tableName = "ringtones")
 @Parcelize
 data class Ringtone(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
-    @ColumnInfo
-    val title: String,
-
-    @ColumnInfo
+    @Nonnull
     val author: String,
 
-    @ColumnInfo
+    @Nonnull
+    val title: String,
+
+    @Nonnull
     val time: String,
 
-    @ColumnInfo
+    @Nonnull
     val url: String,
 
-    @ColumnInfo
+    @Nonnull
     val type: String
-):Serializable,Parcelable
+
+) : Serializable, Parcelable
