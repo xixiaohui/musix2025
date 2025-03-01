@@ -10,28 +10,7 @@
       
   <string name="ab1_inversions">Inversioni</string>
       
-  <string name="ab2_quick_yoga">Yoga veloce</string>
-      
-  <string name="ab3_stretching">Allungamento</string>
-      
-  <string name="ab4_tabata">Tabata</string>
-      
-  <string name="ab5_hiit">Allenamento ad alta intensità</string>
-      
-  <string name="ab6_pre_natal_yoga">Yoga prenatale</string>
-      
-  <string name="fc1_short_mantras">Mantra brevi</string>
-      
-  <string name="fc2_nature_meditations">Meditazioni sulla natura</string>
-      
-  <string name="fc3_stress_and_anxiety">Stress e ansia</string>
-      
-  <string name="fc4_self_massage">Automassaggio</string>
-      
-  <string name="fc5_overwhelmed">Sopraffatto</string>
-      
-  <string name="fc6_nightly_wind_down">Rilassamento notturno</string>
-      
+
   <string name="cd_fab_start">inizio</string>
       
   <string name="bottom_navigation_home">Casa</string>
