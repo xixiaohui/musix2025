@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class RingtoneViewModel(application: Application) : AndroidViewModel(application){
+class RingtoneViewModel(application: Application) : AndroidViewModel(application) {
 
     private val ringtoneDao = AppDatabase.getInstance(application).ringtoneDao()
 
@@ -28,7 +28,16 @@ class RingtoneViewModel(application: Application) : AndroidViewModel(application
 
     init {
         viewModelScope.launch {
-            ringtoneDao.getAllRingtones().collect { list ->
+            ringtoneDao.searchRingtonesLimited(15).collect { list ->
+                _ringtones.value = list
+            }
+        }
+    }
+
+    //通过铃音类型进行查询
+    fun search(typeName: String) {
+        viewModelScope.launch {
+            ringtoneDao.searchRingtoneByTypeExactly(typeName).collect { list ->
                 _ringtones.value = list
             }
         }
@@ -57,7 +66,7 @@ class RingtoneViewModel(application: Application) : AndroidViewModel(application
     }
 
     //删除铃音
-    fun deleteRingtone(ringtone: Ringtone){
+    fun deleteRingtone(ringtone: Ringtone) {
         viewModelScope.launch {
             ringtoneDao.delete(ringtone)
         }

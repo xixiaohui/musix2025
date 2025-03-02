@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -48,10 +47,27 @@ import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlin.reflect.KFunction2
 
 /**
- * 分类页面
- * 展示查询结果
+ *
+ * 展示查询结果的页面
+ *
  */
 class SearchResultActivity : ComponentActivity() {
+
+    val typeNameList = listOf(
+        "Funny" to 5,
+        "Devotional" to 8,
+        "Tamil" to 1,
+        "audio/mpeg" to 11,
+        "Iphone" to 10,
+        "Baby" to 9,
+        "Sound Effects" to 6,
+        "Music" to 3,
+        "Bollywood / Hindi" to 0,
+        "SMS  / Message Alert" to 2,
+        "Miscellaneous" to 7,
+        "Malayalam" to 4
+    ).associate { it.second to it.first }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -63,19 +79,21 @@ class SearchResultActivity : ComponentActivity() {
                 index = getInt("EXTRA_INFO")
             }
         }
-        Log.v("musixSearchResultActivity",index.toString())
+        Log.v("musixSearchResultActivity", index.toString())
+
 
         setContent {
-            DatabaseScreen()
+            DatabaseScreen(typeNameList[index]!!)
         }
     }
 
     @Composable
-    fun DatabaseScreen() {
+    fun DatabaseScreen(typeName: String) {
         val viewModel: RingtoneViewModel =
             viewModel(factory = RingtoneViewModelFactory(application))
 
 //        val ringtones by viewModel.ringtones.collectAsState()
+        viewModel.search(typeName)
 
         Scaffold(
             modifier = Modifier.fillMaxSize()
@@ -152,7 +170,7 @@ fun RingtoneCard(ringtone: Ringtone, navigateToPlay: KFunction2<Context, Rington
             .padding(start = 2.dp, end = 2.dp),
 
         onClick = {
-            navigateToPlay(context,ringtone)
+            navigateToPlay(context, ringtone)
         }
     ) {
         Box(
@@ -193,11 +211,17 @@ fun RingtoneCard(ringtone: Ringtone, navigateToPlay: KFunction2<Context, Rington
                         style = MaterialTheme.typography.labelSmall,
                     )
                     Spacer(modifier = Modifier.size(8.dp))
+
                     Text(
                         text = "on " + ringtone.time,
                         style = MaterialTheme.typography.labelSmall,
                     )
 
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = ringtone.type + " " + ringtone.id,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
                 }
             }
         }
@@ -205,7 +229,7 @@ fun RingtoneCard(ringtone: Ringtone, navigateToPlay: KFunction2<Context, Rington
     }
 }
 
-fun navigateToPlayActivity(context: Context,ringtone: Ringtone) {
+fun navigateToPlayActivity(context: Context, ringtone: Ringtone) {
     //跳转到下一个activity
     val intent = Intent(context, PlayActivity::class.java).apply {
 //                    putExtra("EXTRA_INFO", ringtone as Serializable)
