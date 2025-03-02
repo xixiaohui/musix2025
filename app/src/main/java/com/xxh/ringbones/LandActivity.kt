@@ -69,6 +69,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlin.reflect.KFunction2
 
@@ -293,12 +294,16 @@ fun AlignYourBodyRow(
 fun FavoriteCollectionsGrid(
     modifier: Modifier = Modifier
 ) {
+    val height = 84
+    val fixedCount = 4
+    val overallHeight = fixedCount * height
+
     LazyHorizontalGrid(
-        rows = GridCells.Fixed(2),
+        rows = GridCells.Fixed(fixedCount),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.height(168.dp)
+        modifier = modifier.height(Dp(overallHeight.toFloat()) )
     ) {
         itemsIndexed(favoriteCollectionsData) { index, item ->
             FavoriteCollectionCard(
