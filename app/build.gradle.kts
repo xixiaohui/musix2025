@@ -35,9 +35,17 @@ android {
     }
 
     buildTypes {
+        getByName("debug"){
+            debug {
+                isDebuggable = true
+
+                buildConfigField("boolean", "ENABLE_FEATURE", "true")
+            }
+        }
+
         getByName("release") {
 
-
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = false
 
@@ -47,6 +55,8 @@ android {
             )
 
             signingConfig = signingConfigs.getByName("release")
+
+            buildConfigField("boolean", "ENABLE_FEATURE", "true")
         }
     }
     compileOptions {
@@ -60,6 +70,9 @@ android {
         compose = true
     }
 
+    buildFeatures{
+        buildConfig = true
+    }
 
 //    sourceSets {
 //        // 配置 main 源集

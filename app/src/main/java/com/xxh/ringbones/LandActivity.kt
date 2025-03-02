@@ -28,9 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -89,32 +87,32 @@ class LandActivity : ComponentActivity() {
 
 
 private val alignYourBodyData = listOf(
-    R.drawable.ab1_inversions to R.string.hindi_bollywood,
-    R.drawable.ab1_inversions to R.string.tamil,
-    R.drawable.ab1_inversions to R.string.sms,
-    R.drawable.ab1_inversions to R.string.music,
-    R.drawable.ab1_inversions to R.string.malayalam,
-    R.drawable.ab1_inversions to R.string.funny,
-    R.drawable.ab1_inversions to R.string.sound,
-    R.drawable.ab1_inversions to R.string.miscellaneous,
-    R.drawable.ab1_inversions to R.string.devotional,
-    R.drawable.ab1_inversions to R.string.baby,
-    R.drawable.ab1_inversions to R.string.iphone,
+    R.drawable.erik to R.string.hindi_bollywood,
+    R.drawable.james to R.string.tamil,
+    R.drawable.artem to R.string.sms,
+    R.drawable.dushawn to R.string.music,
+    R.drawable.hanny to R.string.malayalam,
+    R.drawable.james to R.string.funny,
+    R.drawable.johanna to R.string.sound,
+    R.drawable.leticia to R.string.miscellaneous,
+    R.drawable.mohammad to R.string.devotional,
+    R.drawable.simon to R.string.baby,
+    R.drawable.anthony to R.string.iphone,
 
     ).map { DrawableStringPair(it.first, it.second) }
 
 private val favoriteCollectionsData = listOf(
-    R.drawable.ab1_inversions to R.string.hindi_bollywood,
-    R.drawable.ab1_inversions to R.string.tamil,
-    R.drawable.ab1_inversions to R.string.sms,
-    R.drawable.ab1_inversions to R.string.music,
-    R.drawable.ab1_inversions to R.string.malayalam,
-    R.drawable.ab1_inversions to R.string.funny,
-    R.drawable.ab1_inversions to R.string.sound,
-    R.drawable.ab1_inversions to R.string.miscellaneous,
-    R.drawable.ab1_inversions to R.string.devotional,
-    R.drawable.ab1_inversions to R.string.baby,
-    R.drawable.ab1_inversions to R.string.iphone,
+    R.drawable.erik to R.string.hindi_bollywood,
+    R.drawable.james to R.string.tamil,
+    R.drawable.artem to R.string.sms,
+    R.drawable.dushawn to R.string.music,
+    R.drawable.hanny to R.string.malayalam,
+    R.drawable.james to R.string.funny,
+    R.drawable.johanna to R.string.sound,
+    R.drawable.leticia to R.string.miscellaneous,
+    R.drawable.mohammad to R.string.devotional,
+    R.drawable.simon to R.string.baby,
+    R.drawable.anthony to R.string.iphone,
 ).map { DrawableStringPair(it.first, it.second) }
 
 private data class DrawableStringPair(
@@ -139,7 +137,7 @@ fun SearchBar(
             .heightIn(min = 56.dp)
             .background(MaterialTheme.colorScheme.background),
 
-        leadingIcon= {
+        leadingIcon = {
             IconButton(onClick = {
                 onImeActionDone(context, text)
             }) {
@@ -187,10 +185,8 @@ fun AlignYourBodyElement(
     val context = LocalContext.current
     Column(
         modifier = modifier.clickable {
-//            Log.v("musixAlignYourBodyElement", text.toString())
 
             navigateToSearchResult(context, index)
-
         },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -252,8 +248,8 @@ fun FavoriteCollectionCard(
 fun FavoriteCollectionCardPreview() {
     Musix2025Theme {
         FavoriteCollectionCard(
-            text = R.string.ab1_inversions,
-            drawable = R.drawable.ab1_inversions,
+            text = R.string.favorite_collections,
+            drawable = R.drawable.erik,
             navigateToSearchResult = ::navigateToSearchResultActivity,
             index = 0,
             modifier = Modifier.padding(8.dp)
@@ -343,7 +339,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     ) {
         Spacer(Modifier.height(16.dp))
         SearchBar(Modifier.padding(horizontal = 16.dp))
-        HomeSection(title = R.string.align_your_body) {
+        HomeSection(title = R.string.recommended_collections) {
             AlignYourBodyRow()
         }
         HomeSection(title = R.string.favorite_collections) {
@@ -402,7 +398,13 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
 fun MySootheAppPortrait() {
     Musix2025Theme {
         Scaffold(
-            bottomBar = { SootheBottomNavigation() }
+
+            bottomBar = {
+                if (BuildConfig.DEBUG) {
+                    SootheBottomNavigation()
+                }
+            }
+
         ) { padding ->
             HomeScreen(Modifier.padding(padding))
         }

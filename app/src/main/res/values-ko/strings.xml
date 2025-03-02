@@ -1,53 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
-      
-  <string name="app_name">음악</string>
-      
-  <string name="title_activity_land">토지 활동</string>
-      
-  <string name="favorite_collections">즐겨찾는 컬렉션</string>
-      
-  <string name="align_your_body">몸을 정렬하세요</string>
-      
-  <string name="ab1_inversions">역전</string>
-      
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
 
-      
-  <string name="cd_fab_start">시작</string>
-      
-  <string name="bottom_navigation_home">집</string>
-      
-  <string name="bottom_navigation_profile">윤곽</string>
-      
-  <string name="placeholder_search">찾다</string>
-      
-  <string name="title_activity_play">놀이활동</string>
-      
-  <string name="play">놀다</string>
-      
-  <string name="pause">정지시키다</string>
-      
-  <string name="tips">팁</string>
-      
-  <string name="downloadTips">이 벨소리를 다운로드하시겠습니까?</string>
-      
-  <string name="downloadTips2">인터넷에서 이 벨소리를 다운로드하세요.</string>
-      
-  <string name="downloadTips3">벨소리 파일이 종료되었습니다.</string>
-      
-  <string name="add_to_fav_list">즐겨찾기 목록에 추가하시겠습니까?</string>
-      
-  <string name="add_to_fav_list2">즐겨찾기 목록에 추가</string>
-      
-  <string name="set_ringtone">이 벨소리를 휴대폰 벨소리로 설정하시겠습니까?</string>
-      
-  <string name="set_ringtone2">당신의 전화 벨소리로</string>
-      
-  <string name="set_ringtone3">벨소리가 종료되지 않았습니다! 먼저 다운로드해 주세요.</string>
-      
-  <string name="set_ringtone_success">벨소리 설정 성공.</string>
-      
-  <string name="cancel">취소</string>
-      
-  <string name="confirm">확인하다</string>
-  
+    <string name="app_name" translatable="false">Musix</string>
+
+    <string name="bottom_navigation_home" translatable="false">Home</string>
+
+    <string name="bottom_navigation_profile" translatable="false">Profile</string>
+
+    <string name="placeholder_search">찾다</string>
+
+    <string name="cd_fab_start" translatable="false">start</string>
+
+    <string name="play" translatable="false">play</string>
+
+    <string name="pause" translatable="false">pause</string>
+
+    <string name="tips" translatable="false">Tips</string>
+
+    <string name="downloadTips">이 벨소리를 다운로드하시겠습니까?</string>
+
+    <string name="downloadTips2">인터넷에서 이 벨소리를 다운로드하세요.</string>
+
+    <string name="downloadTips3">벨소리 파일이 존재합니다.</string>
+
+    <string name="add_to_fav_list">즐겨찾기 목록에 추가하시겠습니까?</string>
+
+    <string name="add_to_fav_list2">즐겨찾기 목록에 추가</string>
+
+    <string name="set_ringtone">이 벨소리를 휴대폰 벨소리로 설정하시겠습니까?</string>
+
+    <string name="set_ringtone2">당신의 전화 벨소리로</string>
+
+    <string name="set_ringtone3">벨소리가 존재하지 않습니다! 먼저 다운로드해 주세요.</string>
+
+    <string name="set_ringtone_success">벨소리 설정 성공.</string>
+
+    <string name="cancel">취소</string>
+
+    <string name="confirm">확인하다</string>
+
+    <string name="favorite_collections">즐겨찾는 컬렉션</string>
+
+    <string name="recommended_collections">추천 벨소리</string>
+
+    <string name="hindi_bollywood">힌디어-볼리우드</string>
+
+    <string name="tamil">타밀 사람</string>
+
+    <string name="sms">문자 메시지</string>
+
+    <string name="music">음악</string>
+
+    <string name="malayalam">말라얄람어</string>
+
+    <string name="funny">재미있는</string>
+
+    <string name="sound">소리</string>
+
+    <string name="miscellaneous">여러 가지 잡다한</string>
+
+    <string name="devotional">헌신적인</string>
+
+    <string name="baby">아기</string>
+
+    <string name="iphone">아이폰</string>
+
+
 </resources>

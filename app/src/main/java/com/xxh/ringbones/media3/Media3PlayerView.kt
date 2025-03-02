@@ -276,7 +276,7 @@ fun Media3AndroidView(player: ExoPlayer?) {
 
             this.artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FILL
             this.defaultArtwork =
-                ContextCompat.getDrawable(context, com.xxh.ringbones.R.drawable.amplitude)
+                ContextCompat.getDrawable(context, com.xxh.ringbones.R.drawable.erik)
 
             val defaultTimeBar =
                 this.findViewById<DefaultTimeBar>(androidx.media3.ui.R.id.exo_progress).apply {

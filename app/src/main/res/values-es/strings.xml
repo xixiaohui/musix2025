@@ -1,53 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
-      
-  <string name="app_name">Música</string>
-      
-  <string name="title_activity_land">Actividad terrestre</string>
-      
-  <string name="favorite_collections">Colecciones favoritas</string>
-      
-  <string name="align_your_body">Alinea tu cuerpo</string>
-      
-  <string name="ab1_inversions">Inversiones</string>
-      
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
 
-      
-  <string name="cd_fab_start">comenzar</string>
-      
-  <string name="bottom_navigation_home">Hogar</string>
-      
-  <string name="bottom_navigation_profile">Perfil</string>
-      
-  <string name="placeholder_search">Buscar</string>
-      
-  <string name="title_activity_play">Actividad de juego</string>
-      
-  <string name="play">jugar</string>
-      
-  <string name="pause">pausa</string>
-      
-  <string name="tips">Consejos</string>
-      
-  <string name="downloadTips">¿Descargar este tono de llamada?</string>
-      
-  <string name="downloadTips2">Descargue este tono de llamada de internet.</string>
-      
-  <string name="downloadTips3">El archivo de tono de llamada está disponible.</string>
-      
-  <string name="add_to_fav_list">¿Añadir a la lista de favoritos?</string>
-      
-  <string name="add_to_fav_list2">Añadir a la lista de favoritos</string>
-      
-  <string name="set_ringtone">¿Establecer este tono de llamada como tono de llamada de su teléfono?</string>
-      
-  <string name="set_ringtone2">Como tono de llamada de tu teléfono</string>
-      
-  <string name="set_ringtone3">¡El tono de llamada no sale! Por favor descargue primero.</string>
-      
-  <string name="set_ringtone_success">Establecer tono de llamada exitoso.</string>
-      
-  <string name="cancel">Cancelar</string>
-      
-  <string name="confirm">Confirmar</string>
-  
+    <string name="app_name" translatable="false">Musix</string>
+
+    <string name="bottom_navigation_home" translatable="false">Home</string>
+
+    <string name="bottom_navigation_profile" translatable="false">Profile</string>
+
+    <string name="placeholder_search">Buscar</string>
+
+    <string name="cd_fab_start" translatable="false">start</string>
+
+    <string name="play" translatable="false">play</string>
+
+    <string name="pause" translatable="false">pause</string>
+
+    <string name="tips" translatable="false">Tips</string>
+
+    <string name="downloadTips">¿Descargar este tono de llamada?</string>
+
+    <string name="downloadTips2">Descargue este tono de llamada de internet.</string>
+
+    <string name="downloadTips3">El archivo de tono de llamada existe.</string>
+
+    <string name="add_to_fav_list">¿Añadir a la lista de favoritos?</string>
+
+    <string name="add_to_fav_list2">Añadir a la lista de favoritos</string>
+
+    <string name="set_ringtone">¿Establecer este tono de llamada como tono de llamada de su teléfono?</string>
+
+    <string name="set_ringtone2">Como tono de llamada de tu teléfono</string>
+
+    <string name="set_ringtone3">¡El tono de llamada no existe! Por favor descargue primero.</string>
+
+    <string name="set_ringtone_success">Establecer tono de llamada exitoso.</string>
+
+    <string name="cancel">Cancelar</string>
+
+    <string name="confirm">Confirmar</string>
+
+    <string name="favorite_collections">Colecciones favoritas</string>
+
+    <string name="recommended_collections">Tonos de llamada recomendados</string>
+
+    <string name="hindi_bollywood">Hindi-Bollywood</string>
+
+    <string name="tamil">Tamil</string>
+
+    <string name="sms">Mensaje de texto</string>
+
+    <string name="music">Música</string>
+
+    <string name="malayalam">Malabar</string>
+
+    <string name="funny">Divertido</string>
+
+    <string name="sound">Sonido</string>
+
+    <string name="miscellaneous">Misceláneas</string>
+
+    <string name="devotional">Piadoso</string>
+
+    <string name="baby">Bebé</string>
+
+    <string name="iphone">Iphone</string>
+
+
 </resources>

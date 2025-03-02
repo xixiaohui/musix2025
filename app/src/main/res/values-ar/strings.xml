@@ -1,53 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?><resources>
-      
-  <string name="app_name">موسيقى</string>
-      
-  <string name="title_activity_land">النشاط الأرضي</string>
-      
-  <string name="favorite_collections">المجموعات المفضلة</string>
-      
-  <string name="align_your_body">محاذاة جسمك</string>
-      
-  <string name="ab1_inversions">الانعكاسات</string>
-      
 
-      
-  <string name="cd_fab_start">يبدأ</string>
-      
-  <string name="bottom_navigation_home">بيت</string>
-      
-  <string name="bottom_navigation_profile">حساب تعريفي</string>
-      
-  <string name="placeholder_search">يبحث</string>
-      
-  <string name="title_activity_play">لعب النشاط</string>
-      
-  <string name="play">يلعب</string>
-      
-  <string name="pause">يوقف</string>
-      
-  <string name="tips">نصائح</string>
-      
+
+
+  <string name="app_name" translatable="false">Musix</string>
+
+  <string name="bottom_navigation_home" translatable="false">Home</string>
+
+  <string name="bottom_navigation_profile" translatable="false">Profile</string>
+
+  <string name="cd_fab_start" translatable="false">start</string>
+
+  <string name="play" translatable="false">play</string>
+
+  <string name="pause" translatable="false">pause</string>
+
+  <string name="tips" translatable="false">Tips</string>
+
   <string name="downloadTips">تنزيل هذه النغمة؟</string>
-      
+
   <string name="downloadTips2">قم بتنزيل نغمة الرنين هذه من الإنترنت.</string>
-      
-  <string name="downloadTips3">تم الخروج من ملف نغمة الرنين.</string>
-      
+
+  <string name="downloadTips3">ملف نغمة الرنين موجود.</string>
+
   <string name="add_to_fav_list">أضف إلى قائمة المفضلة؟</string>
-      
+
   <string name="add_to_fav_list2">أضف إلى قائمة المفضلة</string>
-      
+
   <string name="set_ringtone">تعيين هذه النغمة كنغمة رنين لهاتفك؟</string>
-      
+
   <string name="set_ringtone2">كنغمة رنين لهاتفك</string>
-      
-  <string name="set_ringtone3">نغمة الرنين ليست خروج! يرجى التنزيل أولاً.</string>
-      
+
+  <string name="set_ringtone3">نغمة الرنين غير موجودة! يرجى التنزيل أولاً.</string>
+
   <string name="set_ringtone_success">تم ضبط نغمة الرنين بنجاح.</string>
-      
+
   <string name="cancel">يلغي</string>
-      
+
   <string name="confirm">يتأكد</string>
-  
+
+  <string name="favorite_collections">المجموعات المفضلة</string>
+
+  <string name="recommended_collections">نغمات الرنين الموصى بها</string>
+
+  <string name="hindi_bollywood">الهندية-بوليوود</string>
+
+  <string name="tamil">التاميلية</string>
+
+  <string name="sms">رسالة قصيرة</string>
+
+  <string name="music">موسيقى</string>
+
+  <string name="malayalam">المالايالامية</string>
+
+  <string name="funny">مضحك</string>
+
+  <string name="sound">صوت</string>
+
+  <string name="miscellaneous">متنوع</string>
+
+  <string name="devotional">عبادي</string>
+
+  <string name="baby">طفل</string>
+
+  <string name="iphone">ايفون</string>
+
+  <string name="placeholder_search">يبحث</string>
 </resources>

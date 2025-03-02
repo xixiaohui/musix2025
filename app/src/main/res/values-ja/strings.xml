@@ -1,53 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
-      
-  <string name="app_name">ミュージック</string>
-      
-  <string name="title_activity_land">陸上アクティビティ</string>
-      
-  <string name="favorite_collections">お気に入りのコレクション</string>
-      
-  <string name="align_your_body">体を整える</string>
-      
-  <string name="ab1_inversions">反転</string>
-      
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
 
-      
-  <string name="cd_fab_start">始める</string>
-      
-  <string name="bottom_navigation_home">家</string>
-      
-  <string name="bottom_navigation_profile">プロフィール</string>
-      
-  <string name="placeholder_search">検索</string>
-      
-  <string name="title_activity_play">プレイアクティビティ</string>
-      
-  <string name="play">遊ぶ</string>
-      
-  <string name="pause">一時停止</string>
-      
-  <string name="tips">ヒント</string>
-      
-  <string name="downloadTips">この着信音をダウンロードしますか?</string>
-      
-  <string name="downloadTips2">この着信音をインターネットからダウンロードしてください。</string>
-      
-  <string name="downloadTips3">着信音ファイルは終了です。</string>
-      
-  <string name="add_to_fav_list">お気に入りリストに追加しますか?</string>
-      
-  <string name="add_to_fav_list2">お気に入りリストに追加</string>
-      
-  <string name="set_ringtone">この着信音を携帯電話の着信音として設定しますか?</string>
-      
-  <string name="set_ringtone2">携帯電話の着信音として</string>
-      
-  <string name="set_ringtone3">着信音は出ません！まずはダウンロードしてください。</string>
-      
-  <string name="set_ringtone_success">着信音の設定に成功しました。</string>
-      
-  <string name="cancel">キャンセル</string>
-      
-  <string name="confirm">確認する</string>
-  
+    <string name="app_name" translatable="false">Musix</string>
+
+    <string name="bottom_navigation_home" translatable="false">Home</string>
+
+    <string name="bottom_navigation_profile" translatable="false">Profile</string>
+
+    <string name="placeholder_search">検索</string>
+
+    <string name="cd_fab_start" translatable="false">start</string>
+
+    <string name="play" translatable="false">play</string>
+
+    <string name="pause" translatable="false">pause</string>
+
+    <string name="tips" translatable="false">Tips</string>
+
+    <string name="downloadTips">この着信音をダウンロードしますか?</string>
+
+    <string name="downloadTips2">この着信音をインターネットからダウンロードしてください。</string>
+
+    <string name="downloadTips3">着信音ファイルが存在します。</string>
+
+    <string name="add_to_fav_list">お気に入りリストに追加しますか?</string>
+
+    <string name="add_to_fav_list2">お気に入りリストに追加</string>
+
+    <string name="set_ringtone">この着信音を携帯電話の着信音として設定しますか?</string>
+
+    <string name="set_ringtone2">携帯電話の着信音として</string>
+
+    <string name="set_ringtone3">着信音が存在しません! まずはダウンロードしてください。</string>
+
+    <string name="set_ringtone_success">着信音の設定に成功しました。</string>
+
+    <string name="cancel">キャンセル</string>
+
+    <string name="confirm">確認する</string>
+
+    <string name="favorite_collections">お気に入りのコレクション</string>
+
+    <string name="recommended_collections">おすすめの着信音</string>
+
+    <string name="hindi_bollywood">ヒンディー語-ボリウッド</string>
+
+    <string name="tamil">タミル語</string>
+
+    <string name="sms">SMS</string>
+
+    <string name="music">音楽</string>
+
+    <string name="malayalam">マラヤーラム語</string>
+
+    <string name="funny">面白い</string>
+
+    <string name="sound">音</string>
+
+    <string name="miscellaneous">その他</string>
+
+    <string name="devotional">祈り</string>
+
+    <string name="baby">赤ちゃん</string>
+
+    <string name="iphone">アイフォン</string>
+
+
 </resources>

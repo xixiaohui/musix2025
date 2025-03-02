@@ -1,53 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
-      
-  <string name="app_name">म्यूज़िक्स</string>
-      
-  <string name="title_activity_land">भूमि गतिविधि</string>
-      
-  <string name="favorite_collections">पसंदीदा संग्रह</string>
-      
-  <string name="align_your_body">अपने शरीर को संरेखित करें</string>
-      
-  <string name="ab1_inversions">इन्वर्ज़न</string>
-      
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
 
-      
-  <string name="cd_fab_start">शुरू</string>
-      
-  <string name="bottom_navigation_home">घर</string>
-      
-  <string name="bottom_navigation_profile">प्रोफ़ाइल</string>
-      
-  <string name="placeholder_search">खोज</string>
-      
-  <string name="title_activity_play">खेल गतिविधि</string>
-      
-  <string name="play">खेल</string>
-      
-  <string name="pause">विराम</string>
-      
-  <string name="tips">सुझावों</string>
-      
-  <string name="downloadTips">यह रिंगटोन डाउनलोड करें?</string>
-      
-  <string name="downloadTips2">इस रिंगटोन को इंटरनेट से डाउनलोड करें.</string>
-      
-  <string name="downloadTips3">रिंगटोन फ़ाइल बाहर आ गई है.</string>
-      
-  <string name="add_to_fav_list">पसंदीदा सूची में जोड़ें?</string>
-      
-  <string name="add_to_fav_list2">पसंदीदा सूची में जोड़ें</string>
-      
-  <string name="set_ringtone">इस रिंगटोन को अपने फोन रिंगटोन के रूप में सेट करें?</string>
-      
-  <string name="set_ringtone2">आपके फ़ोन की रिंगटोन के रूप में</string>
-      
-  <string name="set_ringtone3">रिंगटोन बाहर नहीं है! कृपया पहले डाउनलोड करें.</string>
-      
-  <string name="set_ringtone_success">रिंगटोन सेट करना सफल.</string>
-      
-  <string name="cancel">रद्द करना</string>
-      
-  <string name="confirm">पुष्टि करना</string>
-  
+    <string name="app_name" translatable="false">Musix</string>
+
+    <string name="bottom_navigation_home" translatable="false">Home</string>
+
+    <string name="bottom_navigation_profile" translatable="false">Profile</string>
+
+    <string name="placeholder_search">खोज</string>
+
+    <string name="cd_fab_start" translatable="false">start</string>
+
+    <string name="play" translatable="false">play</string>
+
+    <string name="pause" translatable="false">pause</string>
+
+    <string name="tips" translatable="false">Tips</string>
+
+    <string name="downloadTips">यह रिंगटोन डाउनलोड करें?</string>
+
+    <string name="downloadTips2">इस रिंगटोन को इंटरनेट से डाउनलोड करें.</string>
+
+    <string name="downloadTips3">रिंगटोन फ़ाइल मौजूद है.</string>
+
+    <string name="add_to_fav_list">पसंदीदा सूची में जोड़ें?</string>
+
+    <string name="add_to_fav_list2">पसंदीदा सूची में जोड़ें</string>
+
+    <string name="set_ringtone">इस रिंगटोन को अपने फोन रिंगटोन के रूप में सेट करें?</string>
+
+    <string name="set_ringtone2">आपके फ़ोन की रिंगटोन के रूप में</string>
+
+    <string name="set_ringtone3">रिंगटोन मौजूद नहीं है! कृपया पहले डाउनलोड करें.</string>
+
+    <string name="set_ringtone_success">रिंगटोन सेट करना सफल.</string>
+
+    <string name="cancel">रद्द करना</string>
+
+    <string name="confirm">पुष्टि करना</string>
+
+    <string name="favorite_collections">पसंदीदा संग्रह</string>
+
+    <string name="recommended_collections">अनुशंसित रिंगटोन</string>
+
+    <string name="hindi_bollywood">हिंदी-बॉलीवुड</string>
+
+    <string name="tamil">तामिल</string>
+
+    <string name="sms">एसएमएस</string>
+
+    <string name="music">संगीत</string>
+
+    <string name="malayalam">मलयालम</string>
+
+    <string name="funny">मज़ेदार</string>
+
+    <string name="sound">आवाज़</string>
+
+    <string name="miscellaneous">मिश्रित</string>
+
+    <string name="devotional">धार्मिक</string>
+
+    <string name="baby">बच्चा</string>
+
+    <string name="iphone">आईफोन</string>
+
+
 </resources>

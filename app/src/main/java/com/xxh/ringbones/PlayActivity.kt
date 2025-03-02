@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.content.IntentCompat.getParcelableExtra
 import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.media3.Media3PlayerView
 import com.xxh.ringbones.ui.theme.Musix2025Theme
@@ -43,12 +44,10 @@ class PlayActivity : ComponentActivity() {
 
 
         //获取ringtone
-        val bundle: Bundle? = intent.extras
-        var ringtone: Ringtone? = null
-        bundle?.let {
-            bundle.apply {
-                ringtone = getParcelable("EXTRA_INFO")!!
-            }
+        val ringtone: Ringtone? = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            intent.getParcelableExtra("EXTRA_INFO",Ringtone::class.java)
+        }else{
+            intent.getParcelableExtra<Ringtone>("EXTRA_INFO")
         }
 
 

@@ -1,47 +1,43 @@
 <resources>
-    <string name="app_name">Musix</string>
-    <string name="title_activity_land">LandActivity</string>
-    <string name="favorite_collections">Favorite Collections</string>
-    <string name="align_your_body">Align your Body</string>
-    <string name="ab1_inversions">Inversions</string>
+    <string name="app_name" translatable="false">Musix</string>
+    <string name="bottom_navigation_home" translatable="false">Home</string>
+    <string name="bottom_navigation_profile" translatable="false">Profile</string>
 
-    <string name="cd_fab_start">start</string>
-    <string name="bottom_navigation_home">Home</string>
-    <string name="bottom_navigation_profile">Profile</string>
-    <string name="placeholder_search">Search</string>
-    <string name="title_activity_play">PlayActivity</string>
+    <string name="cd_fab_start" translatable="false">start</string>
+    <string name="play" translatable="false">play</string>
+    <string name="pause" translatable="false">pause</string>
+    <string name="tips" translatable="false">Tips</string>
 
-    <string name="play">play</string>
-    <string name="pause">pause</string>
+    <string name="title_activity_play" translatable="false">PlayActivity</string>
+    <string name="title_activity_land" translatable="false">LandActivity</string>
 
-    <string name="tips">Tips</string>
 
     <string name="downloadTips">Download this ringtone?</string>
     <string name="downloadTips2">Download this ringtone from internet.</string>
     <string name="downloadTips3">Ringtone file is exist.</string>
-
     <string name="add_to_fav_list">Add to favorites list?</string>
     <string name="add_to_fav_list2">Add to favorites list</string>
-
     <string name="set_ringtone">Set this ringtone as your phone ringtone?</string>
     <string name="set_ringtone2">As your phone ringtone</string>
     <string name="set_ringtone3">Ringtone is not exist! Please download first.</string>
     <string name="set_ringtone_success">Set ringtone success.</string>
-
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
 
-    <string name="hindi_bollywood" translatable="false">Hindi-bollywood</string>
-    <string name="tamil" translatable="false">Tamil</string>
-    <string name="sms" translatable="false">Sms</string>
-    <string name="music" translatable="false">Music</string>
-    <string name="malayalam" translatable="false">Malayalam</string>
-    <string name="funny" translatable="false">Funny</string>
-    <string name="sound" translatable="false">Sound</string>
-    <string name="miscellaneous" translatable="false">Miscellaneous</string>
-    <string name="devotional" translatable="false">Devotional</string>
-    <string name="baby" translatable="false">Baby</string>
-    <string name="iphone" translatable="false">Iphone</string>
+    <string name="placeholder_search">Search</string>
+    <string name="favorite_collections">Favorite Collections</string>
+    <string name="recommended_collections">Recommended Ringtones</string>
+    <string name="hindi_bollywood" >Hindi-bollywood</string>
+    <string name="tamil" >Tamil</string>
+    <string name="sms" >Sms</string>
+    <string name="music" >Music</string>
+    <string name="malayalam" >Malayalam</string>
+    <string name="funny" >Funny</string>
+    <string name="sound" >Sound</string>
+    <string name="miscellaneous" >Miscellaneous</string>
+    <string name="devotional" >Devotional</string>
+    <string name="baby" >Baby</string>
+    <string name="iphone" >Iphone</string>
 
 
 </resources>

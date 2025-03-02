@@ -1,52 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
-      
-  <string name="app_name">Musix</string>
-      
-  <string name="title_activity_land">LandAktivität</string>
-      
-  <string name="favorite_collections">Beliebteste Kollektionen</string>
-      
-  <string name="align_your_body">Richten Sie Ihren Körper aus</string>
-      
-  <string name="ab1_inversions">Umkehrungen</string>
-      
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
 
-  <string name="cd_fab_start">Start</string>
-      
-  <string name="bottom_navigation_home">Heim</string>
-      
-  <string name="bottom_navigation_profile">Profil</string>
-      
-  <string name="placeholder_search">Suchen</string>
-      
-  <string name="title_activity_play">Spielaktivität</string>
-      
-  <string name="play">spielen</string>
-      
-  <string name="pause">Pause</string>
-      
-  <string name="tips">Tipps</string>
-      
-  <string name="downloadTips">Diesen Klingelton herunterladen?</string>
-      
-  <string name="downloadTips2">Laden Sie diesen Klingelton aus dem Internet herunter.</string>
-      
-  <string name="downloadTips3">Klingeltondatei wird beendet.</string>
-      
-  <string name="add_to_fav_list">Zur Favoritenliste hinzufügen?</string>
-      
-  <string name="add_to_fav_list2">Zur Favoritenliste hinzufügen</string>
-      
-  <string name="set_ringtone">Diesen Klingelton als Klingelton für Ihr Telefon festlegen?</string>
-      
-  <string name="set_ringtone2">Als Klingelton für Ihr Telefon</string>
-      
-  <string name="set_ringtone3">Klingelton wird nicht beendet! Bitte zuerst herunterladen.</string>
-      
-  <string name="set_ringtone_success">Klingelton erfolgreich eingestellt.</string>
-      
-  <string name="cancel">Stornieren</string>
-      
-  <string name="confirm">Bestätigen</string>
-  
+    <string name="app_name" translatable="false">Musix</string>
+
+    <string name="bottom_navigation_home" translatable="false">Home</string>
+
+    <string name="bottom_navigation_profile" translatable="false">Profile</string>
+
+    <string name="placeholder_search">Suchen</string>
+
+    <string name="cd_fab_start" translatable="false">start</string>
+
+    <string name="play" translatable="false">play</string>
+
+    <string name="pause" translatable="false">pause</string>
+
+    <string name="tips" translatable="false">Tips</string>
+
+    <string name="downloadTips">Diesen Klingelton herunterladen?</string>
+
+    <string name="downloadTips2">Laden Sie diesen Klingelton aus dem Internet herunter.</string>
+
+    <string name="downloadTips3">Klingeltondatei ist vorhanden.</string>
+
+    <string name="add_to_fav_list">Zur Favoritenliste hinzufügen?</string>
+
+    <string name="add_to_fav_list2">Zur Favoritenliste hinzufügen</string>
+
+    <string name="set_ringtone">Diesen Klingelton als Klingelton für Ihr Telefon festlegen?</string>
+
+    <string name="set_ringtone2">Als Klingelton für Ihr Telefon</string>
+
+    <string name="set_ringtone3">Klingelton existiert nicht! Bitte zuerst herunterladen.</string>
+
+    <string name="set_ringtone_success">Klingelton erfolgreich eingestellt.</string>
+
+    <string name="cancel">Stornieren</string>
+
+    <string name="confirm">Bestätigen</string>
+
+    <string name="favorite_collections">Beliebteste Kollektionen</string>
+
+    <string name="recommended_collections">Empfohlene Klingeltöne</string>
+
+    <string name="hindi_bollywood">Hindi-Bollywood</string>
+
+    <string name="tamil">Tamil</string>
+
+    <string name="sms">SMS</string>
+
+    <string name="music">Musik</string>
+
+    <string name="malayalam">Lettisch</string>
+
+    <string name="funny">Lustig</string>
+
+    <string name="sound">Klang</string>
+
+    <string name="miscellaneous">Verschiedenes</string>
+
+    <string name="devotional">Andacht</string>
+
+    <string name="baby">Baby</string>
+
+    <string name="iphone">Iphone</string>
+
+
 </resources>
+

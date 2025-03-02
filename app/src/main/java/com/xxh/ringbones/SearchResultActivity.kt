@@ -40,12 +40,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.BuildConfig
 import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.data.RingtoneViewModel
 import com.xxh.ringbones.data.RingtoneViewModelFactory
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlin.reflect.KFunction2
+
 
 /**
  *
@@ -140,7 +140,7 @@ fun RingtonesList(loading: Boolean, ringtoneViewModel: RingtoneViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 24.dp),
+                .padding(top = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
@@ -233,7 +233,7 @@ fun RingtoneCard(ringtone: Ringtone, navigateToPlay: KFunction2<Context, Rington
                         style = MaterialTheme.typography.labelSmall,
                     )
 
-                    if (BuildConfig.DEBUG) {
+                    if (BuildConfig.ENABLE_FEATURE) {
                         Spacer(modifier = Modifier.size(8.dp))
                         Text(
                             text = ringtone.type + " " + ringtone.id,
