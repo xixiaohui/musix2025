@@ -28,16 +28,25 @@ class RingtoneViewModel(application: Application) : AndroidViewModel(application
 
     init {
         viewModelScope.launch {
-            ringtoneDao.searchRingtonesLimited(15).collect { list ->
+            ringtoneDao.searchRingtonesLimited(7).collect { list ->
                 _ringtones.value = list
             }
         }
     }
 
     //通过铃音类型进行查询
-    fun search(typeName: String) {
+    fun searchByType(typeName: String) {
         viewModelScope.launch {
             ringtoneDao.searchRingtoneByTypeExactly(typeName).collect { list ->
+                _ringtones.value = list
+            }
+        }
+    }
+
+    //通过铃音类型进行查询
+    fun searchByTitle(title: String) {
+        viewModelScope.launch {
+            ringtoneDao.searchRingtoneByTitle(title).collect { list ->
                 _ringtones.value = list
             }
         }

@@ -30,6 +30,9 @@ interface RingtoneDao {
     @Query("SELECT * FROM ringtones WHERE id IN (:ringtonesIds)")
     fun searchRingtoneByIds(ringtonesIds:List<Int>): kotlinx.coroutines.flow.Flow<List<Ringtone>>
 
+    //通过title查询铃音 模糊查询 %title%
+    @Query("SELECT * FROM ringtones WHERE title LIKE :title OR author LIKE :title ORDER BY id ASC")
+    fun searchRingtoneByTitle(title:String): kotlinx.coroutines.flow.Flow<List<Ringtone>>
 
     @Delete
     suspend fun delete(ringtone: Ringtone)

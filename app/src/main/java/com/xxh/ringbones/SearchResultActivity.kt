@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.BuildConfig
 import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.data.RingtoneViewModel
 import com.xxh.ringbones.data.RingtoneViewModelFactory
@@ -53,7 +54,7 @@ import kotlin.reflect.KFunction2
  */
 class SearchResultActivity : ComponentActivity() {
 
-    val typeNameList = listOf(
+    private val typeNameList = listOf(
         "Funny" to 5,
         "Devotional" to 8,
         "Tamil" to 1,
@@ -74,26 +75,41 @@ class SearchResultActivity : ComponentActivity() {
 
         val bundle: Bundle? = intent.extras
         var index = 0
+        var byTitleSearchText: String? = null
+
         bundle?.let {
             bundle.apply {
                 index = getInt("EXTRA_INFO")
+                byTitleSearchText = getString("EXTRA_TITLE")
             }
         }
         Log.v("musixSearchResultActivity", index.toString())
 
 
         setContent {
-            DatabaseScreen(typeNameList[index]!!)
+
+            if (byTitleSearchText != null) {
+                DatabaseScreen(searchText = byTitleSearchText!!,false)
+            } else {
+                DatabaseScreen(searchText = typeNameList[index]!!)
+            }
+
         }
     }
 
     @Composable
-    fun DatabaseScreen(typeName: String) {
+    fun DatabaseScreen(searchText: String, searchByType: Boolean = true) {
         val viewModel: RingtoneViewModel =
             viewModel(factory = RingtoneViewModelFactory(application))
 
 //        val ringtones by viewModel.ringtones.collectAsState()
-        viewModel.search(typeName)
+
+        if (searchByType) {
+            viewModel.searchByType(searchText)
+        } else {
+            viewModel.searchByTitle("%$searchText%")
+        }
+
 
         Scaffold(
             modifier = Modifier.fillMaxSize()
@@ -217,11 +233,14 @@ fun RingtoneCard(ringtone: Ringtone, navigateToPlay: KFunction2<Context, Rington
                         style = MaterialTheme.typography.labelSmall,
                     )
 
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = ringtone.type + " " + ringtone.id,
-                        style = MaterialTheme.typography.labelSmall,
-                    )
+                    if (BuildConfig.DEBUG) {
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = ringtone.type + " " + ringtone.id,
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                    }
+
                 }
             }
         }

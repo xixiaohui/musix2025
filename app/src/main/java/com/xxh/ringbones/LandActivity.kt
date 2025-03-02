@@ -34,12 +34,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -62,7 +65,12 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import com.xxh.ringbones.ui.theme.Musix2025Theme
 import kotlin.reflect.KFunction2
 
@@ -118,19 +126,29 @@ private data class DrawableStringPair(
 fun SearchBar(
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    var text by remember { mutableStateOf("") }
+
     TextField(
-        value = "",
-        onValueChange = {},
+        value = text,
+        onValueChange = { newText ->
+            text = newText
+        },
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
             .background(MaterialTheme.colorScheme.background),
 
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null
-            )
+        leadingIcon= {
+            IconButton(onClick = {
+                onImeActionDone(context, text)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null
+                )
+            }
+
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -139,7 +157,21 @@ fun SearchBar(
         placeholder = {
             Text(stringResource(R.string.placeholder_search))
         },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done  // 设置回车按钮为 "Done"
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                //当回车键按下时执行的操作
+                onImeActionDone(context, text)
+            }
+        )
     )
+}
+
+//处理在搜索栏输入后，按下回车后的操作
+fun onImeActionDone(context: Context, text: String) {
+    navigateToSearchResultActivityText(context, text)
 }
 
 
@@ -233,6 +265,15 @@ fun navigateToSearchResultActivity(context: Context, index: Int) {
     val intent = Intent(context, SearchResultActivity::class.java).apply {
 //                    putExtra("EXTRA_INFO", ringtone as Serializable)
         putExtra("EXTRA_INFO", index)
+    }
+    context.startActivity(intent)
+}
+
+fun navigateToSearchResultActivityText(context: Context, text: String) {
+    val intent = Intent(context, SearchResultActivity::class.java).apply {
+//                    putExtra("EXTRA_INFO", ringtone as Serializable)
+        putExtra("EXTRA_INFO", 0)
+        putExtra("EXTRA_TITLE", text)
     }
     context.startActivity(intent)
 }
@@ -334,7 +375,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
             selected = true,
             onClick = {
 
-                navigateToSearchResultActivity(context,0)
+                navigateToSearchResultActivity(context, 0)
 
             }
         )
@@ -350,7 +391,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
             },
             selected = false,
             onClick = {
-                navigateToSearchResultActivity(context,0)
+                navigateToSearchResultActivity(context, 0)
             }
         )
     }
