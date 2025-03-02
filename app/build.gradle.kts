@@ -56,7 +56,7 @@ android {
 
             signingConfig = signingConfigs.getByName("release")
 
-            buildConfigField("boolean", "ENABLE_FEATURE", "true")
+            buildConfigField("boolean", "ENABLE_FEATURE", "false")
         }
     }
     compileOptions {
