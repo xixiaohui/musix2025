@@ -38,6 +38,7 @@
     <string name="devotional" >Devotional</string>
     <string name="baby" >Baby</string>
     <string name="iphone" >Iphone</string>
+    <string name="audio_mpeg" translatable="false">audio/mpeg</string>
 
 
 </resources>

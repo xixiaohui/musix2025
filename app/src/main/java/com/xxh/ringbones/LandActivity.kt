@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,7 +29,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -71,7 +74,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import com.xxh.ringbones.ui.theme.Musix2025Theme
-import kotlin.reflect.KFunction2
+import kotlin.reflect.KFunction3
 
 
 class LandActivity : ComponentActivity() {
@@ -103,18 +106,37 @@ private val alignYourBodyData = listOf(
     ).map { DrawableStringPair(it.first, it.second) }
 
 private val favoriteCollectionsData = listOf(
-    R.drawable.erik to R.string.hindi_bollywood,
-    R.drawable.james to R.string.tamil,
-    R.drawable.artem to R.string.sms,
-    R.drawable.dushawn to R.string.music,
-    R.drawable.hanny to R.string.malayalam,
     R.drawable.james to R.string.funny,
     R.drawable.johanna to R.string.sound,
     R.drawable.leticia to R.string.miscellaneous,
     R.drawable.mohammad to R.string.devotional,
     R.drawable.simon to R.string.baby,
     R.drawable.anthony to R.string.iphone,
+    R.drawable.erik to R.string.hindi_bollywood,
+    R.drawable.james to R.string.tamil,
+    R.drawable.artem to R.string.sms,
+    R.drawable.dushawn to R.string.music,
+    R.drawable.hanny to R.string.malayalam
+
 ).map { DrawableStringPair(it.first, it.second) }
+
+
+//数据库type值和展示字符值对应
+private val TypeNameToText = listOf(
+    "Funny" to R.string.funny,
+    "Devotional" to R.string.devotional,
+    "Tamil" to R.string.tamil,
+    "audio/mpeg" to R.string.audio_mpeg,
+    "Iphone" to R.string.iphone,
+    "Baby" to R.string.baby,
+    "Sound Effects" to R.string.sound,
+    "Music" to R.string.music,
+    "Bollywood / Hindi" to R.string.hindi_bollywood,
+    "SMS  / Message Alert" to R.string.sms,
+    "Miscellaneous" to R.string.miscellaneous,
+    "Malayalam" to R.string.malayalam,
+).associate { it.second to it.first }
+
 
 private data class DrawableStringPair(
     @DrawableRes val drawable: Int,
@@ -140,7 +162,7 @@ fun SearchBar(
 
         leadingIcon = {
             IconButton(onClick = {
-                onImeActionDone(context, text)
+                onImeActionDone(context, text, true)
             }) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -162,15 +184,15 @@ fun SearchBar(
         keyboardActions = KeyboardActions(
             onDone = {
                 //当回车键按下时执行的操作
-                onImeActionDone(context, text)
+                onImeActionDone(context, text, true)
             }
         )
     )
 }
 
 //处理在搜索栏输入后，按下回车后的操作
-fun onImeActionDone(context: Context, text: String) {
-    navigateToSearchResultActivityText(context, text)
+fun onImeActionDone(context: Context, text: String, isSearch: Boolean) {
+    navigateToSearchResultActivityText(context, text, isSearch)
 }
 
 
@@ -178,16 +200,15 @@ fun onImeActionDone(context: Context, text: String) {
 fun AlignYourBodyElement(
     @DrawableRes drawable: Int,
     @StringRes text: Int,
-    navigateToSearchResult: KFunction2<Context, Int, Unit>,
-    index: Int,
+    navigate: KFunction3<Context, String, Boolean, Unit>,
     modifier: Modifier = Modifier
 ) {
 
     val context = LocalContext.current
     Column(
         modifier = modifier.clickable {
-
-            navigateToSearchResult(context, index)
+            Log.v("musixAlignYourBodyElement", TypeNameToText[text]!!)
+            navigate(context, TypeNameToText[text]!!, false)
         },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -211,8 +232,7 @@ fun AlignYourBodyElement(
 fun FavoriteCollectionCard(
     @DrawableRes drawable: Int,
     @StringRes text: Int,
-    navigateToSearchResult: KFunction2<Context, Int, Unit>,
-    index: Int,
+    navigate: KFunction3<Context, String, Boolean, Unit>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -226,7 +246,7 @@ fun FavoriteCollectionCard(
             modifier = Modifier
                 .width(255.dp)
                 .clickable {
-                    navigateToSearchResult(context, index)
+                    navigate(context, TypeNameToText[text]!!, false)
                 }
         ) {
             Image(
@@ -249,28 +269,31 @@ fun FavoriteCollectionCard(
 fun FavoriteCollectionCardPreview() {
     Musix2025Theme {
         FavoriteCollectionCard(
-            text = R.string.favorite_collections,
+            text = R.string.hindi_bollywood,
             drawable = R.drawable.erik,
-            navigateToSearchResult = ::navigateToSearchResultActivity,
-            index = 0,
+            navigate = ::navigateToSearchResultActivityText,
             modifier = Modifier.padding(8.dp)
         )
     }
 }
 
+@Deprecated("no use index")
 fun navigateToSearchResultActivity(context: Context, index: Int) {
     val intent = Intent(context, SearchResultActivity::class.java).apply {
-//                    putExtra("EXTRA_INFO", ringtone as Serializable)
         putExtra("EXTRA_INFO", index)
     }
     context.startActivity(intent)
 }
 
-fun navigateToSearchResultActivityText(context: Context, text: String) {
+fun navigateToSearchResultActivityText(context: Context, text: String, isSearch: Boolean) {
     val intent = Intent(context, SearchResultActivity::class.java).apply {
-//                    putExtra("EXTRA_INFO", ringtone as Serializable)
-        putExtra("EXTRA_INFO", 0)
-        putExtra("EXTRA_TITLE", text)
+
+        if (isSearch) {
+            putExtra("EXTRA_TITLE", text)
+        } else {
+            putExtra("EXTRA_TYPE", text)
+        }
+
     }
     context.startActivity(intent)
 }
@@ -284,8 +307,8 @@ fun AlignYourBodyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier
     ) {
-        itemsIndexed(alignYourBodyData) { index, item ->
-            AlignYourBodyElement(item.drawable, item.text, ::navigateToSearchResultActivity, index)
+        items(alignYourBodyData) { item ->
+            AlignYourBodyElement(item.drawable, item.text, ::navigateToSearchResultActivityText)
         }
     }
 }
@@ -303,14 +326,13 @@ fun FavoriteCollectionsGrid(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.height(Dp(overallHeight.toFloat()) )
+        modifier = modifier.height(Dp(overallHeight.toFloat()))
     ) {
-        itemsIndexed(favoriteCollectionsData) { index, item ->
+        items(favoriteCollectionsData) { item ->
             FavoriteCollectionCard(
                 item.drawable,
                 item.text,
-                ::navigateToSearchResultActivity,
-                index,
+                ::navigateToSearchResultActivityText,
                 Modifier.height(80.dp)
             )
         }
@@ -358,7 +380,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
 
-    val context = LocalContext.current
+
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier
@@ -376,7 +398,6 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
             selected = true,
             onClick = {
 
-                navigateToSearchResultActivity(context, 0)
 
             }
         )
@@ -392,7 +413,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
             },
             selected = false,
             onClick = {
-                navigateToSearchResultActivity(context, 0)
+
             }
         )
     }

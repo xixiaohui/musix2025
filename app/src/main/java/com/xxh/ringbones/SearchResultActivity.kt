@@ -54,44 +54,30 @@ import kotlin.reflect.KFunction2
  */
 class SearchResultActivity : ComponentActivity() {
 
-    private val typeNameList = listOf(
-        "Funny" to 5,
-        "Devotional" to 8,
-        "Tamil" to 1,
-        "audio/mpeg" to 11,
-        "Iphone" to 10,
-        "Baby" to 9,
-        "Sound Effects" to 6,
-        "Music" to 3,
-        "Bollywood / Hindi" to 0,
-        "SMS  / Message Alert" to 2,
-        "Miscellaneous" to 7,
-        "Malayalam" to 4
-    ).associate { it.second to it.first }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         val bundle: Bundle? = intent.extras
-        var index = 0
         var byTitleSearchText: String? = null
+        var byTypeText: String? = null
+
 
         bundle?.let {
             bundle.apply {
-                index = getInt("EXTRA_INFO")
                 byTitleSearchText = getString("EXTRA_TITLE")
+                byTypeText = getString("EXTRA_TYPE")
             }
         }
-        Log.v("musixSearchResultActivity", index.toString())
 
 
         setContent {
 
             if (byTitleSearchText != null) {
-                DatabaseScreen(searchText = byTitleSearchText!!,false)
-            } else {
-                DatabaseScreen(searchText = typeNameList[index]!!)
+                DatabaseScreen(searchText = byTitleSearchText!!, false)
+            }else{
+                DatabaseScreen(searchText = byTypeText!!)
             }
 
         }
