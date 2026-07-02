@@ -1,7 +1,7 @@
 package com.xxh.ringbones.data
 
 import com.xxh.ringbones.R
-import okhttp3.OkHttpClient
+import com.xxh.ringbones.network.HttpClient
 import okhttp3.Request
 import java.io.IOException
 
@@ -12,7 +12,6 @@ class MusixRingtonesList {
     companion object {
         const val ringtoneURL = "https://www.compocore.com/ringtones/rings/malayalam.json"
 
-        //        const val URL = "https://www.compocore.com/ringtones/rings/"
         const val URL = "https://compocore.com/wp-content/uploads/2025/02/"
 
         val ringtoneUrlMap = mapOf(
@@ -91,26 +90,22 @@ class MusixRingtonesList {
     }
 
 
-    private var client: OkHttpClient = OkHttpClient()
-
     private fun read(url: String): String? {
         val request = Request.Builder()
             .url(url)
             .build()
         return try {
-            client.newCall(request).execute().use { response ->
-
-                if (response.isSuccessful){
+            HttpClient.instance.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
                     response.body?.string()
-                }else{
+                } else {
                     "Error: ${response.code}"
                 }
             }
-        }catch (ex:IOException){
+        } catch (ex: IOException) {
             ex.printStackTrace()
             "Request failed"
         }
-
     }
 
     fun sendRequestWithOkHttp(url: String): String? {

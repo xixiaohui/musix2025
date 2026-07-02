@@ -1,0 +1,135 @@
+package com.xxh.ringbones.util
+
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Context
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
+object RingtoneHelper {
+
+    private const val TAG = "musixDownload"
+
+    fun downloadMusic(activity: Activity, url: String, onComplete: (() -> Unit)? = null) {
+        val fileName = url.split("/").last()
+        val file = File(activity.getExternalFilesDir(Environment.DIRECTORY_RINGTONES), fileName)
+
+        if (file.exists()) {
+            Log.e(TAG, "File already exists: ${file.absolutePath}")
+            onComplete?.invoke()
+            return
+        }
+
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        com.xxh.ringbones.network.HttpClient.instance.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e(TAG, "Download failed: ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val inputStream = response.body?.byteStream()
+                    val outputFile = File(
+                        activity.getExternalFilesDir(Environment.DIRECTORY_RINGTONES),
+                        fileName
+                    )
+                    val outputStream = FileOutputStream(outputFile)
+
+                    try {
+                        inputStream?.copyTo(outputStream)
+                        activity.runOnUiThread {
+                            Log.d(TAG, "Music downloaded: ${outputFile.absolutePath}")
+                            onComplete?.invoke()
+                        }
+                    } catch (e: IOException) {
+                        activity.runOnUiThread {
+                            Log.e(TAG, "Error saving: ${e.message}")
+                        }
+                    } finally {
+                        outputStream.close()
+                        inputStream?.close()
+                    }
+                } else {
+                    activity.runOnUiThread {
+                        Log.e(TAG, "Download failed: ${response.code}")
+                    }
+                }
+            }
+        })
+    }
+
+    fun isFileDownloaded(context: Context, url: String): Boolean {
+        val fileName = url.split("/").last()
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_RINGTONES), fileName)
+        return file.exists()
+    }
+
+    fun getLocalFile(context: Context, url: String): File {
+        val fileName = url.split("/").last()
+        return File(context.getExternalFilesDir(Environment.DIRECTORY_RINGTONES), fileName)
+    }
+
+    fun setRingtone(context: Context, sourceFilePath: String) {
+        val sourceFile = File(sourceFilePath)
+        if (!sourceFile.exists()) return
+
+        try {
+            val ringtoneUri = if (sourceFilePath.startsWith("/")) {
+                // Local file path – copy to MediaStore for Android 10+
+                insertToMediaStore(context, sourceFile)
+            } else {
+                Uri.parse(sourceFilePath)
+            }
+
+            ringtoneUri?.let { uri ->
+                RingtoneManager.setActualDefaultRingtoneUri(
+                    context,
+                    RingtoneManager.TYPE_RINGTONE,
+                    uri
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error setting ringtone: ${e.message}")
+        }
+    }
+
+    private fun insertToMediaStore(context: Context, sourceFile: File): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Audio.Media.DISPLAY_NAME, sourceFile.name)
+            put(MediaStore.Audio.Media.MIME_TYPE, "audio/mpeg")
+            put(MediaStore.Audio.Media.IS_RINGTONE, true)
+            put(MediaStore.Audio.Media.IS_NOTIFICATION, false)
+            put(MediaStore.Audio.Media.IS_ALARM, false)
+            put(MediaStore.Audio.Media.IS_MUSIC, false)
+        }
+
+        val uri = context.contentResolver.insert(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+
+        uri?.let {
+            context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                sourceFile.inputStream().use { inputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+        }
+
+        return uri
+    }
+}

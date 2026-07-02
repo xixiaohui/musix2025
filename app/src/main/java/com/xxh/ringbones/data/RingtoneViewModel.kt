@@ -2,19 +2,19 @@ package com.xxh.ringbones.data
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import kotlinx.coroutines.flow.Flow
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class RingtoneViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class RingtoneViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
     private val ringtoneDao = AppDatabase.getInstance(application).ringtoneDao()
 
@@ -26,40 +26,32 @@ class RingtoneViewModel(application: Application) : AndroidViewModel(application
         pagingSourceFactory = { ringtoneDao.getAllRingtonesPaging() }
     ).flow
 
-    init {
-        viewModelScope.launch {
-            ringtoneDao.searchRingtonesLimited(7).collect { list ->
-                _ringtones.value = list
-            }
-        }
-    }
+    private var searchJob: Job? = null
 
-    //通过铃音类型进行查询
     fun searchByType(typeName: String) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             ringtoneDao.searchRingtoneByTypeExactly(typeName).collect { list ->
                 _ringtones.value = list
             }
         }
     }
 
-    //通过铃音类型进行查询
     fun searchByTitle(title: String) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             ringtoneDao.searchRingtoneByTitle(title).collect { list ->
                 _ringtones.value = list
             }
         }
     }
 
-    //插入铃音
     fun insert(ringtone: Ringtone) {
         viewModelScope.launch {
             ringtoneDao.insert(ringtone)
         }
     }
 
-    //插入铃音
     fun insert(title: String, author: String, time: String, url: String, type: String) {
         viewModelScope.launch {
             ringtoneDao.insert(
@@ -74,11 +66,9 @@ class RingtoneViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    //删除铃音
     fun deleteRingtone(ringtone: Ringtone) {
         viewModelScope.launch {
             ringtoneDao.delete(ringtone)
         }
     }
-
 }

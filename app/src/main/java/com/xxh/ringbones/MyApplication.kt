@@ -1,18 +1,10 @@
 package com.xxh.ringbones
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
 
-class MyApplication: Application() {
-
-    companion object{
-        @SuppressLint("StaticFieldLeak")
-        lateinit var context: Context
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        context = applicationContext
-    }
-}
+/**
+ * Application entry point configured for Hilt dependency injection.
+ */
+@HiltAndroidApp
+class MyApplication : Application()
