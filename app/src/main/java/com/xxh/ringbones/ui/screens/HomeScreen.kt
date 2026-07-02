@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xxh.ringbones.R
-import com.xxh.ringbones.ui.components.CategoryGrid
-import com.xxh.ringbones.ui.components.CategoryRow
-import com.xxh.ringbones.ui.components.DrawableStringPair
-import com.xxh.ringbones.ui.components.SearchBar
+import com.xxh.ringbones.presentation.common.SearchBar
+import com.xxh.ringbones.presentation.home.components.CategoryGrid
+import com.xxh.ringbones.presentation.home.components.CategoryRow
+import com.xxh.ringbones.presentation.home.components.DrawableStringPair
 
 /**
  * Type name mapping: string resource ID → database type string.

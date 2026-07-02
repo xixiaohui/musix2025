@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.components
+package com.xxh.ringbones.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

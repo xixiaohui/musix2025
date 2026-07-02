@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.components
+package com.xxh.ringbones.presentation.home.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

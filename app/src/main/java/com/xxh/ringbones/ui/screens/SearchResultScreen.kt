@@ -10,9 +10,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.data.RingtoneViewModel
-import com.xxh.ringbones.ui.components.RingtoneList
+import com.xxh.ringbones.domain.model.Ringtone
+import com.xxh.ringbones.presentation.search.components.RingtoneList
 
 @Composable
 fun SearchResultScreen(

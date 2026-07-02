@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.components
+package com.xxh.ringbones.presentation.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

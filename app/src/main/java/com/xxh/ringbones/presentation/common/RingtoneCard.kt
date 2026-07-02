@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.components
+package com.xxh.ringbones.presentation.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xxh.ringbones.BuildConfig
 import com.xxh.ringbones.R
-import com.xxh.ringbones.data.Ringtone
+import com.xxh.ringbones.domain.model.Ringtone
 
 @Composable
 fun RingtoneCard(
@@ -75,14 +75,14 @@ fun RingtoneCard(
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = "on " + ringtone.time,
+                        text = "on " + ringtone.duration,
                         style = MaterialTheme.typography.labelSmall,
                     )
 
                     if (BuildConfig.ENABLE_FEATURE) {
                         Spacer(modifier = Modifier.size(8.dp))
                         Text(
-                            text = ringtone.type + " " + ringtone.id,
+                            text = ringtone.mimeType + " " + ringtone.id,
                             style = MaterialTheme.typography.labelSmall,
                         )
                     }
@@ -96,11 +96,13 @@ fun RingtoneCard(
 @Composable
 private fun PreviewRingtoneCard() {
     val ringtone = Ringtone(
+        id = 1,
         title = "Kailasanadan",
         author = "Sanu",
-        time = "Dec 30, 2014",
+        duration = "Dec 30, 2014",
         url = "https://dl.prokerala.com/downloads/ringtones/files/mp3/satis-song-5294.mp3",
-        type = "audio/mpeg"
+        mimeType = "audio/mpeg",
+        category = "music"
     )
     RingtoneCard(ringtone = ringtone, onClick = {})
 }

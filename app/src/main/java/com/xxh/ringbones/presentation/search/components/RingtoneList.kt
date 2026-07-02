@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.components
+package com.xxh.ringbones.presentation.search.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.xxh.ringbones.data.Ringtone
+import com.xxh.ringbones.domain.model.Ringtone
+import com.xxh.ringbones.presentation.common.LoadingIndicator
+import com.xxh.ringbones.presentation.common.RingtoneCard
 
 @Composable
 fun RingtoneList(
