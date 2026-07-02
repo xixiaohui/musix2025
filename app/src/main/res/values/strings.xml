@@ -8,8 +8,6 @@
     <string name="pause" translatable="false">pause</string>
     <string name="tips" translatable="false">Tips</string>
 
-    <string name="title_activity_play" translatable="false">PlayActivity</string>
-    <string name="title_activity_land" translatable="false">LandActivity</string>
 
 
     <string name="downloadTips">Download this ringtone?</string>
