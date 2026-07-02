@@ -1,8 +1,11 @@
 package com.xxh.ringbones.core.di
 
+import android.content.Context
+import com.xxh.ringbones.core.datastore.UserPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
@@ -12,8 +15,8 @@ import javax.inject.Singleton
 private const val HTTP_TIMEOUT_SECONDS = 30L
 
 /**
- * Provides application-scoped singleton dependencies: OkHttp network client.
- * Additional providers (Database, DataStore) are added in later tasks.
+ * Provides application-scoped singleton dependencies: OkHttp network client,
+ * DataStore UserPreferences.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,4 +31,13 @@ object AppModule {
         .connectTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .build()
+
+    /**
+     * Creates a singleton UserPreferences backed by Jetpack DataStore.
+     */
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
+        return UserPreferences(context)
+    }
 }

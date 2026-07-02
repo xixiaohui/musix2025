@@ -1,4 +1,4 @@
-package com.xxh.ringbones.network
+package com.xxh.ringbones.core.network
 
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit

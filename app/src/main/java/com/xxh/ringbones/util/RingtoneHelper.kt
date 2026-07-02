@@ -35,7 +35,7 @@ object RingtoneHelper {
             .url(url)
             .build()
 
-        com.xxh.ringbones.network.HttpClient.instance.newCall(request).enqueue(object : Callback {
+        com.xxh.ringbones.core.network.HttpClient.instance.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e(TAG, "Download failed: ${e.message}")
             }

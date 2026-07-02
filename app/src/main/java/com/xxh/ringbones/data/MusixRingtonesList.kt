@@ -1,7 +1,7 @@
 package com.xxh.ringbones.data
 
 import com.xxh.ringbones.R
-import com.xxh.ringbones.network.HttpClient
+import com.xxh.ringbones.core.network.HttpClient
 import okhttp3.Request
 import java.io.IOException
 
