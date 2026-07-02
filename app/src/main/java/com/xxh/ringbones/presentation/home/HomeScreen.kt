@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.screens
+package com.xxh.ringbones.presentation.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.xxh.ringbones.R
 import com.xxh.ringbones.presentation.common.SearchBar
 import com.xxh.ringbones.presentation.home.components.CategoryGrid
@@ -19,7 +20,7 @@ import com.xxh.ringbones.presentation.home.components.CategoryRow
 import com.xxh.ringbones.presentation.home.components.DrawableStringPair
 
 /**
- * Type name mapping: string resource ID → database type string.
+ * Type name mapping: string resource ID -> database type string.
  * Used to map category clicks to the type value stored in Room.
  */
 val TypeNameToText = mapOf(
@@ -87,6 +88,7 @@ fun HomeSection(
 fun HomeScreen(
     onSearch: (String) -> Unit,
     onCategoryClick: (String) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -102,14 +104,14 @@ fun HomeScreen(
             CategoryRow(
                 items = alignYourBodyData,
                 onCategoryClick = onCategoryClick,
-                typeNameMap = TypeNameToText
+                typeNameMap = viewModel.categories
             )
         }
         HomeSection(title = R.string.favorite_collections) {
             CategoryGrid(
                 items = favoriteCollectionsData,
                 onCategoryClick = onCategoryClick,
-                typeNameMap = TypeNameToText
+                typeNameMap = viewModel.categories
             )
         }
         Spacer(Modifier.height(16.dp))
