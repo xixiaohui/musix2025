@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.xxh.ringbones.core.datastore.UserPreferences
 import com.xxh.ringbones.core.util.Constants
+import com.xxh.ringbones.data.local.dao.FavoriteDao
+import com.xxh.ringbones.data.local.dao.PlayHistoryDao
+import com.xxh.ringbones.data.local.dao.RingtoneDao
+import com.xxh.ringbones.data.local.dao.SearchHistoryDao
 import com.xxh.ringbones.data.local.database.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -58,4 +62,16 @@ object AppModule {
             .fallbackToDestructiveMigration()
             .build()
     }
+
+    @Provides
+    fun provideRingtoneDao(db: AppDatabase): RingtoneDao = db.ringtoneDao()
+
+    @Provides
+    fun provideFavoriteDao(db: AppDatabase): FavoriteDao = db.favoriteDao()
+
+    @Provides
+    fun providePlayHistoryDao(db: AppDatabase): PlayHistoryDao = db.playHistoryDao()
+
+    @Provides
+    fun provideSearchHistoryDao(db: AppDatabase): SearchHistoryDao = db.searchHistoryDao()
 }
