@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.theme
+package com.xxh.ringbones.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.xxh.ringbones.ui.theme
+package com.xxh.ringbones.core.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF7F4D7A)
