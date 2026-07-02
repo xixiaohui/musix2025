@@ -1,4 +1,4 @@
-package com.xxh.ringbones.util
+package com.xxh.ringbones.core.util
 
 import android.app.Activity
 import android.content.ContentValues

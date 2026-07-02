@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.xxh.ringbones.data.Ringtone
 import com.xxh.ringbones.media3.Media3PlayerView
-import com.xxh.ringbones.util.RingtoneHelper
+import com.xxh.ringbones.core.util.RingtoneHelper
 import java.io.File
 
 @Composable

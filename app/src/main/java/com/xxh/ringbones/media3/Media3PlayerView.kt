@@ -35,7 +35,7 @@ import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
 import com.google.android.material.snackbar.Snackbar
 import com.xxh.ringbones.R
-import com.xxh.ringbones.util.RingtoneHelper
+import com.xxh.ringbones.core.util.RingtoneHelper
 
 
 @Composable
