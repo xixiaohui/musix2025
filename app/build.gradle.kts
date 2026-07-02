@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    alias(libs.plugins.hilt)
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
@@ -140,4 +141,12 @@ dependencies {
     ksp(libs.androidx.room.compiler) // 注解处理器
     // 如果需要使用数据库迁移支持
     implementation(libs.androidx.room.paging)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    // DataStore
+    implementation(libs.datastore.preferences)
 }
