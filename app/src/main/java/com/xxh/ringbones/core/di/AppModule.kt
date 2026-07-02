@@ -1,7 +1,10 @@
 package com.xxh.ringbones.core.di
 
 import android.content.Context
+import androidx.room.Room
 import com.xxh.ringbones.core.datastore.UserPreferences
+import com.xxh.ringbones.core.util.Constants
+import com.xxh.ringbones.data.local.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,5 +42,20 @@ object AppModule {
     @Singleton
     fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
         return UserPreferences(context)
+    }
+
+    /**
+     * Creates a singleton Room AppDatabase with all ringtone-related tables.
+     */
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            Constants.DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }
