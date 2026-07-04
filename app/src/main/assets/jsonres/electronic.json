@@ -1,0 +1,324 @@
+[
+  {
+    "title": "Beep",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_beep.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Bell",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_bell.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Blip",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_blip.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Blip2",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_blip2.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Blup",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_blup.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Bong",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_bong.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Chime",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_chime.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Chirp",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_chirp.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Cymbal",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_cymbal.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Ding",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_ding.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Filt Beep",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_filt_beep.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Flip",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_flip.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Fuzz Beep",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_fuzz_beep.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Hi Snare",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_hi_snare.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Hollow Kick",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_hollow_kick.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Lo Snare",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_lo_snare.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Mid Snare",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_mid_snare.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Ping",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_ping.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Plip",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_plip.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Pop",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_pop.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Siren Beep",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_siren_beep.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Soft Kick",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_soft_kick.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Tick",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_tick.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Triangle",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_triangle.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Twang",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_twang.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Twip",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_twip.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Wood",
+    "author": "Sonic Pi - Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/elec_wood.flac",
+    "type": "Electronic"
+  },
+  {
+    "title": "Bass G",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_bass_g.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc1",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc1.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc2",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc2.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc3",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc3.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc4",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc4.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc5",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc5.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc6",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc6.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Perc7",
+    "author": "Sonic Pi - Glitch Electronic",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/glitch_perc7.flac",
+    "type": "Glitch Electronic"
+  },
+  {
+    "title": "Fxbed Loop",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_fxbed_loop.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Highkey C4",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_highkey_c4.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 1",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_1.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 2",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_2.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 3",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_3.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 4",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_4.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 5",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_5.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 6",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_6.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 7",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_7.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Pad 8",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_pad_8.flac",
+    "type": "Electronic Pad"
+  },
+  {
+    "title": "Plankton",
+    "author": "Sonic Pi - Electronic Pad",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/tbd_plankton.flac",
+    "type": "Electronic Pad"
+  }
+]

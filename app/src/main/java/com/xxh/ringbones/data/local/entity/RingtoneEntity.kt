@@ -21,5 +21,17 @@ data class RingtoneEntity(
     val downloadPath: String? = null,
     val playCount: Int = 0,
     val lastPlayedAt: Long = 0,
+    val isFavorite: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
+)
+
+/**
+ * Room query result for category-level aggregation.
+ *
+ * @property category Category name
+ * @property count Number of ringtones in this category
+ */
+data class CategoryCount(
+    val category: String,
+    val count: Int
 )

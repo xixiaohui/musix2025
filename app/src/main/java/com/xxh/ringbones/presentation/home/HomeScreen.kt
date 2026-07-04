@@ -1,119 +1,157 @@
 package com.xxh.ringbones.presentation.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.xxh.ringbones.R
-import com.xxh.ringbones.presentation.common.SearchBar
+import com.xxh.ringbones.domain.model.Ringtone
+import com.xxh.ringbones.presentation.home.components.CategoryChipRow
 import com.xxh.ringbones.presentation.home.components.CategoryGrid
-import com.xxh.ringbones.presentation.home.components.CategoryRow
-import com.xxh.ringbones.presentation.home.components.DrawableStringPair
+import com.xxh.ringbones.presentation.home.components.FeaturedRow
+import com.xxh.ringbones.presentation.home.components.HeroHeader
+
+/** Unified horizontal padding for all home sections. */
+private val HOME_HORIZONTAL = 24.dp
+
+/** Vertical spacing between major sections. */
+private val SECTION_SPACING = 28.dp
 
 /**
- * Type name mapping: string resource ID -> database type string.
- * Used to map category clicks to the type value stored in Room.
+ * Modern glassmorphism HomeScreen with dynamic gradient hero, animated category chips,
+ * snap-scroll featured ringtones, and staggered category grid.
+ *
+ * All sections use a unified 24dp horizontal padding and consistent vertical
+ * spacing rhythm for a polished, professional feel.
+ *
+ * @param onSearch Callback when user submits a search query
+ * @param onCategoryClick Callback when a category chip or grid card is clicked
+ * @param onRingtoneClick Callback when a featured ringtone card is tapped → navigates to Player
+ * @param viewModel Hilt-injected ViewModel providing dynamic data
  */
-val TypeNameToText = mapOf(
-    R.string.funny to "Funny",
-    R.string.devotional to "Devotional",
-    R.string.tamil to "Tamil",
-    R.string.audio_mpeg to "audio/mpeg",
-    R.string.iphone to "Iphone",
-    R.string.baby to "Baby",
-    R.string.sound to "Sound Effects",
-    R.string.music to "Music",
-    R.string.hindi_bollywood to "Bollywood / Hindi",
-    R.string.sms to "SMS  / Message Alert",
-    R.string.miscellaneous to "Miscellaneous",
-    R.string.malayalam to "Malayalam",
-)
-
-private val alignYourBodyData = listOf(
-    R.drawable.erik to R.string.hindi_bollywood,
-    R.drawable.james to R.string.tamil,
-    R.drawable.artem to R.string.sms,
-    R.drawable.dushawn to R.string.music,
-    R.drawable.hanny to R.string.malayalam,
-    R.drawable.james to R.string.funny,
-    R.drawable.johanna to R.string.sound,
-    R.drawable.leticia to R.string.miscellaneous,
-    R.drawable.mohammad to R.string.devotional,
-    R.drawable.simon to R.string.baby,
-    R.drawable.anthony to R.string.iphone,
-).map { DrawableStringPair(it.first, it.second) }
-
-private val favoriteCollectionsData = listOf(
-    R.drawable.james to R.string.funny,
-    R.drawable.johanna to R.string.sound,
-    R.drawable.leticia to R.string.miscellaneous,
-    R.drawable.mohammad to R.string.devotional,
-    R.drawable.simon to R.string.baby,
-    R.drawable.anthony to R.string.iphone,
-    R.drawable.erik to R.string.hindi_bollywood,
-    R.drawable.james to R.string.tamil,
-    R.drawable.artem to R.string.sms,
-    R.drawable.dushawn to R.string.music,
-    R.drawable.hanny to R.string.malayalam
-).map { DrawableStringPair(it.first, it.second) }
-
-@Composable
-fun HomeSection(
-    title: Int,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    Column(modifier) {
-        Text(
-            text = stringResource(title),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .padding(top = 40.dp, bottom = 16.dp)
-                .padding(horizontal = 16.dp)
-        )
-        content()
-    }
-}
-
 @Composable
 fun HomeScreen(
     onSearch: (String) -> Unit,
     onCategoryClick: (String) -> Unit,
+    onRingtoneClick: (Ringtone) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier
-            .verticalScroll(rememberScrollState())
+    val availableCategories by viewModel.availableCategories.collectAsState()
+    val categoryCounts by viewModel.categoryCounts.collectAsState()
+    val featuredRingtones by viewModel.featuredRingtones.collectAsState()
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentPadding = PaddingValues(bottom = 32.dp)
     ) {
-        Spacer(Modifier.height(16.dp))
-        SearchBar(
-            onSearch = onSearch,
-            modifier = Modifier.padding(horizontal = 16.dp)
+        // ── Hero Header ──
+        item(key = "hero") {
+            HeroHeader(onSearch = onSearch)
+        }
+
+        // ── Category Chips ──
+        if (availableCategories.isNotEmpty()) {
+            item(key = "section_categories") {
+                SectionHeader(
+                    title = stringResource(R.string.browse_categories),
+                    modifier = Modifier.padding(top = SECTION_SPACING)
+                )
+            }
+            item(key = "chip_row") {
+                CategoryChipRow(
+                    categories = availableCategories,
+                    onCategoryClick = onCategoryClick
+                )
+            }
+        }
+
+        // ── Featured / Popular Now ──
+        if (featuredRingtones.isNotEmpty()) {
+            item(key = "section_popular") {
+                SectionHeader(
+                    title = stringResource(R.string.popular_now),
+                    modifier = Modifier.padding(top = SECTION_SPACING)
+                )
+            }
+            item(key = "featured_row") {
+                FeaturedRow(
+                    ringtones = featuredRingtones,
+                    onRingtoneClick = onRingtoneClick
+                )
+            }
+        }
+
+        // ── Browse All Categories Grid ──
+        if (categoryCounts.isNotEmpty()) {
+            item(key = "section_browse") {
+                SectionHeader(
+                    title = stringResource(R.string.browse_all),
+                    modifier = Modifier.padding(top = SECTION_SPACING)
+                )
+            }
+            item(key = "category_grid") {
+                CategoryGrid(
+                    categories = categoryCounts,
+                    onCategoryClick = onCategoryClick
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Consistent section title with unified horizontal padding.
+ */
+@Composable
+private fun SectionHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    onSeeAll: (() -> Unit)? = null
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = HOME_HORIZONTAL)
+            .padding(bottom = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
-        HomeSection(title = R.string.recommended_collections) {
-            CategoryRow(
-                items = alignYourBodyData,
-                onCategoryClick = onCategoryClick,
-                typeNameMap = viewModel.categories
-            )
+        if (onSeeAll != null) {
+            TextButton(onClick = onSeeAll) {
+                Text(
+                    text = stringResource(R.string.see_all),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
-        HomeSection(title = R.string.favorite_collections) {
-            CategoryGrid(
-                items = favoriteCollectionsData,
-                onCategoryClick = onCategoryClick,
-                typeNameMap = viewModel.categories
-            )
-        }
-        Spacer(Modifier.height(16.dp))
     }
 }

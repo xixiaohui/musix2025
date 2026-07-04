@@ -12,4 +12,17 @@ interface RingtoneRepository {
     suspend fun insertAll(ringtones: List<Ringtone>)
     suspend fun updatePlayCount(id: Long, count: Int)
     suspend fun updateLastPlayed(id: Long, timestamp: Long)
+    /** Updates the local download path for a ringtone. */
+    suspend fun updateDownloadPath(id: Long, path: String)
+
+    /** Toggles the favorite flag for the given ringtone. */
+    suspend fun toggleFavorite(id: Long)
+    /** Returns ringtones matching the given IDs, preserving order. */
+    fun getByIds(ids: List<Long>): Flow<List<Ringtone>>
+    /** Returns distinct category names currently in the database. */
+    fun getDistinctCategories(): Flow<List<String>>
+    /** Returns the top N most-played ringtones. */
+    fun getTopPlayed(limit: Int): Flow<List<Ringtone>>
+    /** Returns category → count map for the category browse grid. */
+    fun getCategoryCounts(): Flow<Map<String, Int>>
 }

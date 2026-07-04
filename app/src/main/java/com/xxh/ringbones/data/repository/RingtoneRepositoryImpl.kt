@@ -62,4 +62,30 @@ class RingtoneRepositoryImpl @Inject constructor(
     override suspend fun updateLastPlayed(id: Long, timestamp: Long) {
         ringtoneDao.updateLastPlayed(id, timestamp)
     }
+
+    override suspend fun updateDownloadPath(id: Long, path: String) {
+        ringtoneDao.updateDownloadPath(id, path)
+    }
+
+    override suspend fun toggleFavorite(id: Long) {
+        ringtoneDao.toggleFavorite(id)
+    }
+
+    override fun getByIds(ids: List<Long>): Flow<List<Ringtone>> =
+        ringtoneDao.getByIds(ids).map { entities ->
+            entities.map { RingtoneMapper.toDomain(it) }
+        }
+
+    override fun getDistinctCategories(): Flow<List<String>> =
+        ringtoneDao.getDistinctCategories()
+
+    override fun getTopPlayed(limit: Int): Flow<List<Ringtone>> =
+        ringtoneDao.getTopPlayed(limit).map { entities ->
+            entities.map { RingtoneMapper.toDomain(it) }
+        }
+
+    override fun getCategoryCounts(): Flow<Map<String, Int>> =
+        ringtoneDao.getCategoryCounts().map { counts ->
+            counts.associate { it.category to it.count }
+        }
 }

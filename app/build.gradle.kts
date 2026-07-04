@@ -1,4 +1,4 @@
-import org.gradle.internal.declarativedsl.parsing.main
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -15,14 +15,14 @@ plugins {
 
 android {
     namespace = "com.xxh.ringbones"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.xxh.ringbones"
         minSdk = 24
         targetSdk = 35
-        versionCode = 17
-        versionName = "2.0.1"
+        versionCode = 18
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,11 +38,13 @@ android {
 
     buildTypes {
         getByName("debug"){
-            debug {
-                isDebuggable = true
+            isDebuggable = true
 
-                buildConfigField("boolean", "ENABLE_FEATURE", "true")
-            }
+            buildConfigField(
+                "boolean",
+                "ENABLE_FEATURE",
+                "true"
+            )
         }
 
         getByName("release") {
@@ -65,8 +67,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true
@@ -97,6 +101,20 @@ android {
 }
 
 dependencies {
+
+    // 强制 kotlin-stdlib 版本与项目 Kotlin 编译器版本一致，防止传递依赖升级到不兼容版本
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib") {
+            version {
+                strictly("2.3.21")
+            }
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-common") {
+            version {
+                strictly("2.3.21")
+            }
+        }
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -21,7 +21,10 @@ sealed class Route {
         val byCategory: Boolean = true
     ) : Route()
 
-    /** Player screen — loads ringtone by ID from the repository. */
+    /** Player screen — loads ringtone by ID from the repository, with optional queue. */
     @Serializable
-    data class Player(val ringtoneId: Long) : Route()
+    data class Player(
+        val ringtoneId: Long,
+        val queueIds: List<Long> = emptyList(),
+    ) : Route()
 }

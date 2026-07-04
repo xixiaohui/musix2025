@@ -9,8 +9,11 @@ import com.xxh.ringbones.domain.model.Ringtone
  */
 object RingtoneMapper {
 
-    /** Convert Room entity to domain model, with favorite flag. */
-    fun toDomain(entity: RingtoneEntity, isFavorite: Boolean = false): Ringtone = Ringtone(
+    /** Convert Room entity to domain model, with favorite flag from entity. */
+    fun toDomain(entity: RingtoneEntity): Ringtone = toDomain(entity, isFavorite = entity.isFavorite)
+
+    /** Convert Room entity to domain model, overriding the favorite flag. */
+    fun toDomain(entity: RingtoneEntity, isFavorite: Boolean): Ringtone = Ringtone(
         id = entity.id,
         title = entity.title,
         author = entity.author,

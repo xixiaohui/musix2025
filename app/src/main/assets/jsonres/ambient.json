@@ -1,0 +1,107 @@
+[
+  {
+    "title": "Choir",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_choir.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Dark Woosh",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_dark_woosh.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Drone",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_drone.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Glass Hum",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_glass_hum.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Glass Rub",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_glass_rub.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Haunted Hum",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_haunted_hum.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Lunar Land",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_lunar_land.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Piano",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_piano.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Sauna",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_sauna.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Swoosh",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_swoosh.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "Woosh",
+    "author": "Sonic Pi - Ambient",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/ambi_woosh.flac",
+    "type": "Ambient"
+  },
+  {
+    "title": "E Fifths",
+    "author": "Sonic Pi - Guitar",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/guit_e_fifths.flac",
+    "type": "Guitar"
+  },
+  {
+    "title": "E Slide",
+    "author": "Sonic Pi - Guitar",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/guit_e_slide.flac",
+    "type": "Guitar"
+  },
+  {
+    "title": "Em9",
+    "author": "Sonic Pi - Guitar",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/guit_em9.flac",
+    "type": "Guitar"
+  },
+  {
+    "title": "Harmonics",
+    "author": "Sonic Pi - Guitar",
+    "time": "Sonic Pi",
+    "url": "https://cdn.jsdelivr.net/npm/supersonic-scsynth-samples@0.70.0/samples/guit_harmonics.flac",
+    "type": "Guitar"
+  }
+]

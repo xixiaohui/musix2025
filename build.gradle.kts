@@ -9,7 +9,7 @@ plugins {
 
     id("com.google.gms.google-services") version "4.4.2" apply false
 
-    id("com.google.devtools.ksp") version "2.1.10-1.0.30" apply false
+    id("com.google.devtools.ksp") version "2.3.9" apply false
 
 
 }

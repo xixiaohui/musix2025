@@ -22,7 +22,7 @@ import com.xxh.ringbones.data.local.entity.SearchHistoryEntity
         PlayHistoryEntity::class,
         SearchHistoryEntity::class
     ],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun ringtoneDao(): RingtoneDao

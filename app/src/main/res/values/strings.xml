@@ -15,6 +15,8 @@
     <string name="downloadTips3">Ringtone file is exist.</string>
     <string name="add_to_fav_list">Add to favorites list?</string>
     <string name="add_to_fav_list2">Add to favorites list</string>
+    <string name="btn_set_ringtone">Set Ringtone</string>
+    <string name="btn_download">Download</string>
     <string name="set_ringtone">Set this ringtone as your phone ringtone?</string>
     <string name="set_ringtone2">As your phone ringtone</string>
     <string name="set_ringtone3">Ringtone is not exist! Please download first.</string>
@@ -25,6 +27,13 @@
     <string name="placeholder_search">Search</string>
     <string name="favorite_collections">Favorite Collections</string>
     <string name="recommended_collections">Recommended Ringtones</string>
+    <string name="browse_categories">Categories</string>
+    <string name="popular_now">Popular Now</string>
+    <string name="browse_all">Browse All</string>
+    <string name="tagline">Discover premium ringtones</string>
+    <string name="see_all">See All</string>
+    <string name="no_ringtones_found">No ringtones found</string>
+    <string name="loading">Loading…</string>
     <string name="hindi_bollywood" >Hindi-bollywood</string>
     <string name="tamil" >Tamil</string>
     <string name="sms" >Sms</string>
@@ -37,6 +46,9 @@
     <string name="baby" >Baby</string>
     <string name="iphone" >Iphone</string>
     <string name="audio_mpeg" translatable="false">audio/mpeg</string>
+    <string name="ringtones">Ringtones</string>
+    <string name="search">Search</string>
+    <string name="tracks">Tracks</string>
 
 
 </resources>

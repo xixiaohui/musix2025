@@ -68,7 +68,7 @@ fun Musix2025App(windowSize: WindowSizeClass) {
 @Composable
 private fun SootheNavigationRail(modifier: Modifier = Modifier) {
     NavigationRail(
-        modifier = modifier.padding(start = 8.dp, end = 8.dp),
+        modifier = modifier.padding(8.dp, 0.dp, 8.dp, 0.dp),
         containerColor = MaterialTheme.colorScheme.background,
     ) {
         Column(

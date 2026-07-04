@@ -2,6 +2,8 @@ package com.xxh.ringbones.core.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.xxh.ringbones.core.datastore.UserPreferences
 import com.xxh.ringbones.core.util.Constants
 import com.xxh.ringbones.data.local.dao.FavoriteDao
@@ -20,6 +22,17 @@ import javax.inject.Singleton
 
 /** Timeout duration for OkHttp connections and reads, in seconds. */
 private const val HTTP_TIMEOUT_SECONDS = 30L
+
+/**
+ * Migration from v1 → v2: adds the `isFavorite` column to the `ringtones` table.
+ */
+private val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "ALTER TABLE ringtones ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0"
+        )
+    }
+}
 
 /**
  * Provides application-scoped singleton dependencies: OkHttp network client,
@@ -59,6 +72,7 @@ object AppModule {
             AppDatabase::class.java,
             Constants.DATABASE_NAME
         )
+            .addMigrations(MIGRATION_1_2)
             .fallbackToDestructiveMigration()
             .build()
     }

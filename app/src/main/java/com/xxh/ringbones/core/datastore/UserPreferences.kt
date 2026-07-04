@@ -23,6 +23,8 @@ private val Context.userPreferencesStore: DataStore<Preferences> by preferencesD
 private object PreferenceKeys {
     val DARK_THEME = booleanPreferencesKey("dark_theme")
     val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
+    /** Guard flag: true after JSON ringtone data has been seeded into Room. Bump suffix to force re-seed. */
+    val JSON_SEEDED_V5 = booleanPreferencesKey("json_seeded_v5")
 }
 
 /**
@@ -53,6 +55,18 @@ class UserPreferences @Inject constructor(
     suspend fun setDynamicColor(enabled: Boolean) {
         context.userPreferencesStore.edit { preferences ->
             preferences[PreferenceKeys.DYNAMIC_COLOR] = enabled
+        }
+    }
+
+    /** Observable: whether JSON ringtone data has been seeded into Room. */
+    val isJsonSeeded: Flow<Boolean> = context.userPreferencesStore.data.map { preferences ->
+        preferences[PreferenceKeys.JSON_SEEDED_V5] ?: false
+    }
+
+    /** Mark JSON seeding as complete so it never runs again. */
+    suspend fun setJsonSeeded(seeded: Boolean) {
+        context.userPreferencesStore.edit { preferences ->
+            preferences[PreferenceKeys.JSON_SEEDED_V5] = seeded
         }
     }
 }

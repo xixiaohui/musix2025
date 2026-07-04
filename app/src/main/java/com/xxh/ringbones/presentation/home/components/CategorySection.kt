@@ -92,7 +92,7 @@ fun CategoryCard(
             Text(
                 text = stringResource(text),
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
             )
         }
     }

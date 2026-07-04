@@ -29,7 +29,7 @@ fun RingtoneList(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 24.dp),
+            .padding(0.dp, 24.dp, 0.dp, 0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         LazyColumn {
