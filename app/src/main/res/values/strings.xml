@@ -50,6 +50,10 @@
     <string name="search">Search</string>
     <string name="tracks">Tracks</string>
     <string name="prokerala">Prokerala</string>
+    <string name="favorites">Favorites</string>
+    <string name="play_history">Play History</string>
+    <string name="no_favorites_yet">No favorites yet</string>
+    <string name="no_play_history_yet">No play history yet</string>
 
 
 </resources>
