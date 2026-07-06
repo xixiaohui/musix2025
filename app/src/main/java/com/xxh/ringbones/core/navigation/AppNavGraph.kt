@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.xxh.ringbones.presentation.home.HomeScreen
 import com.xxh.ringbones.presentation.player.PlayerScreen
+import com.xxh.ringbones.presentation.prokerala.ProkeralaListScreen
 import com.xxh.ringbones.presentation.search.SearchResultScreen
 
 /**
@@ -31,6 +32,9 @@ fun AppNavGraph(navController: NavHostController) {
                 },
                 onRingtoneClick = { ringtone ->
                     navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                },
+                onProkeralaSeeAll = {
+                    navController.navigate(Route.ProkeralaList)
                 }
             )
         }
@@ -39,6 +43,18 @@ fun AppNavGraph(navController: NavHostController) {
         composable<Route.Search> { backStackEntry ->
             backStackEntry.toRoute<Route.Search>()
             SearchResultScreen(
+                onRingtoneClick = { ringtone ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ── Prokerala List Screen ──
+        composable<Route.ProkeralaList> {
+            ProkeralaListScreen(
                 onRingtoneClick = { ringtone ->
                     navController.navigate(Route.Player(ringtoneId = ringtone.id))
                 },
