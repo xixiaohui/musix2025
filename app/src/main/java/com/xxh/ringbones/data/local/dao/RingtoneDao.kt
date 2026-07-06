@@ -65,4 +65,8 @@ interface RingtoneDao {
     /** Returns category names paired with ringtone counts, grouped and ordered. */
     @Query("SELECT category, COUNT(*) as count FROM ringtones GROUP BY category ORDER BY category ASC")
     fun getCategoryCounts(): Flow<List<CategoryCount>>
+
+    /** Returns ringtones whose download URL contains the given domain string. */
+    @Query("SELECT * FROM ringtones WHERE url LIKE '%' || :domain || '%' ORDER BY id ASC")
+    fun getByUrlDomain(domain: String): Flow<List<RingtoneEntity>>
 }
