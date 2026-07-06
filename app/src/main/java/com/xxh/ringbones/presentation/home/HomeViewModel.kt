@@ -14,6 +14,12 @@ import javax.inject.Inject
 /** Number of top ringtones to display in the featured section. */
 private const val TOP_RINGTONE_LIMIT = 10
 
+/** Number of prokerala ringtones to preview on the home screen. */
+private const val PROKERALA_PREVIEW_LIMIT = 7
+
+/** Domain string used to filter prokerala ringtones by URL. */
+private const val PROKERALA_DOMAIN = "dl.prokerala.com"
+
 /**
  * ViewModel for the Home screen.
  *
@@ -41,10 +47,15 @@ class HomeViewModel @Inject constructor(
     private val _recentRingtones = MutableStateFlow<List<Ringtone>>(emptyList())
     val recentRingtones: StateFlow<List<Ringtone>> = _recentRingtones.asStateFlow()
 
+    /** Observable list of prokerala ringtones for the home section, capped at 7. */
+    private val _prokeralaRingtones = MutableStateFlow<List<Ringtone>>(emptyList())
+    val prokeralaRingtones: StateFlow<List<Ringtone>> = _prokeralaRingtones.asStateFlow()
+
     init {
         loadCategories()
         loadCategoryCounts()
         loadFeatured()
+        loadProkerala()
     }
 
     /** Observes distinct categories from Room. */
@@ -70,6 +81,15 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             ringtoneRepository.getTopPlayed(TOP_RINGTONE_LIMIT).collect { list ->
                 _featuredRingtones.value = list
+            }
+        }
+    }
+
+    /** Observes prokerala ringtones, capped at the preview limit. */
+    private fun loadProkerala() {
+        viewModelScope.launch {
+            ringtoneRepository.getByUrlDomain(PROKERALA_DOMAIN).collect { list ->
+                _prokeralaRingtones.value = list.take(PROKERALA_PREVIEW_LIMIT)
             }
         }
     }
