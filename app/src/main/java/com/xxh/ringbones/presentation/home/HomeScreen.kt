@@ -38,7 +38,8 @@ private val SECTION_SPACING = 28.dp
 
 /**
  * Modern glassmorphism HomeScreen with dynamic gradient hero, animated category chips,
- * snap-scroll featured ringtones, and staggered category grid.
+ * snap-scroll featured ringtones, prokerala section, favorites section, play history
+ * section, and staggered category grid.
  *
  * All sections use a unified 24dp horizontal padding and consistent vertical
  * spacing rhythm for a polished, professional feel.
@@ -47,6 +48,8 @@ private val SECTION_SPACING = 28.dp
  * @param onCategoryClick Callback when a category chip or grid card is clicked
  * @param onRingtoneClick Callback when a featured ringtone card is tapped → navigates to Player
  * @param onProkeralaSeeAll Callback when user taps "See All" in the prokerala section
+ * @param onFavoritesSeeAll Callback when user taps "See All" in the favorites section
+ * @param onPlayHistorySeeAll Callback when user taps "See All" in the play history section
  * @param viewModel Hilt-injected ViewModel providing dynamic data
  */
 @Composable
@@ -55,6 +58,8 @@ fun HomeScreen(
     onCategoryClick: (String) -> Unit,
     onRingtoneClick: (Ringtone) -> Unit,
     onProkeralaSeeAll: () -> Unit,
+    onFavoritesSeeAll: () -> Unit,
+    onPlayHistorySeeAll: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -62,6 +67,8 @@ fun HomeScreen(
     val categoryCounts by viewModel.categoryCounts.collectAsState()
     val featuredRingtones by viewModel.featuredRingtones.collectAsState()
     val prokeralaRingtones by viewModel.prokeralaRingtones.collectAsState()
+    val favoriteRingtones by viewModel.favoriteRingtones.collectAsState()
+    val recentPlays by viewModel.recentPlays.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -118,6 +125,40 @@ fun HomeScreen(
             item(key = "prokerala_featured_row") {
                 FeaturedRow(
                     ringtones = prokeralaRingtones,
+                    onRingtoneClick = onRingtoneClick
+                )
+            }
+        }
+
+        // ── Favorites ──
+        if (favoriteRingtones.isNotEmpty()) {
+            item(key = "section_favorites") {
+                SectionHeader(
+                    title = stringResource(R.string.favorites),
+                    onSeeAll = onFavoritesSeeAll,
+                    modifier = Modifier.padding(top = SECTION_SPACING)
+                )
+            }
+            item(key = "favorites_row") {
+                FeaturedRow(
+                    ringtones = favoriteRingtones,
+                    onRingtoneClick = onRingtoneClick
+                )
+            }
+        }
+
+        // ── Recently Played ──
+        if (recentPlays.isNotEmpty()) {
+            item(key = "section_recent_plays") {
+                SectionHeader(
+                    title = stringResource(R.string.play_history),
+                    onSeeAll = onPlayHistorySeeAll,
+                    modifier = Modifier.padding(top = SECTION_SPACING)
+                )
+            }
+            item(key = "recent_plays_row") {
+                FeaturedRow(
+                    ringtones = recentPlays,
                     onRingtoneClick = onRingtoneClick
                 )
             }

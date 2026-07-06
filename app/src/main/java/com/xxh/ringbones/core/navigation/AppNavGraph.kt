@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.xxh.ringbones.presentation.favorites.FavoritesScreen
+import com.xxh.ringbones.presentation.history.HistoryScreen
 import com.xxh.ringbones.presentation.home.HomeScreen
 import com.xxh.ringbones.presentation.player.PlayerScreen
 import com.xxh.ringbones.presentation.prokerala.ProkeralaListScreen
@@ -35,6 +37,12 @@ fun AppNavGraph(navController: NavHostController) {
                 },
                 onProkeralaSeeAll = {
                     navController.navigate(Route.ProkeralaList)
+                },
+                onFavoritesSeeAll = {
+                    navController.navigate(Route.Favorites)
+                },
+                onPlayHistorySeeAll = {
+                    navController.navigate(Route.PlayHistory)
                 }
             )
         }
@@ -68,6 +76,30 @@ fun AppNavGraph(navController: NavHostController) {
         composable<Route.Player> { backStackEntry ->
             backStackEntry.toRoute<Route.Player>()
             PlayerScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ── Favorites Screen ──
+        composable<Route.Favorites> {
+            FavoritesScreen(
+                onRingtoneClick = { ringtone ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ── Play History Screen ──
+        composable<Route.PlayHistory> {
+            HistoryScreen(
+                onRingtoneClick = { ringtone ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                },
                 onBackClick = {
                     navController.popBackStack()
                 }
