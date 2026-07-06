@@ -46,6 +46,7 @@ private val SECTION_SPACING = 28.dp
  * @param onSearch Callback when user submits a search query
  * @param onCategoryClick Callback when a category chip or grid card is clicked
  * @param onRingtoneClick Callback when a featured ringtone card is tapped → navigates to Player
+ * @param onProkeralaSeeAll Callback when user taps "See All" in the prokerala section
  * @param viewModel Hilt-injected ViewModel providing dynamic data
  */
 @Composable
@@ -53,12 +54,14 @@ fun HomeScreen(
     onSearch: (String) -> Unit,
     onCategoryClick: (String) -> Unit,
     onRingtoneClick: (Ringtone) -> Unit,
+    onProkeralaSeeAll: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val availableCategories by viewModel.availableCategories.collectAsState()
     val categoryCounts by viewModel.categoryCounts.collectAsState()
     val featuredRingtones by viewModel.featuredRingtones.collectAsState()
+    val prokeralaRingtones by viewModel.prokeralaRingtones.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -98,6 +101,23 @@ fun HomeScreen(
             item(key = "featured_row") {
                 FeaturedRow(
                     ringtones = featuredRingtones,
+                    onRingtoneClick = onRingtoneClick
+                )
+            }
+        }
+
+        // ── Prokerala Ringtones ──
+        if (prokeralaRingtones.isNotEmpty()) {
+            item(key = "section_prokerala") {
+                SectionHeader(
+                    title = stringResource(R.string.prokerala),
+                    onSeeAll = onProkeralaSeeAll,
+                    modifier = Modifier.padding(top = SECTION_SPACING)
+                )
+            }
+            item(key = "prokerala_featured_row") {
+                FeaturedRow(
+                    ringtones = prokeralaRingtones,
                     onRingtoneClick = onRingtoneClick
                 )
             }
