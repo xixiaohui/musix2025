@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxh.ringbones.domain.model.Ringtone
 import com.xxh.ringbones.domain.repository.RingtoneRepository
+import com.xxh.ringbones.domain.usecase.GetFavoriteRingtonesUseCase
+import com.xxh.ringbones.domain.usecase.GetPlayHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +19,9 @@ private const val TOP_RINGTONE_LIMIT = 10
 /** Number of prokerala ringtones to preview on the home screen. */
 private const val PROKERALA_PREVIEW_LIMIT = 7
 
+/** Number of items to preview in favorites and recent plays sections. */
+private const val HOME_PREVIEW_LIMIT = 7
+
 /** Domain string used to filter prokerala ringtones by URL. */
 private const val PROKERALA_DOMAIN = "dl.prokerala.com"
 
@@ -24,11 +29,14 @@ private const val PROKERALA_DOMAIN = "dl.prokerala.com"
  * ViewModel for the Home screen.
  *
  * Observes category names from Room and loads ringtone counts per category,
- * top-played featured ringtones, and recently added ringtones.
+ * top-played featured ringtones, prokerala ringtones, favorited ringtones,
+ * and recently played ringtones.
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val ringtoneRepository: RingtoneRepository
+    private val ringtoneRepository: RingtoneRepository,
+    private val getFavoriteRingtonesUseCase: GetFavoriteRingtonesUseCase,
+    private val getPlayHistoryUseCase: GetPlayHistoryUseCase,
 ) : ViewModel() {
 
     /** Observable list of distinct category names from the database. */
@@ -51,11 +59,21 @@ class HomeViewModel @Inject constructor(
     private val _prokeralaRingtones = MutableStateFlow<List<Ringtone>>(emptyList())
     val prokeralaRingtones: StateFlow<List<Ringtone>> = _prokeralaRingtones.asStateFlow()
 
+    /** Observable list of favorited ringtones for the home section, capped at 7. */
+    private val _favoriteRingtones = MutableStateFlow<List<Ringtone>>(emptyList())
+    val favoriteRingtones: StateFlow<List<Ringtone>> = _favoriteRingtones.asStateFlow()
+
+    /** Observable list of recently played ringtones for the home section, capped at 7. */
+    private val _recentPlays = MutableStateFlow<List<Ringtone>>(emptyList())
+    val recentPlays: StateFlow<List<Ringtone>> = _recentPlays.asStateFlow()
+
     init {
         loadCategories()
         loadCategoryCounts()
         loadFeatured()
         loadProkerala()
+        loadFavorites()
+        loadRecentPlays()
     }
 
     /** Observes distinct categories from Room. */
@@ -90,6 +108,24 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             ringtoneRepository.getByUrlDomain(PROKERALA_DOMAIN).collect { list ->
                 _prokeralaRingtones.value = list.take(PROKERALA_PREVIEW_LIMIT)
+            }
+        }
+    }
+
+    /** Observes favorited ringtones from the use case, capped at the preview limit. */
+    private fun loadFavorites() {
+        viewModelScope.launch {
+            getFavoriteRingtonesUseCase().collect { list ->
+                _favoriteRingtones.value = list.take(HOME_PREVIEW_LIMIT)
+            }
+        }
+    }
+
+    /** Observes recently played ringtones from the use case, capped at the preview limit. */
+    private fun loadRecentPlays() {
+        viewModelScope.launch {
+            getPlayHistoryUseCase.getRecentPlays().collect { list ->
+                _recentPlays.value = list.take(HOME_PREVIEW_LIMIT)
             }
         }
     }
