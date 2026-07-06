@@ -27,4 +27,8 @@ sealed class Route {
         val ringtoneId: Long,
         val queueIds: List<Long> = emptyList(),
     ) : Route()
+
+    /** Prokerala ringtone list screen. */
+    @Serializable
+    data object ProkeralaList : Route()
 }
