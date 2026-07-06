@@ -88,4 +88,9 @@ class RingtoneRepositoryImpl @Inject constructor(
         ringtoneDao.getCategoryCounts().map { counts ->
             counts.associate { it.category to it.count }
         }
+
+    override fun getByUrlDomain(domain: String): Flow<List<Ringtone>> =
+        ringtoneDao.getByUrlDomain(domain).map { entities ->
+            entities.map { RingtoneMapper.toDomain(it) }
+        }
 }

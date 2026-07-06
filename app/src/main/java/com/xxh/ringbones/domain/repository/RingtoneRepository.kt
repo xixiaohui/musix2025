@@ -25,4 +25,7 @@ interface RingtoneRepository {
     fun getTopPlayed(limit: Int): Flow<List<Ringtone>>
     /** Returns category → count map for the category browse grid. */
     fun getCategoryCounts(): Flow<Map<String, Int>>
+
+    /** Returns ringtones whose download URL contains the given domain string. */
+    fun getByUrlDomain(domain: String): Flow<List<Ringtone>>
 }
