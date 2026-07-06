@@ -31,4 +31,12 @@ sealed class Route {
     /** Prokerala ringtone list screen. */
     @Serializable
     data object ProkeralaList : Route()
+
+    /** Favorites list screen — all user-favorited ringtones. */
+    @Serializable
+    data object Favorites : Route()
+
+    /** Play history screen — recently played ringtones. */
+    @Serializable
+    data object PlayHistory : Route()
 }
