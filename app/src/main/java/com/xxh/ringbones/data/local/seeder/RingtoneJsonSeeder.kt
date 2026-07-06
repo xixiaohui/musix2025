@@ -15,6 +15,9 @@ import javax.inject.Singleton
 /** Directory under assets/ that contains the ringtone JSON files. */
 private const val JSON_ASSETS_DIR = "jsonres"
 
+/** Directory under assets/ that contains prokerala ringtone JSON. */
+private const val PROKERALA_ASSETS_DIR = "prokerala"
+
 /**
  * Parses ringtone JSON files from assets and seeds them into the Room database.
  *
@@ -34,28 +37,50 @@ class RingtoneJsonSeeder @Inject constructor(
     private val jsonParser = Json { ignoreUnknownKeys = true }
 
     /**
-     * Reads all JSON files from [JSON_ASSETS_DIR], parses them into
-     * [RingtoneEntity] instances, and inserts them into the database.
+     * Reads all JSON files from both [JSON_ASSETS_DIR] and [PROKERALA_ASSETS_DIR],
+     * parses them into [RingtoneEntity] instances, and inserts them into the database.
      *
      * @return The total number of ringtones seeded.
      */
     suspend fun seedFromAssets(): Int = withContext(Dispatchers.IO) {
         val assetManager = context.assets
-        val fileNames = assetManager.list(JSON_ASSETS_DIR) ?: emptyArray()
-
         val allEntities = mutableListOf<RingtoneEntity>()
 
+        // Seed from both asset directories
+        allEntities.addAll(parseJsonFilesFrom(assetManager, JSON_ASSETS_DIR))
+        allEntities.addAll(parseJsonFilesFrom(assetManager, PROKERALA_ASSETS_DIR))
+
+        if (allEntities.isNotEmpty()) {
+            // Clear old data to prevent duplicate/dead URLs on re-seed
+            ringtoneDao.deleteAll()
+            ringtoneDao.insertAll(allEntities)
+        }
+
+        allEntities.size
+    }
+
+    /**
+     * Parses all .json files in [dirPath] under assets into [RingtoneEntity] list.
+     * Returns empty list if the directory does not exist or contains no JSON files.
+     */
+    private fun parseJsonFilesFrom(
+        assetManager: android.content.res.AssetManager,
+        dirPath: String
+    ): List<RingtoneEntity> {
+        val fileNames = assetManager.list(dirPath) ?: return emptyList()
+
+        val entities = mutableListOf<RingtoneEntity>()
         for (fileName in fileNames) {
             if (!fileName.endsWith(".json")) continue
 
-            val filePath = "$JSON_ASSETS_DIR/$fileName"
+            val filePath = "$dirPath/$fileName"
             val jsonString = assetManager.open(filePath).use { stream ->
                 InputStreamReader(stream).readText()
             }
 
             val models = jsonParser.decodeFromString<List<JsonRingtoneModel>>(jsonString)
 
-            val entities = models.map { model ->
+            models.mapTo(entities) { model ->
                 RingtoneEntity(
                     title = model.title,
                     author = model.author,
@@ -65,17 +90,8 @@ class RingtoneJsonSeeder @Inject constructor(
                     category = model.type
                 )
             }
-
-            allEntities.addAll(entities)
         }
-
-        if (allEntities.isNotEmpty()) {
-            // Clear old data to prevent duplicate/dead URLs on re-seed
-            ringtoneDao.deleteAll()
-            ringtoneDao.insertAll(allEntities)
-        }
-
-        allEntities.size
+        return entities
     }
 
     /**
