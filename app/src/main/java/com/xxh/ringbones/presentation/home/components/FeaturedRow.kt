@@ -80,7 +80,7 @@ private fun featuredGradient(category: String): Brush {
 @Composable
 fun FeaturedRow(
     ringtones: List<Ringtone>,
-    onRingtoneClick: (Ringtone) -> Unit,
+    onRingtoneClick: (Ringtone, queueIds: List<Long>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -91,7 +91,7 @@ fun FeaturedRow(
         items(ringtones) { ringtone ->
             FeaturedCard(
                 ringtone = ringtone,
-                onClick = { onRingtoneClick(ringtone) }
+                onClick = { onRingtoneClick(ringtone, ringtones.map { it.id }) }
             )
         }
     }
@@ -173,7 +173,7 @@ private fun PreviewFeaturedRow() {
                     duration = "3:45", url = "", mimeType = "audio/mpeg", category = "Music"
                 )
             ),
-            onRingtoneClick = {}
+            onRingtoneClick = { _, _ -> }
         )
     }
 }

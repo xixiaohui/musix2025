@@ -57,7 +57,7 @@ private val SECTION_SPACING = 28.dp
 fun HomeScreen(
     onSearch: (String) -> Unit,
     onCategoryClick: (String) -> Unit,
-    onRingtoneClick: (Ringtone) -> Unit,
+    onRingtoneClick: (Ringtone, queueIds: List<Long>) -> Unit,
     onProkeralaSeeAll: () -> Unit,
     onFavoritesSeeAll: () -> Unit,
     onPlayHistorySeeAll: () -> Unit,
