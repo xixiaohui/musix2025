@@ -64,6 +64,7 @@ class PlayerViewModel @Inject constructor(
     private val ringtoneRepository: RingtoneRepository,
     private val recordPlayHistoryUseCase: RecordPlayHistoryUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val downloadManager: com.xxh.ringbones.core.download.DownloadManager,
 ) : ViewModel() {
 
     /** Combined player + download state, exposed to the UI. */
@@ -181,33 +182,13 @@ class PlayerViewModel @Inject constructor(
     // ── Download ──
 
     /**
-     * Downloads the current ringtone to local storage on [Dispatchers.IO],
-     * then updates the database with the local file path and refreshes
-     * the download-state UI.
+     * Enqueues the current ringtone for download via [DownloadManager].
      */
     private fun downloadCurrentRingtone() {
         val ringtone = _state.value.currentRingtone ?: return
-
-        // Skip if already downloaded
-        if (isFileDownloaded(ringtone)) {
-            viewModelScope.launch {
-                _effects.emit(PlayerEffect.ShowSnackbar("Already downloaded"))
-            }
-            return
-        }
-
+        downloadManager.enqueue(ringtone)
         viewModelScope.launch {
-            _effects.emit(PlayerEffect.ShowSnackbar("Downloading..."))
-            try {
-                val localPath = withContext(Dispatchers.IO) {
-                    downloadToFile(ringtone)
-                }
-                ringtoneRepository.updateDownloadPath(ringtone.id, localPath)
-                _isDownloaded.value = true
-                _effects.emit(PlayerEffect.ShowSnackbar("Download complete"))
-            } catch (e: Exception) {
-                _effects.emit(PlayerEffect.ShowSnackbar("Download failed: ${e.message}"))
-            }
+            _effects.emit(PlayerEffect.ShowSnackbar("Added to download queue"))
         }
     }
 
