@@ -54,6 +54,11 @@
     <string name="play_history">Play History</string>
     <string name="no_favorites_yet">No favorites yet</string>
     <string name="no_play_history_yet">No play history yet</string>
+    <string name="remove">Remove</string>
+    <string name="remove_from_favorites_title">Remove from favorites</string>
+    <string name="remove_from_favorites_message">Remove "%1$s" from your favorites list?</string>
+    <string name="remove_from_history_title">Remove from history</string>
+    <string name="remove_from_history_message">Remove "%1$s" from your play history?</string>
 
 
 </resources>

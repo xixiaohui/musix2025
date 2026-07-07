@@ -3,6 +3,7 @@ package com.xxh.ringbones.presentation.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxh.ringbones.domain.model.Ringtone
+import com.xxh.ringbones.domain.repository.PlayHistoryRepository
 import com.xxh.ringbones.domain.usecase.GetPlayHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val getPlayHistoryUseCase: GetPlayHistoryUseCase
+    private val getPlayHistoryUseCase: GetPlayHistoryUseCase,
+    private val playHistoryRepository: PlayHistoryRepository,
 ) : ViewModel() {
 
     /** Observable list of recently played ringtones, most recent first. */
@@ -47,6 +49,15 @@ class HistoryViewModel @Inject constructor(
             } catch (e: Exception) {
                 _isLoading.value = false
             }
+        }
+    }
+
+    /** Removes a ringtone from the play history. */
+    fun removeFromHistory(ringtoneId: Long) {
+        viewModelScope.launch {
+            try {
+                playHistoryRepository.removeByRingtoneId(ringtoneId)
+            } catch (_: Exception) { }
         }
     }
 }

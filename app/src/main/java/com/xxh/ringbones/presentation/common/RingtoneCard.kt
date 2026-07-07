@@ -1,7 +1,8 @@
 package com.xxh.ringbones.presentation.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,13 +67,16 @@ private fun avatarGradient(category: String): Brush {
  *
  * @param ringtone Domain model with ringtone metadata
  * @param onClick Callback when the card is tapped
+ * @param onLongClick Optional callback when the card is long-pressed (e.g. remove from list)
  * @param avatarModifier Additional modifier for the avatar circle (e.g. SharedTransition)
  * @param modifier External modifier
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RingtoneCard(
     ringtone: Ringtone,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     avatarModifier: Modifier = Modifier
 ) {
@@ -85,7 +89,10 @@ fun RingtoneCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.55f))
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start

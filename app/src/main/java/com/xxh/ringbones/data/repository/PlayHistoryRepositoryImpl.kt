@@ -33,4 +33,8 @@ class PlayHistoryRepositoryImpl @Inject constructor(
             PlayHistoryEntity(ringtoneId = ringtoneId, playDuration = duration)
         )
     }
+
+    override suspend fun removeByRingtoneId(ringtoneId: Long) {
+        playHistoryDao.deleteByRingtoneId(ringtoneId)
+    }
 }

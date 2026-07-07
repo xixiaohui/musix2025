@@ -3,6 +3,7 @@ package com.xxh.ringbones.presentation.favorites
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xxh.ringbones.domain.model.Ringtone
+import com.xxh.ringbones.domain.repository.FavoriteRepository
 import com.xxh.ringbones.domain.usecase.GetFavoriteRingtonesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val getFavoriteRingtonesUseCase: GetFavoriteRingtonesUseCase
+    private val getFavoriteRingtonesUseCase: GetFavoriteRingtonesUseCase,
+    private val favoriteRepository: FavoriteRepository,
 ) : ViewModel() {
 
     /** Observable list of all favorited ringtones. */
@@ -47,6 +49,15 @@ class FavoritesViewModel @Inject constructor(
             } catch (e: Exception) {
                 _isLoading.value = false
             }
+        }
+    }
+
+    /** Removes a ringtone from the favorites list. */
+    fun removeFavorite(ringtoneId: Long) {
+        viewModelScope.launch {
+            try {
+                favoriteRepository.removeFavorite(ringtoneId)
+            } catch (_: Exception) { }
         }
     }
 }

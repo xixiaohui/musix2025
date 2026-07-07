@@ -13,6 +13,10 @@ interface PlayHistoryDao {
     @Insert
     suspend fun insert(history: PlayHistoryEntity)
 
+    /** Deletes all play history records for the given ringtone. */
+    @Query("DELETE FROM play_history WHERE ringtoneId = :ringtoneId")
+    suspend fun deleteByRingtoneId(ringtoneId: Long)
+
     @Query("""
         SELECT r.* FROM ringtones r
         INNER JOIN play_history ph ON r.id = ph.ringtoneId

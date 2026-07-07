@@ -8,4 +8,6 @@ interface PlayHistoryRepository {
     fun getRecentPlays(limit: Int): Flow<List<Ringtone>>
     fun getMostPlayed(limit: Int): Flow<List<Ringtone>>
     suspend fun record(ringtoneId: Long, duration: Long)
+    /** Removes all play history records for the given ringtone. */
+    suspend fun removeByRingtoneId(ringtoneId: Long)
 }
