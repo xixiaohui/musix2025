@@ -42,8 +42,8 @@ fun AppNavGraph(
                 onCategoryClick = { type ->
                     navController.navigate(Route.Search(query = type, byCategory = true))
                 },
-                onRingtoneClick = { ringtone ->
-                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                onRingtoneClick = { ringtone, queueIds ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id, queueIds = queueIds))
                 },
                 onProkeralaSeeAll = {
                     navController.navigate(Route.ProkeralaList)
@@ -64,8 +64,8 @@ fun AppNavGraph(
         composable<Route.Search> { backStackEntry ->
             backStackEntry.toRoute<Route.Search>()
             SearchResultScreen(
-                onRingtoneClick = { ringtone ->
-                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                onRingtoneClick = { ringtone, queueIds ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id, queueIds = queueIds))
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -76,8 +76,8 @@ fun AppNavGraph(
         // ── Prokerala List Screen ──
         composable<Route.ProkeralaList> {
             ProkeralaListScreen(
-                onRingtoneClick = { ringtone ->
-                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                onRingtoneClick = { ringtone, queueIds ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id, queueIds = queueIds))
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -100,8 +100,8 @@ fun AppNavGraph(
         // ── Favorites Screen ──
         composable<Route.Favorites> {
             FavoritesScreen(
-                onRingtoneClick = { ringtone ->
-                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                onRingtoneClick = { ringtone, queueIds ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id, queueIds = queueIds))
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -112,8 +112,8 @@ fun AppNavGraph(
         // ── Play History Screen ──
         composable<Route.PlayHistory> {
             HistoryScreen(
-                onRingtoneClick = { ringtone ->
-                    navController.navigate(Route.Player(ringtoneId = ringtone.id))
+                onRingtoneClick = { ringtone, queueIds ->
+                    navController.navigate(Route.Player(ringtoneId = ringtone.id, queueIds = queueIds))
                 },
                 onBackClick = {
                     navController.popBackStack()
