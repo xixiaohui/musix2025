@@ -10,6 +10,7 @@ import com.xxh.ringbones.presentation.history.HistoryScreen
 import com.xxh.ringbones.presentation.home.HomeScreen
 import com.xxh.ringbones.presentation.player.PlayerScreen
 import com.xxh.ringbones.presentation.prokerala.ProkeralaListScreen
+import com.xxh.ringbones.presentation.download.DownloadListScreen
 import com.xxh.ringbones.presentation.search.SearchResultScreen
 
 /**
@@ -111,6 +112,15 @@ fun AppNavGraph(
                 onRingtoneClick = { ringtone ->
                     navController.navigate(Route.Player(ringtoneId = ringtone.id))
                 },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ── Downloads Screen ──
+        composable<Route.Downloads> {
+            DownloadListScreen(
                 onBackClick = {
                     navController.popBackStack()
                 }

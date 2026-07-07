@@ -39,4 +39,8 @@ sealed class Route {
     /** Play history screen — recently played ringtones. */
     @Serializable
     data object PlayHistory : Route()
+
+    /** Downloads management screen. */
+    @Serializable
+    data object Downloads : Route()
 }
