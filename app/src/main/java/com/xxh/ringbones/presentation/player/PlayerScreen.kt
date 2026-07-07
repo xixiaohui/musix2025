@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -85,6 +86,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun PlayerScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isInPiPMode: Boolean = false,
+    onEnterPiP: () -> Unit = {},
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -222,6 +225,18 @@ fun PlayerScreen(
                             contentDescription = "Back",
                             tint = PlayerColors.textPrimary,
                         )
+                    }
+                },
+                actions = {
+                    // Picture-in-Picture toggle — hides in PiP mode itself
+                    if (!isInPiPMode) {
+                        IconButton(onClick = onEnterPiP) {
+                            Icon(
+                                imageVector = Icons.Default.PictureInPicture,
+                                contentDescription = "Enter picture-in-picture",
+                                tint = PlayerColors.textSecondary,
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

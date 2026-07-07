@@ -17,11 +17,20 @@ import com.xxh.ringbones.presentation.search.SearchResultScreen
  *
  * Navigation flow:
  * - Home → Search/Category (via query param)
- * - Search/Category → Player (via ringtone ID)
- * - Player can go back to previous screen
+ * - Home → ProkeralaList / Favorites / PlayHistory (via See All)
+ * - Any list → Player (via ringtone ID)
+ * - Player can go back to previous screen or enter PiP
+ *
+ * @param navController Host controller for type-safe navigation
+ * @param isInPiPMode Whether the activity is currently in Picture-in-Picture mode
+ * @param onEnterPiP Callback to request entering Picture-in-Picture mode
  */
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(
+    navController: NavHostController,
+    isInPiPMode: Boolean = false,
+    onEnterPiP: () -> Unit = {},
+) {
     NavHost(navController = navController, startDestination = Route.Home) {
         // ── Home Screen ──
         composable<Route.Home> {
@@ -78,7 +87,9 @@ fun AppNavGraph(navController: NavHostController) {
             PlayerScreen(
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
+                isInPiPMode = isInPiPMode,
+                onEnterPiP = onEnterPiP,
             )
         }
 
