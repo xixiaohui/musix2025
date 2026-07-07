@@ -95,6 +95,20 @@ fun DownloadListScreen(
                     }
                 }
 
+                val paused = state.tasks.filter { it.status == DownloadStatus.Paused }
+                if (paused.isNotEmpty()) {
+                    item(key = "header_paused") { SectionHeader("Paused") }
+                    items(paused, key = { "paused_${it.ringtoneId}" }) { task ->
+                        DownloadTaskItem(
+                            task = task,
+                            onPause = {},
+                            onResume = { viewModel.resume(task.ringtoneId) },
+                            onCancel = { viewModel.cancel(task.ringtoneId) },
+                            onRetry = {},
+                        )
+                    }
+                }
+
                 val pending = state.tasks.filter { it.status == DownloadStatus.Pending }
                 if (pending.isNotEmpty()) {
                     item(key = "header_pending") { SectionHeader("Pending") }

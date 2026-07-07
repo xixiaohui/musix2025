@@ -21,8 +21,8 @@ android {
         applicationId = "com.xxh.ringbones"
         minSdk = 24
         targetSdk = 35
-        versionCode = 18
-        versionName = "3.0.0"
+        versionCode = 20
+        versionName = "3.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,6 +52,11 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = false
+
+            // 保留原生代码的调试符号表，用于上传到 Play Console 以符号化原生崩溃和 ANR
+            ndk {
+                debugSymbolLevel = "symbol_table"
+            }
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

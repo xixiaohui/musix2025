@@ -9,6 +9,11 @@ import kotlinx.coroutines.flow.callbackFlow
  * Captures raw PCM audio data from the Android [Visualizer] API for use
  * with [FFTProcessor] to produce real-time spectrum visualization.
  *
+ * Uses [onWaveFormDataCapture] to obtain time-domain PCM samples (not FFT
+ * frequency magnitudes), since [FFTProcessor] runs its own FFT. Each byte
+ * in the waveform array is an 8-bit unsigned PCM sample value, which is
+ * converted to signed [Short] before emission.
+ *
  * Wraps the system [Visualizer] in a coroutine-friendly [Flow] that emits
  * [ShortArray] PCM chunks at the configured [captureRateMs]. Falls back
  * gracefully if the Visualizer API is unavailable on the device.
@@ -43,8 +48,10 @@ class VisualizerCapture(
         }
 
         if (v != null) {
-            // Configure capture listener — the callbackFlow block below
-            // will swap onFftBytes to the emitting lambda when collected.
+            // Configure capture listener to receive waveform (PCM) data.
+            // We capture raw PCM and let FFTProcessor run the FFT — using
+            // onFftDataCapture would give us pre-computed frequency magnitudes
+            // in a different format that cannot be fed through FFTProcessor.
             v.setDataCaptureListener(
                 object : Visualizer.OnDataCaptureListener {
                     override fun onWaveFormDataCapture(
@@ -52,7 +59,7 @@ class VisualizerCapture(
                         waveform: ByteArray?,
                         samplingRate: Int,
                     ) {
-                        // Not used — we capture FFT data instead
+                        onPcmBytes(waveform)
                     }
 
                     override fun onFftDataCapture(
@@ -60,24 +67,24 @@ class VisualizerCapture(
                         fft: ByteArray?,
                         samplingRate: Int,
                     ) {
-                        onFftBytes(fft)
+                        // Not used — we capture waveform PCM instead
                     }
                 },
                 (captureRateMs.toInt() * 1000).coerceAtMost(Int.MAX_VALUE).toInt(),
-                /* waveform = */ false,
-                /* fft = */ true,
+                /* waveform = */ true,
+                /* fft = */ false,
             )
             v.enabled = true
             visualizer = v
             isAvailable = true
             pcmFlow = callbackFlow {
-                onFftBytes = { bytes ->
-                    if (bytes != null && bytes.size >= fftSize * 2) {
+                onPcmBytes = { bytes ->
+                    if (bytes != null && bytes.size >= fftSize) {
                         val shorts = ShortArray(fftSize)
                         for (i in 0 until fftSize) {
-                            val low = bytes[i * 2].toInt() and 0xFF
-                            val high = bytes[i * 2 + 1].toInt() and 0xFF
-                            shorts[i] = ((high shl 8) or low).toShort()
+                            // Convert unsigned byte to signed short: (byte - 128) * 256
+                            val unsignedByte = bytes[i].toInt() and 0xFF
+                            shorts[i] = ((unsignedByte - 128) * 256).toShort()
                         }
                         trySend(shorts)
                     }
@@ -90,8 +97,8 @@ class VisualizerCapture(
         }
     }
 
-    /** Mutable callback set by init — assigned when real FFT data arrives. */
-    private var onFftBytes: (ByteArray?) -> Unit = {}
+    /** Mutable callback set by init — assigned when real PCM waveform data arrives. */
+    private var onPcmBytes: (ByteArray?) -> Unit = {}
 
     /** Release the system Visualizer. Safe to call multiple times. */
     fun release() {

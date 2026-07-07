@@ -223,6 +223,7 @@ class ExoPlayerEngine(
         if (index !in queue.indices) return
 
         queue.removeAt(index)
+        recalculateShuffle()
 
         when {
             // Last track removed — stop and navigate back
@@ -267,6 +268,44 @@ class ExoPlayerEngine(
                 _state.update { it.copy(queue = queue) }
             }
         }
+    }
+
+    /**
+     * Recalculates [shuffledIndices] to match the current queue size after
+     * a removal. Removes stale indices and preserves the remainder of the
+     * shuffled play order. If no valid indices remain, clears shuffle.
+     */
+    private fun recalculateShuffle() {
+        val current = _state.value
+        val indices = shuffledIndices ?: return
+        val queueSize = current.queue.size
+
+        // Remove stale indices and re-map
+        val validIndices = indices.filter { it < queueSize }.toMutableList()
+        if (validIndices.isEmpty()) {
+            shuffledIndices = null
+            return
+        }
+
+        // Build new Fisher-Yates shuffle of available indices
+        val allIndices = (0 until queueSize).toMutableList()
+        val remaining = mutableSetOf<Int>()
+        for (i in validIndices) {
+            if (i in allIndices) {
+                remaining.add(i)
+                allIndices.remove(i)
+            }
+        }
+
+        // Interleave remaining valid positions with new indices
+        val result = mutableListOf<Int>()
+        result.addAll(validIndices.filter { it < queueSize })
+        // Add any missing indices
+        for (i in 0 until queueSize) {
+            if (i !in result) result.add(i)
+        }
+
+        shuffledIndices = result.toIntArray()
     }
 
     // ── Queue navigation ──

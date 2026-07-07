@@ -147,49 +147,48 @@ class DownloadManager @Inject constructor(
 
     private fun scheduleNext() {
         scope.launch {
-            semaphore.withPermit {
-                val next = _state.value.tasks.find { it.status == DownloadStatus.Pending }
-                    ?: return@withPermit
-
-                startDownload(next)
-            }
+            val next = _state.value.tasks.find { it.status == DownloadStatus.Pending }
+                ?: return@launch
+            startDownload(next)
         }
     }
 
     private fun startDownload(task: DownloadTask) {
         val job = scope.launch {
-            updateTask(task.ringtoneId) { it.copy(status = DownloadStatus.Downloading) }
+            semaphore.withPermit {
+                updateTask(task.ringtoneId) { it.copy(status = DownloadStatus.Downloading) }
 
-            try {
-                val localPath = withContext(Dispatchers.IO) {
-                    downloadToFile(task)
-                }
-                ringtoneRepository.updateDownloadPath(task.ringtoneId, localPath)
-                updateTask(task.ringtoneId) {
-                    it.copy(status = DownloadStatus.Completed, progress = 1f)
-                }
-            } catch (e: Exception) {
-                // Delete partial file on failure
-                val partialFile = targetFile(task)
-                if (partialFile.exists()) partialFile.delete()
+                try {
+                    val localPath = withContext(Dispatchers.IO) {
+                        downloadToFile(task)
+                    }
+                    ringtoneRepository.updateDownloadPath(task.ringtoneId, localPath)
+                    updateTask(task.ringtoneId) {
+                        it.copy(status = DownloadStatus.Completed, progress = 1f)
+                    }
+                } catch (e: Exception) {
+                    // Delete partial file on failure
+                    val partialFile = targetFile(task)
+                    if (partialFile.exists()) partialFile.delete()
 
-                updateTask(task.ringtoneId) {
-                    it.copy(
-                        status = DownloadStatus.Failed,
-                        errorMessage = e.message ?: "Unknown error",
-                    )
+                    updateTask(task.ringtoneId) {
+                        it.copy(
+                            status = DownloadStatus.Failed,
+                            errorMessage = e.message ?: "Unknown error",
+                        )
+                    }
+                } finally {
+                    activeJobs.remove(task.ringtoneId)
+                    _state.update { s ->
+                        val remainingTasks = s.tasks
+                        s.copy(
+                            activeCount = remainingTasks.count { it.status == DownloadStatus.Downloading },
+                            pendingCount = remainingTasks.count { it.status == DownloadStatus.Pending },
+                        )
+                    }
+                    // Try to schedule next pending task
+                    scheduleNext()
                 }
-            } finally {
-                activeJobs.remove(task.ringtoneId)
-                _state.update { s ->
-                    val remainingTasks = s.tasks
-                    s.copy(
-                        activeCount = remainingTasks.count { it.status == DownloadStatus.Downloading },
-                        pendingCount = remainingTasks.count { it.status == DownloadStatus.Pending },
-                    )
-                }
-                // Try to schedule next pending task
-                scheduleNext()
             }
         }
         activeJobs[task.ringtoneId] = job
@@ -209,34 +208,40 @@ class DownloadManager @Inject constructor(
 
         val request = Request.Builder().url(task.url).build()
         val response = httpClient.newCall(request).execute()
-        if (!response.isSuccessful) {
-            throw IOException("HTTP ${response.code}")
-        }
-
-        val body = response.body ?: throw IOException("Empty response body")
-        val totalBytes = body.contentLength()
-        val input = body.byteStream()
-        val output = FileOutputStream(file)
-        val buffer = ByteArray(BUFFER_SIZE)
-        var downloaded = 0L
-
-        try {
-            var bytesRead: Int
-            while (input.read(buffer).also { bytesRead = it } != -1) {
-                output.write(buffer, 0, bytesRead)
-                downloaded += bytesRead
-                val progress = if (totalBytes > 0) downloaded.toFloat() / totalBytes else 0f
-                updateTask(task.ringtoneId) {
-                    it.copy(
-                        progress = progress.coerceIn(0f, 1f),
-                        downloadedBytes = downloaded,
-                        totalBytes = totalBytes.coerceAtLeast(0),
-                    )
-                }
+        response.use { resp ->
+            if (!resp.isSuccessful) {
+                throw IOException("HTTP ${resp.code}")
             }
-        } finally {
-            output.close()
-            input.close()
+
+            val body = resp.body ?: throw IOException("Empty response body")
+            val totalBytes = body.contentLength()
+            val input = body.byteStream()
+            val output = FileOutputStream(file)
+            val buffer = ByteArray(BUFFER_SIZE)
+            var downloaded = 0L
+            var lastUpdateTime = 0L
+
+            try {
+                var bytesRead: Int
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    output.write(buffer, 0, bytesRead)
+                    downloaded += bytesRead
+                    val now = System.currentTimeMillis()
+                    if (now - lastUpdateTime >= 100) {
+                        val progress = if (totalBytes > 0) downloaded.toFloat() / totalBytes else 0f
+                        updateTask(task.ringtoneId) {
+                            it.copy(
+                                progress = progress.coerceIn(0f, 1f),
+                                downloadedBytes = downloaded,
+                                totalBytes = totalBytes.coerceAtLeast(0),
+                            )
+                        }
+                        lastUpdateTime = now
+                    }
+                }
+            } finally {
+                output.close()
+            }
         }
 
         file.absolutePath

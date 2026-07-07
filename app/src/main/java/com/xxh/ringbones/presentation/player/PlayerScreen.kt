@@ -141,7 +141,7 @@ fun PlayerScreen(
         audioPermissionGranted.value = granted
     }
 
-    LaunchedEffect(state.visualizerData) {
+    LaunchedEffect(Unit) {
         if (!audioPermissionGranted.value && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
         }
