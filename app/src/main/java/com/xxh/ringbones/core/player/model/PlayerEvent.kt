@@ -54,4 +54,7 @@ sealed interface PlayerEvent {
 
     /** Dismiss the currently displayed error. */
     data object DismissError : PlayerEvent
+
+    /** Remove a track from the queue at the given index. */
+    data class RemoveFromQueue(val index: Int) : PlayerEvent
 }
