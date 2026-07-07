@@ -51,7 +51,7 @@ import com.xxh.ringbones.presentation.search.components.RankedRingtoneCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchResultScreen(
-    onRingtoneClick: (Ringtone) -> Unit,
+    onRingtoneClick: (Ringtone, queueIds: List<Long>) -> Unit,
     onBackClick: () -> Unit,
     viewModel: CategoryDetailViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
@@ -149,7 +149,7 @@ fun SearchResultScreen(
                         ringtone = ringtone,
                         rank = if (index < 10) index + 1 else 0,
                         index = index,
-                        onClick = { onRingtoneClick(ringtone) }
+                        onClick = { onRingtoneClick(ringtone, ringtones.map { it.id }) }
                     )
                 }
 
@@ -166,7 +166,7 @@ fun SearchResultScreen(
 private fun PreviewSearchResultScreen() {
     MaterialTheme {
         SearchResultScreen(
-            onRingtoneClick = {},
+            onRingtoneClick = { _, _ -> },
             onBackClick = {}
         )
     }

@@ -50,7 +50,7 @@ private val CARD_SPACING = 4.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProkeralaListScreen(
-    onRingtoneClick: (Ringtone) -> Unit,
+    onRingtoneClick: (Ringtone, queueIds: List<Long>) -> Unit,
     onBackClick: () -> Unit,
     viewModel: ProkeralaListViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
@@ -123,7 +123,7 @@ fun ProkeralaListScreen(
                     itemsIndexed(ringtones) { _, ringtone ->
                         RingtoneCard(
                             ringtone = ringtone,
-                            onClick = { onRingtoneClick(ringtone) }
+                            onClick = { onRingtoneClick(ringtone, ringtones.map { it.id }) }
                         )
                     }
                 }
@@ -137,7 +137,7 @@ fun ProkeralaListScreen(
 private fun PreviewProkeralaListScreen() {
     MaterialTheme {
         ProkeralaListScreen(
-            onRingtoneClick = {},
+            onRingtoneClick = { _, _ -> },
             onBackClick = {}
         )
     }

@@ -57,7 +57,7 @@ private val CARD_SPACING = 4.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
-    onRingtoneClick: (Ringtone) -> Unit,
+    onRingtoneClick: (Ringtone, queueIds: List<Long>) -> Unit,
     onBackClick: () -> Unit,
     viewModel: HistoryViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
@@ -165,7 +165,7 @@ fun HistoryScreen(
                     itemsIndexed(ringtones) { _, ringtone ->
                         RingtoneCard(
                             ringtone = ringtone,
-                            onClick = { onRingtoneClick(ringtone) },
+                            onClick = { onRingtoneClick(ringtone, ringtones.map { it.id }) },
                             onLongClick = { ringtoneToRemove = ringtone }
                         )
                     }
@@ -180,7 +180,7 @@ fun HistoryScreen(
 private fun PreviewHistoryScreen() {
     MaterialTheme {
         HistoryScreen(
-            onRingtoneClick = {},
+            onRingtoneClick = { _, _ -> },
             onBackClick = {}
         )
     }

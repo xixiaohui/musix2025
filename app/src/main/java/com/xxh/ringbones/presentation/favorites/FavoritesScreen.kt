@@ -57,7 +57,7 @@ private val CARD_SPACING = 4.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
-    onRingtoneClick: (Ringtone) -> Unit,
+    onRingtoneClick: (Ringtone, queueIds: List<Long>) -> Unit,
     onBackClick: () -> Unit,
     viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
@@ -165,7 +165,7 @@ fun FavoritesScreen(
                     itemsIndexed(ringtones) { _, ringtone ->
                         RingtoneCard(
                             ringtone = ringtone,
-                            onClick = { onRingtoneClick(ringtone) },
+                            onClick = { onRingtoneClick(ringtone, ringtones.map { it.id }) },
                             onLongClick = { ringtoneToRemove = ringtone }
                         )
                     }
@@ -180,7 +180,7 @@ fun FavoritesScreen(
 private fun PreviewFavoritesScreen() {
     MaterialTheme {
         FavoritesScreen(
-            onRingtoneClick = {},
+            onRingtoneClick = { _, _ -> },
             onBackClick = {}
         )
     }
