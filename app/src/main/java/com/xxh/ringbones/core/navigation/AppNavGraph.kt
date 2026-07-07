@@ -53,6 +53,9 @@ fun AppNavGraph(
                 },
                 onPlayHistorySeeAll = {
                     navController.navigate(Route.PlayHistory)
+                },
+                onDownloadsClick = {
+                    navController.navigate(Route.Downloads)
                 }
             )
         }

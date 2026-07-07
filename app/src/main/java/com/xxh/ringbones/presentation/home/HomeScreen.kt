@@ -1,6 +1,7 @@
 package com.xxh.ringbones.presentation.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -60,6 +61,7 @@ fun HomeScreen(
     onProkeralaSeeAll: () -> Unit,
     onFavoritesSeeAll: () -> Unit,
     onPlayHistorySeeAll: () -> Unit,
+    onDownloadsClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -79,6 +81,30 @@ fun HomeScreen(
         // ── Hero Header ──
         item(key = "hero") {
             HeroHeader(onSearch = onSearch)
+        }
+
+        // ── Downloads entry ──
+        item(key = "downloads_entry") {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = true, onClick = onDownloadsClick)
+                    .padding(horizontal = HOME_HORIZONTAL, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Downloads",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Text(
+                    text = "Manage →",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
 
         // ── Category Chips ──
