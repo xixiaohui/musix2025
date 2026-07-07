@@ -7,6 +7,7 @@ import android.provider.Settings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xxh.ringbones.core.download.DownloadStatus
 import com.xxh.ringbones.core.network.HttpClient
 import com.xxh.ringbones.core.player.ExoPlayerEngine
 import com.xxh.ringbones.core.player.PlayerEngine
@@ -85,7 +86,7 @@ class PlayerViewModel @Inject constructor(
     private val ringtoneId: Long = savedStateHandle.get<Long>("ringtoneId") ?: 0L
 
     /** Optional queue IDs for building the play queue. */
-    private val queueIds: List<Long> = savedStateHandle.get<ArrayList<Long>>("queueIds") ?: emptyList()
+    private val queueIds: List<Long> = savedStateHandle.get<LongArray>("queueIds")?.toList() ?: emptyList()
 
     init {
         if (ringtoneId <= 0) {
@@ -151,6 +152,9 @@ class PlayerViewModel @Inject constructor(
 
                 // Check initial download status
                 checkDownloadStatus(initialRingtone)
+
+                // Observe download completion for the current track
+                observeDownloadCompletion()
             } catch (e: Exception) {
                 _effects.emit(PlayerEffect.ShowSnackbar("Failed to load player: ${e.message}"))
                 _effects.emit(PlayerEffect.NavigateBack)
@@ -183,12 +187,58 @@ class PlayerViewModel @Inject constructor(
 
     /**
      * Enqueues the current ringtone for download via [DownloadManager].
+     * If already downloaded locally, shows a snackbar and skips the queue.
      */
     private fun downloadCurrentRingtone() {
         val ringtone = _state.value.currentRingtone ?: return
-        downloadManager.enqueue(ringtone)
         viewModelScope.launch {
+            val alreadyExists = withContext(Dispatchers.IO) {
+                isFileDownloaded(ringtone)
+            }
+            if (alreadyExists) {
+                _effects.emit(PlayerEffect.ShowSnackbar("Already downloaded"))
+                return@launch
+            }
+            downloadManager.enqueue(ringtone)
             _effects.emit(PlayerEffect.ShowSnackbar("Added to download queue"))
+        }
+    }
+
+    /**
+     * Observes the [DownloadManager] state and keeps [_isDownloaded] in sync
+     * with the current ringtone's download status in real-time.
+     *
+     * - Task Completed → [_isDownloaded] = true, snackbar once
+     * - Task removed/deleted → [_isDownloaded] = false
+     * - Task pending/failed → [_isDownloaded] = false
+     */
+    private fun observeDownloadCompletion() {
+        viewModelScope.launch {
+            val seenCompleted = mutableSetOf<Long>()
+            downloadManager.state.collect { downloadState ->
+                val currentId = _state.value.currentRingtone?.id ?: return@collect
+                val task = downloadState.tasks.find { it.ringtoneId == currentId }
+
+                when {
+                    task == null -> {
+                        // Task was removed (deleted from downloads page)
+                        _isDownloaded.value = false
+                        seenCompleted.remove(currentId)
+                    }
+                    task.status == DownloadStatus.Completed -> {
+                        _isDownloaded.value = true
+                        if (currentId !in seenCompleted) {
+                            seenCompleted.add(currentId)
+                            _effects.emit(PlayerEffect.ShowSnackbar("Download complete"))
+                        }
+                    }
+                    else -> {
+                        // Pending, Downloading, Paused, Failed — not downloaded
+                        _isDownloaded.value = false
+                        seenCompleted.remove(currentId)
+                    }
+                }
+            }
         }
     }
 
@@ -243,9 +293,9 @@ class PlayerViewModel @Inject constructor(
      * filename from the URL.
      */
     private fun isFileDownloaded(ringtone: Ringtone): Boolean {
-        // Check stored path first
+        // Check stored path first (skip null or empty — cleared on delete)
         val storedPath = ringtone.downloadPath
-        if (storedPath != null && File(storedPath).exists()) return true
+        if (!storedPath.isNullOrEmpty() && File(storedPath).exists()) return true
 
         // Fallback: check the default download location
         val fileName = ringtone.url.split("/").lastOrNull() ?: return false

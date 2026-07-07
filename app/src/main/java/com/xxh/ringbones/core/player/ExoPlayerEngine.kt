@@ -41,6 +41,9 @@ private const val DEFAULT_SPEED = 1.0f
 /** Visualizer frame rate target in milliseconds (~30fps). */
 private const val VISUALIZER_INTERVAL_MS = 33L
 
+/** Retry delay when audio session ID is not yet available (100ms). */
+private const val RETRY_SESSION_ID_DELAY_MS = 100L
+
 /** How often to poll for A–B loop boundaries (fast enough for responsive seeking). */
 private const val AB_LOOP_POLL_MS = 50L
 
@@ -517,9 +520,17 @@ class ExoPlayerEngine(
     private fun startVisualizer() {
         if (visualizerJob?.isActive == true) return
 
+        val sessionId = exoPlayer.audioSessionId
+        if (sessionId == 0) {
+            // Audio session not yet allocated — retry after a short delay
+            visualizerJob = scope.launch {
+                delay(RETRY_SESSION_ID_DELAY_MS)
+                startVisualizer()
+            }
+            return
+        }
+
         val capture = visualizerCapture ?: run {
-            val sessionId = exoPlayer.audioSessionId
-            if (sessionId == 0) return
             VisualizerCapture(audioSessionId = sessionId).also { visualizerCapture = it }
         }
 

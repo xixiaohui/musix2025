@@ -6,7 +6,11 @@ import com.xxh.ringbones.data.local.dao.RingtoneDao
 import com.xxh.ringbones.data.mapper.RingtoneMapper
 import com.xxh.ringbones.domain.model.Ringtone
 import com.xxh.ringbones.domain.repository.RingtoneRepository
+import com.xxh.ringbones.data.local.entity.RingtoneEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -72,9 +76,31 @@ class RingtoneRepositoryImpl @Inject constructor(
     }
 
     override fun getByIds(ids: List<Long>): Flow<List<Ringtone>> =
-        ringtoneDao.getByIds(ids).map { entities ->
-            entities.map { RingtoneMapper.toDomain(it) }
+        if (ids.isEmpty()) {
+            kotlinx.coroutines.flow.flowOf(emptyList())
+        } else {
+            // Chunk to avoid exceeding SQLite max variable number (default 999)
+            chunkedQuery(ids)
         }
+
+    /**
+     * Splits [ids] into batches to avoid hitting SQLITE_MAX_VARIABLE_NUMBER (default 999),
+     * then queries each batch and concatenates results.
+     */
+    private fun chunkedQuery(ids: List<Long>): Flow<List<Ringtone>> = flow {
+        val batches = ids.chunked(MAX_SQL_VARIABLES)
+        val allEntities = mutableListOf<RingtoneEntity>()
+        for (batch in batches) {
+            val entities = ringtoneDao.getByIds(batch).first()
+            allEntities.addAll(entities)
+        }
+        emit(allEntities.map { RingtoneMapper.toDomain(it) })
+    }
+
+    companion object {
+        /** SQLite max host parameters default is 999; keep well under that. */
+        private const val MAX_SQL_VARIABLES = 800
+    }
 
     override fun getDistinctCategories(): Flow<List<String>> =
         ringtoneDao.getDistinctCategories()

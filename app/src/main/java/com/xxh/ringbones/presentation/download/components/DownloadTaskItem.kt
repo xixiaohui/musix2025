@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +32,8 @@ import com.xxh.ringbones.core.download.DownloadTask
 /**
  * A single row in the download list, showing the task title, status,
  * progress bar (if active), and contextual action buttons.
+ *
+ * Completed items show play and delete buttons.
  */
 @Composable
 fun DownloadTaskItem(
@@ -38,6 +42,8 @@ fun DownloadTaskItem(
     onResume: () -> Unit,
     onCancel: () -> Unit,
     onRetry: () -> Unit,
+    onDelete: () -> Unit = {},
+    onPlay: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -108,7 +114,23 @@ fun DownloadTaskItem(
                         )
                     }
                 }
-                DownloadStatus.Completed -> { }
+                DownloadStatus.Completed -> {
+                    IconButton(onClick = onPlay, modifier = Modifier.size(32.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Play",
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                    IconButton(onClick = onDelete, modifier = Modifier.size(32.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+                }
             }
         }
 

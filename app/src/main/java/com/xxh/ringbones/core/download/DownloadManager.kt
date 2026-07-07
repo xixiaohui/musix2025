@@ -13,6 +13,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -70,8 +71,8 @@ class DownloadManager @Inject constructor(
     fun enqueue(ringtone: Ringtone) {
         val current = _state.value.tasks
 
-        // Skip if already downloaded
-        if (ringtone.downloadPath != null && File(ringtone.downloadPath).exists()) {
+        // Skip if already downloaded (ignore empty/null path — cleared on delete)
+        if (!ringtone.downloadPath.isNullOrEmpty() && File(ringtone.downloadPath).exists()) {
             val completedTask = DownloadTask(
                 ringtoneId = ringtone.id,
                 title = ringtone.title,
@@ -141,6 +142,34 @@ class DownloadManager @Inject constructor(
                 it.status != DownloadStatus.Completed && it.status != DownloadStatus.Failed
             })
         }
+    }
+
+    /**
+     * Remove a single task from the queue regardless of its status.
+     * If the task is actively downloading, its coroutine is cancelled first.
+     * If the task is Completed, the local file is also deleted and the
+     * Room downloadPath is cleared so the ringtone can be re-downloaded.
+     */
+    fun remove(ringtoneId: Long) {
+        val task = _state.value.tasks.find { it.ringtoneId == ringtoneId }
+        activeJobs.remove(ringtoneId)?.cancel()
+        _state.update { s ->
+            s.copy(tasks = s.tasks.filter { it.ringtoneId != ringtoneId })
+        }
+
+        // For completed downloads, clean up the file and Room state
+        if (task?.status == DownloadStatus.Completed) {
+            scope.launch {
+                val ringtone = ringtoneRepository.getById(ringtoneId).first()
+                val path = ringtone?.downloadPath
+                if (!path.isNullOrEmpty()) {
+                    File(path).delete()
+                }
+                ringtoneRepository.updateDownloadPath(ringtoneId, "")
+            }
+        }
+
+        scheduleNext()
     }
 
     // ── Internal ──

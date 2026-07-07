@@ -35,4 +35,7 @@ class DownloadListViewModel @Inject constructor(
 
     /** Remove all completed and failed entries from the list. */
     fun clearCompleted() = downloadManager.clearCompleted()
+
+    /** Remove a single task from the queue regardless of its status. */
+    fun remove(ringtoneId: Long) = downloadManager.remove(ringtoneId)
 }

@@ -38,6 +38,7 @@ import com.xxh.ringbones.presentation.download.components.DownloadTaskItem
 @Composable
 fun DownloadListScreen(
     onBackClick: () -> Unit,
+    onPlayClick: (ringtoneId: Long) -> Unit = {},
     viewModel: DownloadListViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
@@ -160,6 +161,8 @@ fun DownloadListScreen(
                             onResume = {},
                             onCancel = {},
                             onRetry = {},
+                            onDelete = { viewModel.remove(task.ringtoneId) },
+                            onPlay = { onPlayClick(task.ringtoneId) },
                         )
                     }
                 }

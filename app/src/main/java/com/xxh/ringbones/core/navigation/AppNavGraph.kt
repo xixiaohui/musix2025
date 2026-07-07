@@ -126,7 +126,10 @@ fun AppNavGraph(
             DownloadListScreen(
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
+                onPlayClick = { ringtoneId ->
+                    navController.navigate(Route.Player(ringtoneId = ringtoneId))
+                },
             )
         }
     }
