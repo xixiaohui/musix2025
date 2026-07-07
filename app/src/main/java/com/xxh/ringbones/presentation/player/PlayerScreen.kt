@@ -124,6 +124,29 @@ fun PlayerScreen(
         }
     }
 
+    // Request RECORD_AUDIO permission for real audio visualization
+    val audioPermissionGranted = remember {
+        mutableStateOf(
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                context.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) ==
+                    android.content.pm.PackageManager.PERMISSION_GRANTED
+            } else {
+                true // auto-granted pre-M
+            }
+        )
+    }
+    val permissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        audioPermissionGranted.value = granted
+    }
+
+    LaunchedEffect(state.visualizerData) {
+        if (!audioPermissionGranted.value && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
     val ringtone = state.currentRingtone
     val bgColorIndex = remember(ringtone?.category) {
         kotlin.math.abs(ringtone?.category?.hashCode() ?: 0)
