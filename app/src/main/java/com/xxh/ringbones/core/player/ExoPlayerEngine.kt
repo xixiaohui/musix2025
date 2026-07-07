@@ -14,6 +14,7 @@ import com.xxh.ringbones.core.player.model.PlayerEvent
 import com.xxh.ringbones.core.player.model.PlayerState
 import com.xxh.ringbones.core.player.model.RepeatMode
 import com.xxh.ringbones.core.player.visualizer.FFTProcessor
+import com.xxh.ringbones.core.player.visualizer.VisualizerCapture
 import com.xxh.ringbones.domain.model.Ringtone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -100,6 +101,9 @@ class ExoPlayerEngine(
     /** Active A–B loop boundary-monitoring job. */
     private var abLoopJob: Job? = null
 
+    /** VisualizerCapture instance — created lazily on first use. */
+    private var visualizerCapture: VisualizerCapture? = null
+
     init {
         require(initialQueue.isNotEmpty()) { "Queue must not be empty" }
         val startIndex = initialQueue.indexOf(initialRingtone).coerceAtLeast(0)
@@ -149,6 +153,7 @@ class ExoPlayerEngine(
         visualizerJob?.cancel()
         sleepTimerJob?.cancel()
         abLoopJob?.cancel()
+        visualizerCapture?.release()
         exoPlayer.release()
     }
 
@@ -472,18 +477,42 @@ class ExoPlayerEngine(
 
     private fun startVisualizer() {
         if (visualizerJob?.isActive == true) return
-        fftProcessor = FFTProcessor()
 
+        val capture = visualizerCapture ?: run {
+            val sessionId = exoPlayer.audioSessionId
+            if (sessionId == 0) return
+            VisualizerCapture(audioSessionId = sessionId).also { visualizerCapture = it }
+        }
+
+        if (!capture.isAvailable) {
+            startDummyVisualizer()
+            return
+        }
+
+        fftProcessor = FFTProcessor()
+        visualizerJob = scope.launch(Dispatchers.Default) {
+            val processor = fftProcessor!!
+            capture.pcmFlow.collect { samples ->
+                val magnitudes = processor.process(samples)
+                _state.update { it.copy(visualizerData = magnitudes) }
+            }
+        }
+    }
+
+    private fun stopVisualizer() {
+        visualizerJob?.cancel()
+        visualizerJob = null
+    }
+
+    /** Fallback visualizer when VisualizerCapture is not available. */
+    private fun startDummyVisualizer() {
+        fftProcessor = FFTProcessor()
         visualizerJob = scope.launch(Dispatchers.Default) {
             val processor = fftProcessor!!
             while (isActive) {
-                // In a full implementation, we'd capture PCM from ExoPlayer's
-                // AudioOffloadListener or AudioProcessor. For now, generate
-                // placeholder data that follows the audio amplitude envelope.
                 val dummySamples = ShortArray(256) { i ->
                     val t = i.toFloat() / 256f
-                    val playing = _state.value.isPlaying  // thread-safe read, no ExoPlayer access needed
-                    val envelope = if (playing) 0.5f + 0.5f * kotlin.math.sin(
+                    val envelope = if (_state.value.isPlaying) 0.5f + 0.5f * kotlin.math.sin(
                         (System.nanoTime() / 1_000_000_000.0 * 2.0 * Math.PI).toFloat()
                     ).toFloat() else 0.1f
                     ((kotlin.math.sin(t * 2 * Math.PI * 8).toFloat() * envelope * 32767)).toInt().toShort()
@@ -493,11 +522,6 @@ class ExoPlayerEngine(
                 delay(VISUALIZER_INTERVAL_MS)
             }
         }
-    }
-
-    private fun stopVisualizer() {
-        visualizerJob?.cancel()
-        visualizerJob = null
     }
 
     // ── ExoPlayer listener ──
