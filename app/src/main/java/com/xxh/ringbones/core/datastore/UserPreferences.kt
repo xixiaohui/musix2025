@@ -27,6 +27,8 @@ private object PreferenceKeys {
     val JSON_SEEDED_V5 = booleanPreferencesKey("json_seeded_v5")
     /** Guard flag: true after JSON ringtone data has been seeded into Room. Bump suffix to force re-seed. */
     val JSON_SEEDED_V6 = booleanPreferencesKey("json_seeded_v6")
+    /** Guard flag: true after JSON ringtone data has been seeded into Room. Bump suffix to force re-seed. */
+    val JSON_SEEDED_V7 = booleanPreferencesKey("json_seeded_v7")
 }
 
 /**
@@ -62,13 +64,13 @@ class UserPreferences @Inject constructor(
 
     /** Observable: whether JSON ringtone data has been seeded into Room. */
     val isJsonSeeded: Flow<Boolean> = context.userPreferencesStore.data.map { preferences ->
-        preferences[PreferenceKeys.JSON_SEEDED_V6] ?: false
+        preferences[PreferenceKeys.JSON_SEEDED_V7] ?: false
     }
 
     /** Mark JSON seeding as complete so it never runs again. */
     suspend fun setJsonSeeded(seeded: Boolean) {
         context.userPreferencesStore.edit { preferences ->
-            preferences[PreferenceKeys.JSON_SEEDED_V6] = seeded
+            preferences[PreferenceKeys.JSON_SEEDED_V7] = seeded
         }
     }
 }
