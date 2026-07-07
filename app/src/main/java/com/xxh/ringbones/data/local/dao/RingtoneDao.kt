@@ -54,6 +54,10 @@ interface RingtoneDao {
     @Query("UPDATE ringtones SET isFavorite = NOT isFavorite WHERE id = :id")
     suspend fun toggleFavorite(id: Long)
 
+    /** Explicitly sets the favorite status for a ringtone by ID. */
+    @Query("UPDATE ringtones SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun setFavorite(id: Long, isFavorite: Boolean)
+
     /** Returns ringtones by their IDs, preserving the order of the input list. */
     @Query("SELECT * FROM ringtones WHERE id IN (:ids)")
     fun getByIds(ids: List<Long>): Flow<List<RingtoneEntity>>

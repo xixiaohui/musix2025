@@ -17,6 +17,7 @@ import com.xxh.ringbones.core.util.RingtoneHelper
 import com.xxh.ringbones.domain.model.Ringtone
 import com.xxh.ringbones.domain.repository.RingtoneRepository
 import com.xxh.ringbones.domain.usecase.RecordPlayHistoryUseCase
+import com.xxh.ringbones.domain.usecase.ToggleFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +47,7 @@ import javax.inject.Inject
  * Also handles side-effects that require data-layer access:
  * - Downloading ringtones to local storage
  * - Setting ringtones as device ringtone via [RingtoneHelper]
- * - Toggling favorites via [RingtoneRepository]
+ * - Toggling favorites via [ToggleFavoriteUseCase]
  *
  * Download state ([isDownloaded]) is tracked as a separate flow and
  * merged into the engine's [PlayerState] so the UI always reflects
@@ -62,6 +63,7 @@ class PlayerViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val ringtoneRepository: RingtoneRepository,
     private val recordPlayHistoryUseCase: RecordPlayHistoryUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel() {
 
     /** Combined player + download state, exposed to the UI. */
@@ -317,11 +319,14 @@ class PlayerViewModel @Inject constructor(
 
     // ── Favorite ──
 
-    /** Toggles the favorite flag for the current ringtone in the repository. */
+    /**
+     * Toggles the favorite status for the current ringtone via [ToggleFavoriteUseCase],
+     * which writes to both the [favorites] join table and [ringtones.isFavorite] column.
+     */
     private fun toggleFavorite() {
         viewModelScope.launch {
             _state.value.currentRingtone?.let { ringtone ->
-                ringtoneRepository.toggleFavorite(ringtone.id)
+                toggleFavoriteUseCase(ringtone.id)
             }
         }
     }
