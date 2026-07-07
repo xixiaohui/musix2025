@@ -163,6 +163,9 @@ fun PlayerScreen(
                 viewModel.onEvent(PlayerEvent.SkipTo(index))
                 showQueue = false
             },
+            onRemove = { index ->
+                viewModel.onEvent(PlayerEvent.RemoveFromQueue(index))
+            },
         )
     }
 
