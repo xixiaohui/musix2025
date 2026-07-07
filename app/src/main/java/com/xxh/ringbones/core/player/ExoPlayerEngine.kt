@@ -138,6 +138,7 @@ class ExoPlayerEngine(
             is PlayerEvent.SetSleepTimer -> setSleepTimer(event.minutes)
             is PlayerEvent.SetABPoint -> setABPoint(event.isStart, current)
             PlayerEvent.ClearABLoop -> clearABLoop()
+            is PlayerEvent.RemoveFromQueue -> handleRemoveFromQueue(event.index)
             is PlayerEvent.SetEqPreset -> setEqPreset(event.preset)
             PlayerEvent.DismissError -> _state.update { it.copy(error = null) }
         }
@@ -198,6 +199,68 @@ class ExoPlayerEngine(
         val current = _state.value
         if (index in current.queue.indices) {
             navigateToIndex(index)
+        }
+    }
+
+    /**
+     * Removes a track from the queue at [index]. Adjusts [currentIndex] to
+     * stay on the same logical track when possible, or stop playback and
+     * emit [PlayerEffect.NavigateBack] if the last track was removed.
+     *
+     * Edge cases:
+     * - Removing current track when others exist: keep currentIndex, next item slides in
+     * - Removing a track before current: decrement currentIndex
+     * - Removing the only remaining track: stop playback, emit NavigateBack
+     */
+    private fun handleRemoveFromQueue(index: Int) {
+        val current = _state.value
+        val queue = current.queue.toMutableList()
+        if (index !in queue.indices) return
+
+        queue.removeAt(index)
+
+        when {
+            // Last track removed — stop and navigate back
+            queue.isEmpty() -> {
+                clearABLoop()
+                exoPlayer.stop()
+                _state.update {
+                    it.copy(
+                        queue = emptyList(),
+                        currentIndex = 0,
+                        currentRingtone = null,
+                        isPlaying = false,
+                    )
+                }
+                emitEffect(PlayerEffect.NavigateBack)
+            }
+
+            // Removed current track — next track (at same index) becomes current
+            index == current.currentIndex -> {
+                _state.update { it.copy(queue = queue) }
+                val newRingtone = queue.getOrNull(index)
+                if (newRingtone != null) {
+                    clearABLoop()
+                    _state.update {
+                        it.copy(currentRingtone = newRingtone, isFavorite = newRingtone.isFavorite)
+                    }
+                    loadTrack(newRingtone)
+                    exoPlayer.prepare()
+                    exoPlayer.playWhenReady = true
+                }
+            }
+
+            // Removed track before current — decrement index
+            index < current.currentIndex -> {
+                _state.update {
+                    it.copy(queue = queue, currentIndex = current.currentIndex - 1)
+                }
+            }
+
+            // Removed track after current — index unchanged
+            else -> {
+                _state.update { it.copy(queue = queue) }
+            }
         }
     }
 
