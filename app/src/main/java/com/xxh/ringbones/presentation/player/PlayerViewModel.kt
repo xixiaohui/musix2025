@@ -145,6 +145,9 @@ class PlayerViewModel @Inject constructor(
 
                 engine = engineInstance
 
+                // Record play history for the initial track
+                recordPlayback()
+
                 // Check initial download status
                 checkDownloadStatus(initialRingtone)
             } catch (e: Exception) {
