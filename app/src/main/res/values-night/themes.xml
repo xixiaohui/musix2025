@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Edge-to-edge theme: DayNight base supports both light and dark modes.
-         Explicit transparent bar colors prevent conflicts with enableEdgeToEdge(). -->
+    <!-- Dark variant of the edge-to-edge theme. Uses DayNight parent for
+         automatic dark mode support on API 29+. -->
     <style name="ThemeOverlay.CustomExoPlayer" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -9,9 +9,4 @@
         <item name="android:enforceNavigationBarContrast">false</item>
         <item name="pause_icon" tools:ignore="PrivateResource">@drawable/exo_styled_controls_play</item>
     </style>
-
-    <style name="CustomStyledPlayerView">
-        <item name="controlBackground">@color/exo</item>
-    </style>
-
 </resources>
