@@ -1,19 +1,29 @@
 package com.xxh.ringbones.presentation.player
 
+import android.content.ComponentName
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.MoreExecutors
+import com.xxh.ringbones.core.download.DownloadManager
 import com.xxh.ringbones.core.download.DownloadStatus
-import com.xxh.ringbones.core.network.HttpClient
-import com.xxh.ringbones.core.player.ExoPlayerEngine
-import com.xxh.ringbones.core.player.PlayerEngine
+import com.xxh.ringbones.core.player.PlaybackService
+import com.xxh.ringbones.core.player.PlayerStateBridge
 import com.xxh.ringbones.core.player.model.PlayerEffect
 import com.xxh.ringbones.core.player.model.PlayerEvent
 import com.xxh.ringbones.core.player.model.PlayerState
+import com.xxh.ringbones.core.player.model.RepeatMode
 import com.xxh.ringbones.core.util.RingtoneHelper
 import com.xxh.ringbones.domain.model.Ringtone
 import com.xxh.ringbones.domain.repository.RingtoneRepository
@@ -30,29 +40,27 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Request
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
+
+/** Duration threshold for "restart current" vs "go to previous" (3 seconds). */
+private const val PREVIOUS_RESTART_THRESHOLD_MS = 3_000L
+
+/** Allowed playback speed values. */
+private val ALLOWED_SPEEDS = setOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f, 3.0f)
 
 /**
  * ViewModel for the full-screen immersive player.
  *
- * Creates and owns a [PlayerEngine] that manages ExoPlayer lifecycle,
- * queue navigation, and all playback state. Routes [PlayerEvent] actions
- * from the UI to the engine, and exposes [state] + [effects] for the
- * Composable screen to observe.
+ * Communicates with [PlaybackService] via [MediaController] for standard
+ * playback commands, and observes [PlayerStateBridge] for custom state
+ * (visualizer, AB loop, sleep timer, EQ, progress).
  *
- * Also handles side-effects that require data-layer access:
- * - Downloading ringtones to local storage
- * - Setting ringtones as device ringtone via [RingtoneHelper]
- * - Toggling favorites via [ToggleFavoriteUseCase]
- *
- * Download state ([isDownloaded]) is tracked as a separate flow and
- * merged into the engine's [PlayerState] so the UI always reflects
- * whether the current track exists locally.
+ * Side-effects not modeled by MediaSession (download, favorite, set ringtone)
+ * remain directly managed here.
  *
  * Navigation args (from [SavedStateHandle]):
  * - `ringtoneId: Long` — the initial track to play
@@ -65,7 +73,8 @@ class PlayerViewModel @Inject constructor(
     private val ringtoneRepository: RingtoneRepository,
     private val recordPlayHistoryUseCase: RecordPlayHistoryUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val downloadManager: com.xxh.ringbones.core.download.DownloadManager,
+    private val downloadManager: DownloadManager,
+    private val playerStateBridge: PlayerStateBridge,
 ) : ViewModel() {
 
     /** Combined player + download state, exposed to the UI. */
@@ -79,86 +88,183 @@ class PlayerViewModel @Inject constructor(
     /** Tracks download status for the current track, updated independently. */
     private val _isDownloaded = MutableStateFlow(false)
 
-    /** Playback engine — initialized once data is loaded. Null until ready. */
-    private var engine: PlayerEngine? = null
+    /** MediaController connection to PlaybackService. Null until connected. */
+    private var mediaController: MediaController? = null
+
+    /** Ringtone queue in display order, parallel to the MediaController queue. */
+    private var ringtoneQueue: List<Ringtone> = emptyList()
 
     /** The initial ringtone ID from navigation. */
     private val ringtoneId: Long = savedStateHandle.get<Long>("ringtoneId") ?: 0L
 
     /** Optional queue IDs for building the play queue. */
-    private val queueIds: List<Long> = savedStateHandle.get<LongArray>("queueIds")?.toList() ?: emptyList()
+    private val queueIds: List<Long> =
+        savedStateHandle.get<LongArray>("queueIds")?.toList() ?: emptyList()
 
     init {
         if (ringtoneId <= 0) {
             _effects.tryEmit(PlayerEffect.NavigateBack)
         } else {
-            initializePlayer()
+            initialize()
         }
     }
 
     /**
-     * Loads the initial track and queue from the repository, then creates
-     * the [ExoPlayerEngine] and connects its state/effects streams to the
-     * ViewModel's public outputs. Also merges the download-status flow
-     * into the emitted state.
+     * Loads the initial track and queue from Room, then connects to
+     * [PlaybackService] via [MediaController] and sets up state observation.
      */
-    private fun initializePlayer() {
+    private fun initialize() {
         viewModelScope.launch {
             try {
-                val initialRingtone = ringtoneRepository.getById(ringtoneId).first()
-                    ?: run {
-                        _effects.emit(PlayerEffect.ShowSnackbar("Track not found"))
-                        _effects.emit(PlayerEffect.NavigateBack)
-                        return@launch
-                    }
-
-                // Build queue: if queueIds provided, load those; otherwise single-track queue
+                // Load queue from Room
                 val queue = if (queueIds.isNotEmpty()) {
                     ringtoneRepository.getByIds(queueIds).first()
                 } else {
-                    listOf(initialRingtone)
+                    val initial = ringtoneRepository.getById(ringtoneId).first()
+                    if (initial != null) listOf(initial) else emptyList()
                 }
 
-                val engineInstance = ExoPlayerEngine(
-                    context = context,
-                    initialRingtone = initialRingtone,
-                    initialQueue = queue,
-                    scope = viewModelScope,
+                if (queue.isEmpty()) {
+                    _effects.emit(PlayerEffect.ShowSnackbar("Track not found"))
+                    _effects.emit(PlayerEffect.NavigateBack)
+                    return@launch
+                }
+
+                ringtoneQueue = queue
+
+                // Connect to PlaybackService via MediaController
+                val sessionToken = SessionToken(
+                    context,
+                    ComponentName(context, PlaybackService::class.java),
                 )
+                val controllerFuture =
+                    MediaController.Builder(context, sessionToken).buildAsync()
 
-                // Forward engine state merged with download status
-                viewModelScope.launch {
-                    combine(
-                        engineInstance.state,
-                        _isDownloaded,
-                    ) { engineState, downloaded ->
-                        engineState.copy(isDownloaded = downloaded)
-                    }.collect { mergedState ->
-                        _state.value = mergedState
-                    }
-                }
-
-                // Forward engine effects to ViewModel effects
-                viewModelScope.launch {
-                    engineInstance.effects.collect { effect ->
-                        _effects.emit(effect)
-                    }
-                }
-
-                engine = engineInstance
-
-                // Record play history for the initial track
-                recordPlayback()
-
-                // Check initial download status
-                checkDownloadStatus(initialRingtone)
-
-                // Observe download completion for the current track
-                observeDownloadCompletion()
+                controllerFuture.addListener(
+                    {
+                        try {
+                            val controller = controllerFuture.get()
+                            mediaController = controller
+                            setupController(controller, queue)
+                        } catch (e: Exception) {
+                            _effects.tryEmit(
+                                PlayerEffect.ShowSnackbar(
+                                    "Failed to connect: ${e.message}"
+                                )
+                            )
+                            _effects.tryEmit(PlayerEffect.NavigateBack)
+                        }
+                    },
+                    MoreExecutors.directExecutor(),
+                )
             } catch (e: Exception) {
-                _effects.emit(PlayerEffect.ShowSnackbar("Failed to load player: ${e.message}"))
+                _effects.emit(PlayerEffect.ShowSnackbar("Failed to load: ${e.message}"))
                 _effects.emit(PlayerEffect.NavigateBack)
             }
+        }
+    }
+
+    /**
+     * Sets up the MediaController listener and loads the initial queue
+     * into the PlaybackService.
+     */
+    private fun setupController(controller: MediaController, queue: List<Ringtone>) {
+        // Convert Ringtone list to MediaItems
+        val mediaItems = queue.map { ringtone ->
+            MediaItem.Builder()
+                .setMediaId(ringtone.id.toString())
+                .setUri(ringtone.url)
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle(ringtone.title)
+                        .setArtist(ringtone.author)
+                        .setArtworkUri(
+                            ringtone.coverImageUrl?.let { android.net.Uri.parse(it) }
+                                ?: android.net.Uri.EMPTY
+                        )
+                        .build()
+                )
+                .build()
+        }
+
+        // Add items to controller queue — this triggers onAddMediaItems in the Service
+        controller.addMediaItems(mediaItems)
+
+        // Start observing controller state
+        controller.addListener(
+            object : Player.Listener {
+                override fun onEvents(player: Player, events: Player.Events) {
+                    updateStateFromController(player)
+                }
+            }
+        )
+
+        // Initial state snapshot
+        updateStateFromController(controller)
+
+        // Observe custom state from bridge (progress, visualizer, AB loop, sleep timer, EQ)
+        viewModelScope.launch {
+            playerStateBridge.customState.collect { custom ->
+                _state.update { current ->
+                    current.copy(
+                        progress = custom.progress,
+                        visualizerData = custom.visualizerData,
+                        abLoop = custom.abLoop,
+                        sleepTimerMinutes = custom.sleepTimerMinutes,
+                        eqPreset = custom.eqPreset,
+                    )
+                }
+            }
+        }
+
+        // Merge download status into state
+        viewModelScope.launch {
+            combine(
+                _state,
+                _isDownloaded,
+            ) { _, downloaded ->
+                downloaded
+            }.collect { downloaded ->
+                _state.update { current -> current.copy(isDownloaded = downloaded) }
+            }
+        }
+
+        // Observe download completion for snackbar notifications
+        observeDownloadCompletion()
+
+        // Record play history for the initial track
+        recordPlayback()
+    }
+
+    /** Reads current state from the MediaController and updates [_state]. */
+    private fun updateStateFromController(player: Player) {
+        val currentIndex = player.currentMediaItemIndex
+        val currentRingtone = ringtoneQueue.getOrNull(currentIndex)
+
+        _state.update { current ->
+            current.copy(
+                currentRingtone = currentRingtone,
+                queue = ringtoneQueue,
+                currentIndex = currentIndex,
+                isPlaying = player.playWhenReady
+                    && player.playbackState == Player.STATE_READY,
+                isLoading = player.playbackState == Player.STATE_BUFFERING,
+                duration = player.duration.coerceAtLeast(0),
+                bufferedPercent = player.bufferedPercentage,
+                repeatMode = when (player.repeatMode) {
+                    Player.REPEAT_MODE_ONE -> RepeatMode.ONE
+                    Player.REPEAT_MODE_ALL -> RepeatMode.ALL
+                    else -> RepeatMode.OFF
+                },
+                shuffleMode = player.shuffleModeEnabled,
+                playbackSpeed = player.playbackParameters.speed,
+                error = if (player.playerError != null) {
+                    com.xxh.ringbones.core.player.model.PlayerError(
+                        message = player.playerError!!.message ?: "Playback error",
+                        recoverable = true,
+                    )
+                } else null,
+            )
         }
     }
 
@@ -167,19 +273,87 @@ class PlayerViewModel @Inject constructor(
      * side-effects for actions that require data-layer or system integration.
      */
     fun onEvent(event: PlayerEvent) {
-        engine?.handleEvent(event)
+        val controller = mediaController ?: return
 
         when (event) {
-            is PlayerEvent.ToggleFavorite -> toggleFavorite()
-            is PlayerEvent.Next, is PlayerEvent.Previous -> recordPlayback()
-            is PlayerEvent.SkipTo -> {
+            is PlayerEvent.PlayPause -> {
+                if (controller.playWhenReady) controller.pause() else controller.play()
+            }
+            is PlayerEvent.Seek -> controller.seekTo(event.positionMs)
+            is PlayerEvent.Next -> {
+                controller.seekToNextMediaItem()
                 recordPlayback()
-                // Refresh download status for the new track
+            }
+            is PlayerEvent.Previous -> {
+                if (controller.currentPosition > PREVIOUS_RESTART_THRESHOLD_MS) {
+                    controller.seekTo(0)
+                } else {
+                    controller.seekToPreviousMediaItem()
+                }
+                recordPlayback()
+            }
+            is PlayerEvent.SkipTo -> {
+                controller.seekToDefaultPosition(event.index)
+                updateStateFromController(controller)
+                recordPlayback()
                 _state.value.currentRingtone?.let { checkDownloadStatus(it) }
             }
+            is PlayerEvent.ToggleFavorite -> toggleFavorite()
             is PlayerEvent.Download -> downloadCurrentRingtone()
             is PlayerEvent.SetRingtone -> setCurrentAsRingtone()
-            else -> { /* no additional side-effect */ }
+            is PlayerEvent.ToggleShuffle ->
+                controller.shuffleModeEnabled = !controller.shuffleModeEnabled
+            is PlayerEvent.SetRepeatMode -> {
+                controller.repeatMode = when (event.mode) {
+                    RepeatMode.OFF -> Player.REPEAT_MODE_OFF
+                    RepeatMode.ONE -> Player.REPEAT_MODE_ONE
+                    RepeatMode.ALL -> Player.REPEAT_MODE_ALL
+                }
+            }
+            is PlayerEvent.SetPlaybackSpeed -> {
+                if (event.speed in ALLOWED_SPEEDS) {
+                    controller.setPlaybackSpeed(event.speed)
+                }
+            }
+            is PlayerEvent.SetSleepTimer -> {
+                val bundle = Bundle().apply {
+                    if (event.minutes != null && event.minutes > 0) {
+                        putInt("minutes", event.minutes)
+                    }
+                }
+                controller.sendCustomCommand(
+                    SessionCommand("SET_SLEEP_TIMER", Bundle.EMPTY),
+                    bundle,
+                )
+            }
+            is PlayerEvent.SetABPoint -> {
+                val bundle = Bundle().apply { putBoolean("isStart", event.isStart) }
+                controller.sendCustomCommand(
+                    SessionCommand("SET_AB_POINT", Bundle.EMPTY),
+                    bundle,
+                )
+            }
+            is PlayerEvent.ClearABLoop -> {
+                controller.sendCustomCommand(
+                    SessionCommand("CLEAR_AB_LOOP", Bundle.EMPTY),
+                    Bundle.EMPTY,
+                )
+            }
+            is PlayerEvent.SetEqPreset -> {
+                val bundle = Bundle().apply { putString("preset", event.preset.name) }
+                controller.sendCustomCommand(
+                    SessionCommand("SET_EQ_PRESET", Bundle.EMPTY),
+                    bundle,
+                )
+            }
+            is PlayerEvent.DismissError -> _state.update { it.copy(error = null) }
+            is PlayerEvent.RemoveFromQueue -> {
+                controller.removeMediaItem(event.index)
+                ringtoneQueue = ringtoneQueue.toMutableList().also {
+                    if (event.index in it.indices) it.removeAt(event.index)
+                }
+                _state.update { it.copy(queue = ringtoneQueue) }
+            }
         }
     }
 
@@ -207,10 +381,6 @@ class PlayerViewModel @Inject constructor(
     /**
      * Observes the [DownloadManager] state and keeps [_isDownloaded] in sync
      * with the current ringtone's download status in real-time.
-     *
-     * - Task Completed → [_isDownloaded] = true, snackbar once
-     * - Task removed/deleted → [_isDownloaded] = false
-     * - Task pending/failed → [_isDownloaded] = false
      */
     private fun observeDownloadCompletion() {
         viewModelScope.launch {
@@ -221,7 +391,6 @@ class PlayerViewModel @Inject constructor(
 
                 when {
                     task == null -> {
-                        // Task was removed (deleted from downloads page)
                         _isDownloaded.value = false
                         seenCompleted.remove(currentId)
                     }
@@ -233,7 +402,6 @@ class PlayerViewModel @Inject constructor(
                         }
                     }
                     else -> {
-                        // Pending, Downloading, Paused, Failed — not downloaded
                         _isDownloaded.value = false
                         seenCompleted.remove(currentId)
                     }
@@ -242,42 +410,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Downloads the ringtone URL to the app's ringtones directory using
-     * the shared [HttpClient] instance.
-     *
-     * If a file with the same name already exists, returns its path immediately.
-     *
-     * @return The absolute path of the downloaded file.
-     */
-    private suspend fun downloadToFile(ringtone: Ringtone): String {
-        val fileName = ringtone.url.split("/").lastOrNull() ?: "ringtone_${ringtone.id}.mp3"
-        val dir = context.getExternalFilesDir(Environment.DIRECTORY_RINGTONES)
-            ?: context.filesDir
-        val file = File(dir, fileName)
-
-        // Skip if already downloaded
-        if (file.exists()) return file.absolutePath
-
-        val request = Request.Builder().url(ringtone.url).build()
-        val response = HttpClient.instance.newCall(request).execute()
-        if (!response.isSuccessful) {
-            throw RuntimeException("HTTP ${response.code}")
-        }
-
-        response.body?.byteStream()?.use { input ->
-            FileOutputStream(file).use { output ->
-                input.copyTo(output)
-            }
-        } ?: throw RuntimeException("Empty response body")
-
-        return file.absolutePath
-    }
-
-    /**
-     * Checks whether the given ringtone is already downloaded to local
-     * storage and updates [_isDownloaded] accordingly.
-     */
+    /** Checks whether the given ringtone is already downloaded to local storage. */
     private fun checkDownloadStatus(ringtone: Ringtone) {
         viewModelScope.launch {
             val downloaded = withContext(Dispatchers.IO) {
@@ -293,11 +426,9 @@ class PlayerViewModel @Inject constructor(
      * filename from the URL.
      */
     private fun isFileDownloaded(ringtone: Ringtone): Boolean {
-        // Check stored path first (skip null or empty — cleared on delete)
         val storedPath = ringtone.downloadPath
         if (!storedPath.isNullOrEmpty() && File(storedPath).exists()) return true
 
-        // Fallback: check the default download location
         val fileName = ringtone.url.split("/").lastOrNull() ?: return false
         val dir = context.getExternalFilesDir(Environment.DIRECTORY_RINGTONES)
             ?: context.filesDir
@@ -310,15 +441,20 @@ class PlayerViewModel @Inject constructor(
      * Sets the current ringtone as the device ringtone.
      *
      * If the ringtone is already downloaded locally, uses the local file.
-     * Otherwise downloads it first, then applies the ringtone.
+     * Otherwise requires the file to be downloaded first.
      */
     private fun setCurrentAsRingtone() {
         val ringtone = _state.value.currentRingtone ?: return
 
-        // Check WRITE_SETTINGS permission on Android 6+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(context)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            !Settings.System.canWrite(context)
+        ) {
             viewModelScope.launch {
-                _effects.emit(PlayerEffect.ShowSnackbar("Permission needed: enable \"Modify system settings\""))
+                _effects.emit(
+                    PlayerEffect.ShowSnackbar(
+                        "Permission needed: enable \"Modify system settings\""
+                    )
+                )
                 _effects.emit(PlayerEffect.OpenWriteSettings)
             }
             return
@@ -328,13 +464,19 @@ class PlayerViewModel @Inject constructor(
             _effects.emit(PlayerEffect.ShowSnackbar("Setting ringtone..."))
             try {
                 val localPath = withContext(Dispatchers.IO) {
-                    // Use existing download path if available and file exists
                     val existingPath = ringtone.downloadPath
                     if (existingPath != null && File(existingPath).exists()) {
                         existingPath
                     } else {
-                        downloadToFile(ringtone).also { path ->
-                            ringtoneRepository.updateDownloadPath(ringtone.id, path)
+                        val fileName = ringtone.url.split("/").lastOrNull()
+                            ?: "ringtone_${ringtone.id}.mp3"
+                        val dir = context.getExternalFilesDir(Environment.DIRECTORY_RINGTONES)
+                            ?: context.filesDir
+                        val file = File(dir, fileName)
+                        if (file.exists()) {
+                            file.absolutePath
+                        } else {
+                            throw IllegalStateException("File not downloaded")
                         }
                     }
                 }
@@ -343,7 +485,11 @@ class PlayerViewModel @Inject constructor(
                 }
                 _effects.emit(PlayerEffect.ShowSnackbar("Ringtone set successfully"))
             } catch (e: SecurityException) {
-                _effects.emit(PlayerEffect.ShowSnackbar("Permission needed: enable \"Modify system settings\""))
+                _effects.emit(
+                    PlayerEffect.ShowSnackbar(
+                        "Permission needed: enable \"Modify system settings\""
+                    )
+                )
                 _effects.emit(PlayerEffect.OpenWriteSettings)
             } catch (e: Exception) {
                 _effects.emit(PlayerEffect.ShowSnackbar("Failed to set ringtone: ${e.message}"))
@@ -353,14 +499,13 @@ class PlayerViewModel @Inject constructor(
 
     // ── Favorite ──
 
-    /**
-     * Toggles the favorite status for the current ringtone via [ToggleFavoriteUseCase],
-     * which writes to both the [favorites] join table and [ringtones.isFavorite] column.
-     */
+    /** Toggles the favorite status for the current ringtone. */
     private fun toggleFavorite() {
         viewModelScope.launch {
             _state.value.currentRingtone?.let { ringtone ->
                 toggleFavoriteUseCase(ringtone.id)
+                val newFav = !ringtone.isFavorite
+                _state.update { it.copy(isFavorite = newFav) }
             }
         }
     }
@@ -378,7 +523,7 @@ class PlayerViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        engine?.release()
-        engine = null
+        mediaController?.release()
+        mediaController = null
     }
 }
