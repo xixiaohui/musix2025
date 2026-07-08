@@ -84,11 +84,17 @@ class PlaybackServiceCallback(
     ): MediaSession.ConnectionResult {
         return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
             .setAvailableSessionCommands(
-                SessionCommands.Builder()
+                MediaSession.ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
                     .add(CMD_SET_AB_POINT)
                     .add(CMD_CLEAR_AB_LOOP)
                     .add(CMD_SET_SLEEP_TIMER)
                     .add(CMD_SET_EQ_PRESET)
+                    .build()
+            )
+            .setAvailablePlayerCommands(
+                MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
+                    .add(Player.COMMAND_SEEK_TO_MEDIA_ITEM)
+                    .add(Player.COMMAND_SET_SPEED_AND_PITCH)
                     .build()
             )
             .build()
@@ -215,7 +221,7 @@ class PlaybackServiceCallback(
                     val t = i.toFloat() / 256f
                     val envelope = if (isPlaying) {
                         0.5f + 0.5f * kotlin.math.sin(
-                            (System.nanoTime() / 1_000_000_000.0 * 2.0 * Math.PI).toFloat()
+                            System.nanoTime() / 1_000_000_000.0 * 2.0 * Math.PI
                         ).toFloat()
                     } else {
                         0.1f
