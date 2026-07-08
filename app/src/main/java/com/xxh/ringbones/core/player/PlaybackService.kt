@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -90,6 +91,21 @@ class PlaybackService : MediaSessionService() {
         mediaSession = MediaSession.Builder(this, player)
             .setCallback(sessionCallback)
             .build()
+
+        // Wire ExoPlayer events to the callback for progress/visualizer lifecycle
+        player.addListener(object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (isPlaying) {
+                    sessionCallback.onPlaybackStarted()
+                } else {
+                    sessionCallback.onPlaybackPaused()
+                }
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                // Error handling: the ViewModel will observe via MediaController listener
+            }
+        })
     }
 
     @UnstableApi
