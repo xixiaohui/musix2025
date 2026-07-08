@@ -21,8 +21,8 @@ android {
         applicationId = "com.xxh.ringbones"
         minSdk = 24
         targetSdk = 35
-        versionCode = 20
-        versionName = "3.2.0"
+        versionCode = 21
+        versionName = "3.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,7 +51,7 @@ android {
 
             isDebuggable = false
             isMinifyEnabled = true
-            isShrinkResources = false
+            isShrinkResources = true
 
             // 保留原生代码的调试符号表，用于上传到 Play Console 以符号化原生崩溃和 ANR
             ndk {
