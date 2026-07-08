@@ -68,7 +68,7 @@ fun FavoriteRow(
 @Composable
 private fun PreviewFavoriteRow() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         FavoriteRow(
             isFavorite = true,
             onToggleFavorite = {},

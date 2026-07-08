@@ -91,8 +91,18 @@ class PlayerViewModel @Inject constructor(
     /** MediaController connection to PlaybackService. Null until connected. */
     private var mediaController: MediaController? = null
 
-    /** Ringtone queue in display order, parallel to the MediaController queue. */
+    /** Ringtone queue in display order for the QueueSheet UI.
+     *  The controller only holds a single item to prevent auto-advancing. */
     private var ringtoneQueue: List<Ringtone> = emptyList()
+
+    /**
+     * Current index within [ringtoneQueue].
+     *
+     * Tracked independently from the MediaController because the controller
+     * only holds a single item (to prevent auto-advance). This index drives
+     * [PlayerState.currentIndex] and [PlayerState.currentRingtone] resolution.
+     */
+    private var currentQueueIndex: Int = 0
 
     /** The initial ringtone ID from navigation. */
     private val ringtoneId: Long = savedStateHandle.get<Long>("ringtoneId") ?: 0L
@@ -165,30 +175,61 @@ class PlayerViewModel @Inject constructor(
     }
 
     /**
-     * Sets up the MediaController listener and loads the initial queue
-     * into the PlaybackService.
+     * Converts a [Ringtone] domain model into a [MediaItem] for the player.
+     */
+    private fun ringtoneToMediaItem(ringtone: Ringtone): MediaItem {
+        return MediaItem.Builder()
+            .setMediaId(ringtone.id.toString())
+            .setUri(ringtone.url)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(ringtone.title)
+                    .setArtist(ringtone.author)
+                    .setArtworkUri(
+                        ringtone.coverImageUrl?.let { android.net.Uri.parse(it) }
+                            ?: android.net.Uri.EMPTY
+                    )
+                    .build()
+            )
+            .build()
+    }
+
+    /**
+     * Loads a single ringtone from [ringtoneQueue] into the MediaController
+     * via [MediaController.addMediaItems], which reliably triggers the
+     * [PlaybackServiceCallback.onAddMediaItems] path.
+     *
+     * Only one item is held by the controller at a time so that
+     * [Player.REPEAT_MODE_OFF] naturally stops playback when the track ends
+     * instead of auto-advancing to the next item.
+     *
+     * Callers are responsible for setting [Player.playWhenReady] after
+     * this method returns, since [addMediaItems] is asynchronous.
+     */
+    private fun loadTrackIntoController(controller: MediaController, index: Int) {
+        val ringtone = ringtoneQueue.getOrNull(index) ?: return
+        controller.addMediaItems(listOf(ringtoneToMediaItem(ringtone)))
+        currentQueueIndex = index
+    }
+
+    /**
+     * Sets up the MediaController listener and loads only the selected
+     * track into the PlaybackService (not the full queue) to prevent
+     * automatic advancement when the current track finishes.
      */
     private fun setupController(controller: MediaController, queue: List<Ringtone>) {
-        // Convert Ringtone list to MediaItems
-        val mediaItems = queue.map { ringtone ->
-            MediaItem.Builder()
-                .setMediaId(ringtone.id.toString())
-                .setUri(ringtone.url)
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .setTitle(ringtone.title)
-                        .setArtist(ringtone.author)
-                        .setArtworkUri(
-                            ringtone.coverImageUrl?.let { android.net.Uri.parse(it) }
-                                ?: android.net.Uri.EMPTY
-                        )
-                        .build()
-                )
-                .build()
-        }
+        val targetIndex = queue.indexOfFirst { it.id == ringtoneId }.coerceAtLeast(0)
 
-        // Add items to controller queue — this triggers onAddMediaItems in the Service
-        controller.addMediaItems(mediaItems)
+        // Load only the single track the user tapped on, not the full queue.
+        // This ensures playback stops at the end instead of auto-advancing.
+        loadTrackIntoController(controller, targetIndex)
+
+        // Auto-start playback on initial load — the PlaybackServiceCallback
+        // no longer forces playWhenReady, so we control it from here.
+        controller.playWhenReady = true
+
+        // Do not loop the current track — play once and stop.
+        controller.repeatMode = Player.REPEAT_MODE_OFF
 
         // Start observing controller state
         controller.addListener(
@@ -236,19 +277,28 @@ class PlayerViewModel @Inject constructor(
         recordPlayback()
     }
 
-    /** Reads current state from the MediaController and updates [_state]. */
+    /** Reads current state from the MediaController and updates [_state].
+     *
+     *  Progress is read from both the controller (authoritative source, updated
+     *  on every player event) and the bridge (high-frequency ~30fps polling for
+     *  smooth seekbar animation during playback). Reading from the controller
+     *  here ensures the seekbar reflects the correct position even when the
+     *  bridge polling is stopped (e.g. after seeking while paused). */
     private fun updateStateFromController(player: Player) {
-        val currentIndex = player.currentMediaItemIndex
-        val currentRingtone = ringtoneQueue.getOrNull(currentIndex)
+        // Use currentQueueIndex (tracked independently) instead of
+        // player.currentMediaItemIndex because the controller only holds
+        // a single item to prevent auto-advance.
+        val currentRingtone = ringtoneQueue.getOrNull(currentQueueIndex)
 
         _state.update { current ->
             current.copy(
                 currentRingtone = currentRingtone,
                 queue = ringtoneQueue,
-                currentIndex = currentIndex,
+                currentIndex = currentQueueIndex,
                 isPlaying = player.playWhenReady
                     && player.playbackState == Player.STATE_READY,
                 isLoading = player.playbackState == Player.STATE_BUFFERING,
+                progress = player.currentPosition.coerceAtLeast(0),
                 duration = player.duration.coerceAtLeast(0),
                 bufferedPercent = player.bufferedPercentage,
                 repeatMode = when (player.repeatMode) {
@@ -279,21 +329,43 @@ class PlayerViewModel @Inject constructor(
             is PlayerEvent.PlayPause -> {
                 if (controller.playWhenReady) controller.pause() else controller.play()
             }
-            is PlayerEvent.Seek -> controller.seekTo(event.positionMs)
+            is PlayerEvent.Seek -> {
+                controller.seekTo(event.positionMs)
+                // Immediately update progress for instant seekbar feedback —
+                // the bridge polling (if active) will keep it in sync afterwards
+                _state.update { it.copy(progress = event.positionMs) }
+            }
             is PlayerEvent.Next -> {
-                controller.seekToNextMediaItem()
+                val nextIndex = (currentQueueIndex + 1)
+                    .coerceAtMost(ringtoneQueue.lastIndex)
+                if (nextIndex != currentQueueIndex) {
+                    val wasPlaying = controller.playWhenReady
+                    loadTrackIntoController(controller, nextIndex)
+                    controller.playWhenReady = wasPlaying
+                }
+                updateStateFromController(controller)
                 recordPlayback()
             }
             is PlayerEvent.Previous -> {
                 if (controller.currentPosition > PREVIOUS_RESTART_THRESHOLD_MS) {
                     controller.seekTo(0)
                 } else {
-                    controller.seekToPreviousMediaItem()
+                    val prevIndex = (currentQueueIndex - 1).coerceAtLeast(0)
+                    if (prevIndex != currentQueueIndex) {
+                        val wasPlaying = controller.playWhenReady
+                        loadTrackIntoController(controller, prevIndex)
+                        controller.playWhenReady = wasPlaying
+                    }
                 }
+                updateStateFromController(controller)
                 recordPlayback()
             }
             is PlayerEvent.SkipTo -> {
-                controller.seekToDefaultPosition(event.index)
+                if (event.index in ringtoneQueue.indices) {
+                    val wasPlaying = controller.playWhenReady
+                    loadTrackIntoController(controller, event.index)
+                    controller.playWhenReady = wasPlaying
+                }
                 updateStateFromController(controller)
                 recordPlayback()
                 _state.value.currentRingtone?.let { checkDownloadStatus(it) }
@@ -348,11 +420,32 @@ class PlayerViewModel @Inject constructor(
             }
             is PlayerEvent.DismissError -> _state.update { it.copy(error = null) }
             is PlayerEvent.RemoveFromQueue -> {
+                // Adjust currentQueueIndex when removing items before/at it
+                if (event.index < currentQueueIndex) {
+                    currentQueueIndex--
+                } else if (event.index == currentQueueIndex) {
+                    // Removing the current track: play next, or stop if last
+                    currentQueueIndex = currentQueueIndex.coerceAtMost(
+                        ringtoneQueue.lastIndex - 1
+                    )
+                    if (currentQueueIndex < ringtoneQueue.size - 1) {
+                        // A new track will exist at this index after removal
+                        val nextRingtone = ringtoneQueue.getOrNull(
+                            event.index + 1
+                        ) ?: ringtoneQueue.getOrNull(0)
+                        if (nextRingtone != null) {
+                            val wasPlaying = controller.playWhenReady
+                            controller.addMediaItems(listOf(ringtoneToMediaItem(nextRingtone)))
+                            controller.playWhenReady = wasPlaying
+                        }
+                    }
+                }
                 controller.removeMediaItem(event.index)
                 ringtoneQueue = ringtoneQueue.toMutableList().also {
                     if (event.index in it.indices) it.removeAt(event.index)
                 }
                 _state.update { it.copy(queue = ringtoneQueue) }
+                updateStateFromController(controller)
             }
         }
     }

@@ -202,7 +202,7 @@ private fun formatTimeMs(ms: Long): String {
 @Composable
 private fun PreviewSeekBar() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         CustomSeekBar(
             progress = 75_000,
             duration = 240_000,

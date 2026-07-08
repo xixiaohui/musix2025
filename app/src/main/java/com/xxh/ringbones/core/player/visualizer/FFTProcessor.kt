@@ -1,7 +1,6 @@
 package com.xxh.ringbones.core.player.visualizer
 
 import kotlin.math.cos
-import kotlin.math.log10
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -65,16 +64,16 @@ class FFTProcessor(
             magnitudeBuffer[i] = sqrt(re * re + im * im)
         }
 
-        // Normalize to 0f–1f using dB-like scaling for visual appeal
+        // Linear normalization with a small floor. Linear preserves dynamic
+        // contrast (tall peaks vs short valleys) — sqrt compression was too
+        // flat. 3 % floor keeps quiet bins barely visible without filling the
+        // spectrum with noise-height bars.
         val maxMag = magnitudeBuffer.maxOrNull() ?: 1f
         if (maxMag <= 0f) return List(binCount) { 0f }
 
+        val floor = maxMag * 0.03f
         return List(binCount) { index ->
-            val normalized = magnitudeBuffer[index] / maxMag
-            // Apply log scaling for better visual representation
-            val dbScaled = 20f * log10(normalized.coerceAtLeast(1e-6f))
-            // Map from dB range [-120, 0] to [0, 1]
-            ((dbScaled + 120f) / 120f).coerceIn(0f, 1f)
+            (magnitudeBuffer[index].coerceIn(floor, maxMag) / maxMag)
         }
     }
 

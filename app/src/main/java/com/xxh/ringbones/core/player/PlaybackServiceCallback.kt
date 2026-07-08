@@ -21,14 +21,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-/** Duration threshold for "restart current" vs "go to previous" (3 seconds). */
-private const val PREVIOUS_RESTART_THRESHOLD_MS = 3_000L
-
 /** Visualizer frame rate target in milliseconds (~30fps). */
 private const val VISUALIZER_INTERVAL_MS = 33L
-
-/** Retry delay when audio session ID is not yet available (100ms). */
-private const val RETRY_SESSION_ID_DELAY_MS = 100L
 
 /** How often to poll for A-B loop boundaries. */
 private const val AB_LOOP_POLL_MS = 50L
@@ -76,6 +70,9 @@ class PlaybackServiceCallback(
     private var visualizerCapture: VisualizerCapture? = null
     private var fftProcessor: FFTProcessor? = null
 
+    /** Previous frame magnitudes for exponential moving average smoothing. */
+    private var smoothedMagnitudes: List<Float>? = null
+
     // ── Standard MediaSession Callbacks ──
 
     override fun onConnect(
@@ -94,23 +91,40 @@ class PlaybackServiceCallback(
             .setAvailablePlayerCommands(
                 MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
                     .add(Player.COMMAND_SEEK_TO_MEDIA_ITEM)
+                    .add(Player.COMMAND_SET_MEDIA_ITEM)
                     .add(Player.COMMAND_SET_SPEED_AND_PITCH)
                     .build()
             )
             .build()
     }
 
+    /**
+     * Handles adding media items to the player queue.
+     *
+     * Always clears the previous queue before adding new items so that
+     * navigating back and re-entering the player with a different track
+     * replaces the content rather than appending to the stale queue.
+     * Playback is always started for the newly added items.
+     */
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
         mediaItems: List<MediaItem>,
     ): ListenableFuture<List<MediaItem>> {
-        val startIndex = exoPlayer.mediaItemCount
+        // Clear any leftover queue from a previous player session so the new
+        // items become the sole content rather than appending to stale data.
+        if (exoPlayer.mediaItemCount > 0) {
+            exoPlayer.clearMediaItems()
+        }
         exoPlayer.addMediaItems(mediaItems)
         exoPlayer.prepare()
-        if (startIndex == 0) {
-            exoPlayer.playWhenReady = true
-        }
+        // playWhenReady is controlled by the ViewModel via MediaController,
+        // not forced here — this lets the user start/pause playback freely.
+
+        // Start progress polling + spectrum visualizer when media is loaded.
+        startProgressPolling()
+        startVisualizer()
+
         val future: SettableFuture<List<MediaItem>> = SettableFuture.create()
         future.set(mediaItems)
         return future
@@ -175,64 +189,89 @@ class PlaybackServiceCallback(
 
     // ── Visualizer ──
 
+    /**
+     * Starts the visualizer: real capture via [VisualizerCapture] if available,
+     * falling back to a breathing multi-tone synthetic generator.
+     */
     private fun startVisualizer() {
-        if (visualizerJob?.isActive == true) return
+        fftProcessor = FFTProcessor()
+        smoothedMagnitudes = null
 
         val sessionId = exoPlayer.audioSessionId
         if (sessionId == 0) {
-            visualizerJob = scope.launch {
-                delay(RETRY_SESSION_ID_DELAY_MS)
-                startVisualizer()
-            }
+            // Audio session not ready — start dummy immediately
+            startDummyGenerator()
             return
         }
 
-        val capture = visualizerCapture ?: run {
-            VisualizerCapture(audioSessionId = sessionId).also { visualizerCapture = it }
-        }
+        val capture = VisualizerCapture(audioSessionId = sessionId)
+        visualizerCapture = capture
 
         if (!capture.isAvailable) {
-            startDummyVisualizer()
+            startDummyGenerator()
             return
         }
 
-        fftProcessor = FFTProcessor()
         visualizerJob = scope.launch(Dispatchers.Default) {
             val processor = fftProcessor!!
             capture.pcmFlow.collect { samples ->
-                val magnitudes = processor.process(samples)
-                playerStateBridge.update { it.copy(visualizerData = magnitudes) }
+                val raw = processor.process(samples)
+                smoothedMagnitudes = blendMagnitudes(smoothedMagnitudes, raw)
+                playerStateBridge.update { it.copy(visualizerData = smoothedMagnitudes!!) }
             }
         }
+    }
+
+    /** Breathing multi-tone synthetic generator for when real capture is unavailable. */
+    private fun startDummyGenerator() {
+        visualizerJob?.cancel()
+        visualizerCapture = null
+        visualizerJob = scope.launch {
+            val processor = fftProcessor!!
+            val random = java.util.Random()
+            while (isActive) {
+                val t = System.nanoTime() / 1_000_000_000.0
+                val breath = 0.55f + 0.45f * kotlin.math.sin(t * 0.6 * Math.PI).toFloat()
+                val samples = ShortArray(256) { i ->
+                    val u = i.toFloat() / 256f
+                    val f1 = kotlin.math.sin(u * 2.0 * Math.PI * 8 + t * 2.5).toFloat()
+                    val f2 = kotlin.math.sin(u * 2.0 * Math.PI * 22 + t * 5.0).toFloat()
+                    val f3 = kotlin.math.sin(u * 2.0 * Math.PI * 48 + t * 8.0).toFloat()
+                    val f4 = kotlin.math.sin(u * 2.0 * Math.PI * 85 + t * 13.0).toFloat()
+                    val noise = (random.nextFloat() - 0.5f) * 0.55f
+                    ((f1 * 0.25f + f2 * 0.20f + f3 * 0.15f + f4 * 0.10f + noise * 0.30f)
+                        * breath * 16384f).toInt().toShort()
+                }
+                val raw = processor.process(samples)
+                smoothedMagnitudes = blendMagnitudes(smoothedMagnitudes, raw)
+                playerStateBridge.update { it.copy(visualizerData = smoothedMagnitudes!!) }
+                delay(VISUALIZER_INTERVAL_MS)
+            }
+        }
+    }
+
+    /**
+     * Blends the new frame's magnitudes with the previous frame using
+     * exponential moving average for fluid, flicker-free animation.
+     *
+     * @param prev Previous smoothed magnitudes, or null on first frame
+     * @param raw  New raw magnitudes from the current FFT frame
+     * @return Blended magnitudes (always non-null if prev is non-null or raw is non-empty)
+     */
+    private fun blendMagnitudes(
+        prev: List<Float>?,
+        raw: List<Float>,
+    ): List<Float> {
+        if (prev == null || prev.size != raw.size) return raw
+        // EMA: 70 % new + 30 % old — responsive but smooth
+        val alpha = 0.7f
+        val beta = 1f - alpha
+        return raw.mapIndexed { i, v -> v * alpha + prev[i] * beta }
     }
 
     private fun stopVisualizer() {
         visualizerJob?.cancel()
         visualizerJob = null
-    }
-
-    private fun startDummyVisualizer() {
-        fftProcessor = FFTProcessor()
-        visualizerJob = scope.launch(Dispatchers.Default) {
-            val processor = fftProcessor!!
-            while (isActive) {
-                val isPlaying = exoPlayer.playWhenReady
-                val dummySamples = ShortArray(256) { i ->
-                    val t = i.toFloat() / 256f
-                    val envelope = if (isPlaying) {
-                        0.5f + 0.5f * kotlin.math.sin(
-                            System.nanoTime() / 1_000_000_000.0 * 2.0 * Math.PI
-                        ).toFloat()
-                    } else {
-                        0.1f
-                    }
-                    ((kotlin.math.sin(t * 2 * Math.PI * 8).toFloat() * envelope * 32767)).toInt().toShort()
-                }
-                val magnitudes = processor.process(dummySamples)
-                playerStateBridge.update { it.copy(visualizerData = magnitudes) }
-                delay(VISUALIZER_INTERVAL_MS)
-            }
-        }
     }
 
     // ── A-B Loop ──
@@ -300,19 +339,7 @@ class PlaybackServiceCallback(
         }
     }
 
-    // ── Lifecycle helpers ──
-
-    /** Start progress + visualizer when playback begins. */
-    fun onPlaybackStarted() {
-        startProgressPolling()
-        startVisualizer()
-    }
-
-    /** Stop progress + visualizer when playback pauses. */
-    fun onPlaybackPaused() {
-        stopProgressPolling()
-        stopVisualizer()
-    }
+    // ── Lifecycle ──
 
     private fun stopAllCoroutines() {
         stopProgressPolling()

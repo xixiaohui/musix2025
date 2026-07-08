@@ -1,88 +1,91 @@
 package com.xxh.ringbones.presentation.player.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
-
-/** Duration for color transition animation in milliseconds. */
-private const val COLOR_TRANSITION_MS = 1500
-
-/** Predefined deep-dark color palettes for the animated background. */
-private val BG_PALETTES = listOf(
-    listOf(Color(0xFF0A0A0F), Color(0xFF1A1040), Color(0xFF0D1B2A)),
-    listOf(Color(0xFF0A0A0F), Color(0xFF1F0A2E), Color(0xFF0A1628)),
-    listOf(Color(0xFF0A0A0F), Color(0xFF16203E), Color(0xFF1A0A1A)),
-    listOf(Color(0xFF0A0A0F), Color(0xFF1A2A2E), Color(0xFF0A1A2A)),
-    listOf(Color(0xFF0A0A0F), Color(0xFF2A0A1E), Color(0xFF1A1A1A)),
-)
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 
 /**
- * Deep-dark immersive background with an animated radial gradient glow
- * and subtle canvas-drawn texture.
+ * Immersive player background with full-screen blurred album cover,
+ * glassmorphism dark overlay, and ambient glow. Follows the
+ * Apple Music × Tidal design language.
  *
- * Colors transition smoothly when the [paletteIndex] changes, creating
- * a dynamic living-background effect that complements the album art.
- *
- * @param paletteIndex Index into preset color palettes (wraps around)
- * @param modifier External modifier
+ * @param coverImageUrl Album art URL for the blurred background
+ * @param accentColor    Dynamic accent from album art for ambient glow
+ * @param modifier       External modifier
  */
 @Composable
 fun ImmersiveBackground(
-    paletteIndex: Int,
+    coverImageUrl: String?,
+    accentColor: Color = Color(0xFFB4A0FF),
     modifier: Modifier = Modifier,
 ) {
-    val palette = BG_PALETTES[paletteIndex % BG_PALETTES.size]
-
-    val baseColor by animateColorAsState(
-        targetValue = palette[0],
-        animationSpec = tween(COLOR_TRANSITION_MS),
-        label = "bgBase",
-    )
-    val glowColor by animateColorAsState(
-        targetValue = palette[1],
-        animationSpec = tween(COLOR_TRANSITION_MS),
-        label = "bgGlow",
-    )
-    val accentColor by animateColorAsState(
-        targetValue = palette[2],
-        animationSpec = tween(COLOR_TRANSITION_MS),
-        label = "bgAccent",
-    )
-
-    val gradientBrush = Brush.radialGradient(
-        colors = listOf(glowColor, baseColor, accentColor),
-        center = Offset(600f, 300f),
-        radius = 1200f,
-    )
-
     Box(modifier = modifier.fillMaxSize()) {
-        // Animated gradient background
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawRect(brush = gradientBrush)
+        // ── Layer 1: Full-screen blurred album cover ──
+        if (coverImageUrl != null) {
+            AsyncImage(
+                model = coverImageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .matchParentSize()
+                    .blur(80.dp),
+                contentScale = ContentScale.Crop,
+            )
         }
 
-        // Subtle noise-like dot pattern for texture
+        // ── Layer 2: Dark glass overlay (gradient from top to bottom) ──
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val dotColor = Color.White.copy(alpha = 0.015f)
-            val step = 32f
+            // Deep dark gradient with subtle color from accent
+            val topColor = accentColor.copy(alpha = 0.15f)
+            val midColor = Color(0xFF080812).copy(alpha = 0.75f)
+            val bottomColor = Color(0xFF060610).copy(alpha = 0.95f)
+            drawRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(topColor, midColor, bottomColor),
+                ),
+            )
+        }
+
+        // ── Layer 3: Ambient glow behind cover area ──
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = (-80).dp)
+                .size(360.dp)
+                .blur(100.dp)
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            accentColor.copy(alpha = 0.30f),
+                            accentColor.copy(alpha = 0.10f),
+                            Color.Transparent,
+                        ),
+                    ),
+                ),
+        )
+
+        // ── Layer 4: Subtle noise texture ──
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val dotColor = Color.White.copy(alpha = 0.008f)
+            val step = 24f
             var x = 0f
             while (x < size.width) {
                 var y = 0f
                 while (y < size.height) {
-                    drawCircle(
-                        color = dotColor,
-                        radius = 1f,
-                        center = Offset(x, y),
-                    )
+                    drawCircle(color = dotColor, radius = 0.8f, center = Offset(x, y))
                     y += step
                 }
                 x += step
@@ -94,7 +97,8 @@ fun ImmersiveBackground(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewImmersiveBackground() {
-    androidx.compose.material3.MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
-    }
+    ImmersiveBackground(
+        coverImageUrl = null,
+        accentColor = Color(0xFFB4A0FF),
+    )
 }

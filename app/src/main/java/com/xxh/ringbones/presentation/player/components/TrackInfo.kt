@@ -72,7 +72,7 @@ fun TrackInfo(
 @Composable
 private fun PreviewTrackInfo() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         TrackInfo(
             title = "Bohemian Rhapsody",
             artist = "Queen",

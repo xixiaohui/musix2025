@@ -129,7 +129,7 @@ fun PlaybackControls(
 @Composable
 private fun PreviewPlaybackControlsPlaying() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         PlaybackControls(
             isPlaying = true,
             onPrevious = {},
@@ -143,7 +143,7 @@ private fun PreviewPlaybackControlsPlaying() {
 @Composable
 private fun PreviewPlaybackControlsPaused() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         PlaybackControls(
             isPlaying = false,
             onPrevious = {},

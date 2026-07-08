@@ -183,7 +183,7 @@ private fun ExtraControlItem(
 @Composable
 private fun PreviewExtraControls() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         ExtraControls(
             visible = true,
             repeatMode = "OFF",

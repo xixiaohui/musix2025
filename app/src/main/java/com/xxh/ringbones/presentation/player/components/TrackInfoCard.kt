@@ -66,7 +66,7 @@ fun TrackInfoCard(
 @Composable
 private fun PreviewTrackInfoCard() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         TrackInfoCard(
             title = "Bohemian Rhapsody",
             artist = "Queen",

@@ -113,7 +113,7 @@ fun ActionCard(
 @Composable
 private fun PreviewActionCard() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         ActionCard(
             onSetRingtone = {},
             onDownload = {},
@@ -126,7 +126,7 @@ private fun PreviewActionCard() {
 @Composable
 private fun PreviewActionCardDownloaded() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
         ActionCard(
             onSetRingtone = {},
             onDownload = {},

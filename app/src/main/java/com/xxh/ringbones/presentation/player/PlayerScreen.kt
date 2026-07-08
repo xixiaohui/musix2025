@@ -1,5 +1,9 @@
 package com.xxh.ringbones.presentation.player
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.xxh.ringbones.core.player.model.PlayerEffect
 import com.xxh.ringbones.core.player.model.PlayerEvent
@@ -61,6 +66,18 @@ import com.xxh.ringbones.presentation.player.components.SleepTimerDialog
 import com.xxh.ringbones.presentation.player.components.SpectrumVisualizer
 import com.xxh.ringbones.presentation.player.components.TrackInfoCard
 import kotlin.time.Duration.Companion.milliseconds
+
+/** Curated accent palette — one per music mood. Matches fallback cover gradients. */
+private val ACCENT_PALETTE = listOf(
+    Color(0xFFB4A0FF), // violet
+    Color(0xFF7AACF0), // sky blue
+    Color(0xFF5CC8B0), // teal
+    Color(0xFFD49480), // warm rose
+    Color(0xFFF0C060), // gold
+    Color(0xFF8E80E0), // orchid
+    Color(0xFF6EBE82), // mint
+    Color(0xFFE08860), // coral
+)
 
 /**
  * Full-screen immersive music player with Apple Music glassmorphism design.
@@ -102,6 +119,20 @@ fun PlayerScreen(
     var showSleepTimerDialog by remember { mutableStateOf(false) }
     var showEqSheet by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf<String?>(null) }
+
+    // Request RECORD_AUDIO permission for the real-time spectrum visualizer.
+    // Without this permission, VisualizerCapture falls back to synthetic data.
+    val recordAudioLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* no-op: VisualizerCapture will work on next playback */ }
+
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            recordAudioLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
 
     // Consume one-shot effects
     LaunchedEffect(Unit) {
@@ -148,8 +179,11 @@ fun PlayerScreen(
     }
 
     val ringtone = state.currentRingtone
-    val bgColorIndex = remember(ringtone?.category) {
-        kotlin.math.abs(ringtone?.category?.hashCode() ?: 0)
+
+    // Dynamic accent from album category (future: palette extraction from cover)
+    val accentColor = remember(ringtone?.category) {
+        val index = kotlin.math.abs(ringtone?.category?.hashCode() ?: 0) % ACCENT_PALETTE.size
+        ACCENT_PALETTE[index]
     }
 
     // ── Dialogs & Sheets ──
@@ -219,10 +253,14 @@ fun PlayerScreen(
     // ── Main Layout ──
 
     Box(modifier = modifier.fillMaxSize()) {
-        ImmersiveBackground(paletteIndex = bgColorIndex)
+        // Full-screen blurred cover + glass overlay
+        ImmersiveBackground(
+            coverImageUrl = ringtone?.coverImageUrl,
+            accentColor = accentColor,
+        )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top bar — transparent with explicit light text
+            // Top bar
             TopAppBar(
                 title = {
                     ringtone?.let { track ->
@@ -254,7 +292,6 @@ fun PlayerScreen(
                     }
                 },
                 actions = {
-                    // Picture-in-Picture toggle — hides in PiP mode itself
                     if (!isInPiPMode) {
                         IconButton(onClick = onEnterPiP) {
                             Icon(
@@ -279,24 +316,19 @@ fun PlayerScreen(
                     .padding(0.dp, 0.dp, 0.dp, 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Loading state
                 if (state.isLoading && ringtone == null) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp),
+                        modifier = Modifier.fillMaxWidth().height(400.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        CircularProgressIndicator(
-                            color = Color(0xFF7C85F5),
-                        )
+                        CircularProgressIndicator(color = accentColor)
                     }
                     return@Column
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                // Album cover
+                // ── 1. Large album cover ──
                 AlbumCover(
                     coverImageUrl = ringtone?.coverImageUrl,
                     category = ringtone?.category ?: "Music",
@@ -304,19 +336,42 @@ fun PlayerScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Track info + seekbar glass card
-                TrackInfoCard(
-                    title = ringtone?.title ?: "",
-                    artist = ringtone?.author ?: "",
-                    trackKey = ringtone?.id ?: 0L,
-                    progress = state.progress,
-                    duration = state.duration,
-                    onSeek = { viewModel.onEvent(PlayerEvent.Seek(it)) },
+                // ── 2. Spectrum — visual center ──
+                SpectrumVisualizer(
+                    magnitudes = state.visualizerData,
+                    accentColor = accentColor,
+                    isPlaying = state.isPlaying,
+                    modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 0.dp),
+                    height = 64.dp,
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // Playback controls
+                // ── 3. Song name + artist ──
+                ringtone?.let { track ->
+                    Text(
+                        text = track.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = PlayerColors.textPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(24.dp, 0.dp, 24.dp, 4.dp),
+                    )
+                    Text(
+                        text = track.author,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = PlayerColors.textSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(24.dp, 0.dp, 24.dp, 0.dp),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ── 4. Playback controls ──
                 PlaybackControls(
                     isPlaying = state.isPlaying,
                     onPrevious = { viewModel.onEvent(PlayerEvent.Previous) },
@@ -325,9 +380,21 @@ fun PlayerScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                // Action card — Set Ringtone + Download
+                // ── 5. Progress seekbar ──
+                TrackInfoCard(
+                    title = "",
+                    artist = "",
+                    trackKey = ringtone?.id ?: 0L,
+                    progress = state.progress,
+                    duration = state.duration,
+                    onSeek = { viewModel.onEvent(PlayerEvent.Seek(it)) },
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // ── 6. Action card ──
                 ActionCard(
                     onSetRingtone = { viewModel.onEvent(PlayerEvent.SetRingtone) },
                     onDownload = { viewModel.onEvent(PlayerEvent.Download) },
@@ -336,14 +403,14 @@ fun PlayerScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Favorite + Queue row
+                // ── 7. Favorite + Queue ──
                 FavoriteRow(
                     isFavorite = state.isFavorite,
                     onToggleFavorite = { viewModel.onEvent(PlayerEvent.ToggleFavorite) },
                     onQueue = { showQueue = true },
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 // Extras toggle
                 IconButton(onClick = { showExtraControls = !showExtraControls }) {
@@ -355,7 +422,6 @@ fun PlayerScreen(
                     )
                 }
 
-                // Extras
                 ExtraControls(
                     visible = showExtraControls,
                     repeatMode = state.repeatMode.name,
@@ -382,18 +448,10 @@ fun PlayerScreen(
                             viewModel.onEvent(PlayerEvent.SetABPoint(true))
                         }
                     },
-                    modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 0.dp),
+                    modifier = Modifier.padding(16.dp, 4.dp, 16.dp, 0.dp),
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Spectrum visualizer
-                SpectrumVisualizer(
-                    magnitudes = state.visualizerData,
-                    modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp),
-                )
-
-                // Error display
+                // Error
                 state.error?.let { error ->
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -406,7 +464,7 @@ fun PlayerScreen(
                 }
             }
 
-            // Snackbar overlay with explicit light text
+            // Snackbar overlay
             AnimatedVisibility(
                 visible = showSnackbar != null,
                 enter = fadeIn(),
@@ -436,6 +494,6 @@ fun PlayerScreen(
 @Composable
 private fun PreviewPlayerScreen() {
     MaterialTheme {
-        ImmersiveBackground(paletteIndex = 0)
+        ImmersiveBackground(coverImageUrl = null)
     }
 }
