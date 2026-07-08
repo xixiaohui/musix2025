@@ -2,17 +2,17 @@ package com.xxh.ringbones.core.player
 
 import android.os.Bundle
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionCommands
+import androidx.media3.session.SessionResult
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
 import com.xxh.ringbones.core.player.model.ABLoop
 import com.xxh.ringbones.core.player.model.EqPreset
 import com.xxh.ringbones.core.player.visualizer.FFTProcessor
 import com.xxh.ringbones.core.player.visualizer.VisualizerCapture
-import com.xxh.ringbones.domain.model.Ringtone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,30 +30,30 @@ private const val VISUALIZER_INTERVAL_MS = 33L
 /** Retry delay when audio session ID is not yet available (100ms). */
 private const val RETRY_SESSION_ID_DELAY_MS = 100L
 
-/** How often to poll for A–B loop boundaries. */
+/** How often to poll for A-B loop boundaries. */
 private const val AB_LOOP_POLL_MS = 50L
 
 /** Allowed playback speed values. */
 private val ALLOWED_SPEEDS = setOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f, 3.0f)
 
-/** Custom command: set A or B point for A–B loop. Bundle keys: "isStart" (Boolean). */
-private val CMD_SET_AB_POINT = SessionCommand("SET_AB_POINT", Bundle::class.java)
+/** Custom command: set A or B point for A-B loop. Bundle keys: "isStart" (Boolean). */
+private val CMD_SET_AB_POINT = SessionCommand("SET_AB_POINT", Bundle.EMPTY)
 
-/** Custom command: clear active A–B loop. */
-private val CMD_CLEAR_AB_LOOP = SessionCommand("CLEAR_AB_LOOP", Bundle::class.java)
+/** Custom command: clear active A-B loop. */
+private val CMD_CLEAR_AB_LOOP = SessionCommand("CLEAR_AB_LOOP", Bundle.EMPTY)
 
 /** Custom command: set sleep timer. Bundle keys: "minutes" (Int, nullable). */
-private val CMD_SET_SLEEP_TIMER = SessionCommand("SET_SLEEP_TIMER", Bundle::class.java)
+private val CMD_SET_SLEEP_TIMER = SessionCommand("SET_SLEEP_TIMER", Bundle.EMPTY)
 
 /** Custom command: set EQ preset. Bundle keys: "preset" (String). */
-private val CMD_SET_EQ_PRESET = SessionCommand("SET_EQ_PRESET", Bundle::class.java)
+private val CMD_SET_EQ_PRESET = SessionCommand("SET_EQ_PRESET", Bundle.EMPTY)
 
 /**
  * [MediaSession.Callback] implementation that handles both standard Media3
  * playback commands and custom app-specific commands (AB loop, sleep timer, EQ).
  *
  * Owns coroutine-scoped features that are not natively modeled by MediaSession:
- * - A–B loop boundary monitor
+ * - A-B loop boundary monitor
  * - Sleep timer countdown
  * - FFT audio visualizer capture
  * - Progress polling at ~30fps
@@ -82,29 +82,15 @@ class PlaybackServiceCallback(
         session: MediaSession,
         controller: MediaSession.ControllerInfo,
     ): MediaSession.ConnectionResult {
-        val customCommands = MediaSession.CustomCommand.Builder()
-            .addCustomCommand(CMD_SET_AB_POINT)
-            .addCustomCommand(CMD_CLEAR_AB_LOOP)
-            .addCustomCommand(CMD_SET_SLEEP_TIMER)
-            .addCustomCommand(CMD_SET_EQ_PRESET)
-            .build()
-
         return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
             .setAvailableSessionCommands(
-                MediaSession.ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
-                    .addCustomCommand(CMD_SET_AB_POINT)
-                    .addCustomCommand(CMD_CLEAR_AB_LOOP)
-                    .addCustomCommand(CMD_SET_SLEEP_TIMER)
-                    .addCustomCommand(CMD_SET_EQ_PRESET)
+                SessionCommands.Builder()
+                    .add(CMD_SET_AB_POINT)
+                    .add(CMD_CLEAR_AB_LOOP)
+                    .add(CMD_SET_SLEEP_TIMER)
+                    .add(CMD_SET_EQ_PRESET)
                     .build()
             )
-            .setAvailablePlayerCommands(
-                MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
-                    .add(Player.COMMAND_SEEK_TO_MEDIA_ITEM)
-                    .add(Player.COMMAND_SET_SPEED_AND_PITCH)
-                    .build()
-            )
-            .setCustomLayout(emptyList())
             .build()
     }
 
@@ -119,7 +105,9 @@ class PlaybackServiceCallback(
         if (startIndex == 0) {
             exoPlayer.playWhenReady = true
         }
-        return androidx.media3.common.util.Util.getFuture(mediaItems)
+        val future: SettableFuture<List<MediaItem>> = SettableFuture.create()
+        future.set(mediaItems)
+        return future
     }
 
     override fun onPostConnect(
@@ -127,15 +115,6 @@ class PlaybackServiceCallback(
         controller: MediaSession.ControllerInfo,
     ) {
         // No-op: keep existing queue and state
-    }
-
-    // ── Player events ──
-
-    override fun onPlayerAvailableCommandsChanged(
-        session: MediaSession,
-        availableCommands: Player.Commands,
-    ) {
-        // No-op
     }
 
     // ── Custom commands ──
@@ -157,34 +136,18 @@ class PlaybackServiceCallback(
                 setSleepTimer(if (minutes != null && minutes > 0) minutes else null)
             }
             "SET_EQ_PRESET" -> {
-                val presetName = args.getString("preset") ?: return@onCustomCommand
+                val presetName = args.getString("preset") ?: return resultFuture(SessionResult.RESULT_SUCCESS)
                 val preset = EqPreset.entries.find { it.name == presetName } ?: EqPreset.FLAT
                 playerStateBridge.update { it.copy(eqPreset = preset) }
             }
         }
-        return androidx.media3.common.util.Util.getFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+        return resultFuture(SessionResult.RESULT_SUCCESS)
     }
 
-    // ── MediaSession lifecycle ──
-
-    override fun onPlayerRemoved(
-        session: MediaSession,
-        controller: MediaSession.ControllerInfo,
-    ) {
-        // Clean up if all controllers have disconnected
-        if (session.connectedControllers.isEmpty()) {
-            stopAllCoroutines()
-        }
-    }
-
-    override fun onPostDisconnect(
-        session: MediaSession,
-        controller: MediaSession.ControllerInfo,
-    ) {
-        // If no connected controllers remain, stop coroutines but keep playback
-        if (session.connectedControllers.isEmpty()) {
-            stopAllCoroutines()
-        }
+    private fun resultFuture(code: Int): ListenableFuture<SessionResult> {
+        val future: SettableFuture<SessionResult> = SettableFuture.create()
+        future.set(SessionResult(code))
+        return future
     }
 
     // ── Progress polling ──
@@ -266,7 +229,7 @@ class PlaybackServiceCallback(
         }
     }
 
-    // ── A–B Loop ──
+    // ── A-B Loop ──
 
     private fun setABPoint(isStart: Boolean) {
         val pos = exoPlayer.currentPosition
